@@ -8,7 +8,7 @@ use std::thread;
 use glium::{self, Display};
 use glium::vertex::VertexBufferAny;
 
-pub mod camera;
+//pub mod camera;
 
 pub enum Action {
     Stop,

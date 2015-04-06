@@ -17,7 +17,7 @@ fn main() {
         .unwrap();
 
     // building the vertex and index buffers
-    let vertex_buffer = support::load_wavefront(&display, include_bytes!("support/teapot.obj"));
+    let vertex_buffer = support::load_wavefront(&display, include_bytes!("assets/teapot.obj"));
 
     // the program
     let program = match glium::Program::from_source(&display,
