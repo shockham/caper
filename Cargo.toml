@@ -1,0 +1,11 @@
+[package]
+name = "caper"
+version = "0.0.1"
+authors = ["shockham <samuel.hockham@gmail.com>"]
+
+[dependencies]
+glium = "*"
+glutin = "*"
+genmesh = "*"
+clock_ticks = "*"
+obj = "*"
