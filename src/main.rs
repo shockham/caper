@@ -120,6 +120,7 @@ fn main() {
         target.finish();
         
         // polling and handling the events received by the window
+        // I kind of feel like this is a bit ugly
         for event in display.poll_events() {
             match event {
                 glutin::Event::Closed => return support::Action::Stop,
@@ -130,18 +131,17 @@ fn main() {
                         Some(glutin::VirtualKeyCode::S) => move_btn_down[1] = true,
                         Some(glutin::VirtualKeyCode::A) => move_btn_down[2] = true,
                         Some(glutin::VirtualKeyCode::D) => move_btn_down[3] = true,
-                        Some(k) => println!("key: {:?}", k),
+                        Some(k) => println!("pressed key: {:?}", k),
                         _ => ()
                     }
                 }, 
                 glutin::Event::KeyboardInput(glutin::ElementState::Released, _, vkey) => {
                     match vkey{
-                        Some(glutin::VirtualKeyCode::Escape) => return support::Action::Stop,
                         Some(glutin::VirtualKeyCode::W) => move_btn_down[0] = false,
                         Some(glutin::VirtualKeyCode::S) => move_btn_down[1] = false,
                         Some(glutin::VirtualKeyCode::A) => move_btn_down[2] = false,
                         Some(glutin::VirtualKeyCode::D) => move_btn_down[3] = false,
-                        Some(k) => println!("key: {:?}", k),
+                        Some(k) => println!("released key: {:?}", k),
                         _ => ()
                     }
                 }, 
