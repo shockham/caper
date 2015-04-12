@@ -77,13 +77,19 @@ fn main() {
             }
         ")){
             Ok(p) => p,
-            Err(e) => panic!("{}", e), 
+            Err(e) => panic!("glsl error: {}", e), 
         };
     
     //quick and dirty vars for cam movement
     let mut cam_z = 0.0f32;
     let mut cam_x = 0.0f32;
-    let move_speed = 0.1f32;
+    let move_speed = 0.2f32;
+
+    fn update(){
+        //put updates here
+    }
+
+    let mut move_btn_down = [false, false, false, false];
 
     // the main loop
     support::start_loop(|| {
@@ -112,7 +118,7 @@ fn main() {
                     &glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList),
                     &program, &uniforms, &params).unwrap();
         target.finish();
-
+        
         // polling and handling the events received by the window
         for event in display.poll_events() {
             match event {
@@ -120,10 +126,21 @@ fn main() {
                 glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, vkey) => {
                     match vkey{
                         Some(glutin::VirtualKeyCode::Escape) => return support::Action::Stop,
-                        Some(glutin::VirtualKeyCode::W) => cam_z += move_speed,
-                        Some(glutin::VirtualKeyCode::S) => cam_z -= move_speed,
-                        Some(glutin::VirtualKeyCode::A) => cam_x += move_speed,
-                        Some(glutin::VirtualKeyCode::D) => cam_x -= move_speed,
+                        Some(glutin::VirtualKeyCode::W) => move_btn_down[0] = true,
+                        Some(glutin::VirtualKeyCode::S) => move_btn_down[1] = true,
+                        Some(glutin::VirtualKeyCode::A) => move_btn_down[2] = true,
+                        Some(glutin::VirtualKeyCode::D) => move_btn_down[3] = true,
+                        Some(k) => println!("key: {:?}", k),
+                        _ => ()
+                    }
+                }, 
+                glutin::Event::KeyboardInput(glutin::ElementState::Released, _, vkey) => {
+                    match vkey{
+                        Some(glutin::VirtualKeyCode::Escape) => return support::Action::Stop,
+                        Some(glutin::VirtualKeyCode::W) => move_btn_down[0] = false,
+                        Some(glutin::VirtualKeyCode::S) => move_btn_down[1] = false,
+                        Some(glutin::VirtualKeyCode::A) => move_btn_down[2] = false,
+                        Some(glutin::VirtualKeyCode::D) => move_btn_down[3] = false,
                         Some(k) => println!("key: {:?}", k),
                         _ => ()
                     }
@@ -131,7 +148,24 @@ fn main() {
                 _ => ()
             }
         }
+        
+        //changing the camera position based on input events
+        if move_btn_down[0] {
+            cam_z += move_speed;
+        }
+
+        if move_btn_down[1] {
+            cam_z -= move_speed;
+        }
+
+        if move_btn_down[2] {
+            cam_x += move_speed;
+        }
+
+        if move_btn_down[3] {
+            cam_x -= move_speed;
+        }
 
         support::Action::Continue
-    });
+    }, update);
 }
