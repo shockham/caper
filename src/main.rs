@@ -1,3 +1,5 @@
+#![feature(collections)]
+
 extern crate glutin;
 
 #[macro_use]
@@ -16,9 +18,13 @@ fn main() {
         .build_glium()
         .unwrap();
 
-    // building the vertex and index buffers
-    let vertex_buffer = support::load_wavefront(&display, include_bytes!("assets/untitled.obj"));
+    //load the models in to vec<Vertex>
+    let mut vertex_data = support::load_wavefront(include_bytes!("assets/untitled.obj"));
+    vertex_data.append(&mut support::load_wavefront(include_bytes!("assets/teapot.obj")));
 
+    // building the vertex and index buffers
+    let vertex_buffer = glium::vertex::VertexBuffer::new(&display, vertex_data);
+    
     // the shader programs
     let program = match glium::Program::from_source(&display,
         // vertex shader

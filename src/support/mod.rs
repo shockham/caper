@@ -5,8 +5,6 @@ extern crate clock_ticks;
 extern crate obj;
 
 use std::thread;
-use glium::{self, Display};
-use glium::vertex::VertexBufferAny;
 
 pub enum Action {
     Stop,
@@ -40,14 +38,17 @@ pub fn start_loop<F>(mut callback: F, update: fn()) where F: FnMut() -> Action {
     }
 }
 
+
+
+#[derive(Copy, Clone)]
+pub struct Vertex {
+    position: [f32; 3],
+    normal: [f32; 3],
+    texture: [f32; 2],
+}
+
 /// Returns a vertex buffer that should be rendered as `TrianglesList`.
-pub fn load_wavefront(display: &Display, data: &[u8]) -> VertexBufferAny {
-    #[derive(Copy, Clone)]
-    struct Vertex {
-        position: [f32; 3],
-        normal: [f32; 3],
-        texture: [f32; 2],
-    }
+pub fn load_wavefront( data: &[u8]) -> Vec<Vertex> {
 
     implement_vertex!(Vertex, position, normal, texture);
 
@@ -78,7 +79,8 @@ pub fn load_wavefront(display: &Display, data: &[u8]) -> VertexBufferAny {
         }
     }
 
-    glium::vertex::VertexBuffer::new(display, vertex_data).into_vertex_buffer_any()
+    //glium::vertex::VertexBuffer::new(display, vertex_data).into_vertex_buffer_any()
+    vertex_data
 }
 
 
