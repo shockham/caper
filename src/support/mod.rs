@@ -1,10 +1,12 @@
-#![allow(dead_code)]
 
 extern crate genmesh;
 extern crate clock_ticks;
 extern crate obj;
 
 use std::thread;
+use std::f32::consts::PI;
+use std::ops::{Add, Mul};
+use std::num::Zero;
 
 pub enum Action {
     Stop,
@@ -85,7 +87,7 @@ pub fn load_wavefront( data: &[u8]) -> Vec<Vertex> {
 
 
 pub fn build_persp_proj_mat(fov:f32,aspect:f32,znear:f32,zfar:f32) -> [[f32; 4]; 4] {
-    let ymax = znear * (fov * (3.141592653589793/360.0)).tan();
+    let ymax = znear * (fov * (PI/360.0)).tan();
     let ymin = -ymax;
     let xmax = ymax * aspect;
     let xmin = ymin * aspect;
@@ -107,4 +109,13 @@ pub fn build_persp_proj_mat(fov:f32,aspect:f32,znear:f32,zfar:f32) -> [[f32; 4];
     m[3] = [0.0f32, 0.0f32, qn, 0.0f32];
 
     return m;
+}
+
+fn dotp<T>(this: &[T], other: &[T]) -> T where T:Add<T, Output=T> + Mul<T, Output=T> + Zero + Copy {
+    assert!(this.len() == other.len(), "The dimensions must be equal");
+
+    let zero : T = Zero::zero();
+    this.iter().zip(other.iter())
+             .map(|(&a, &b)| a * b)
+             .fold(zero, |sum, n| sum + n)
 }

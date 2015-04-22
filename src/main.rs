@@ -1,4 +1,5 @@
 #![feature(collections)]
+#![feature(zero_one)]
 
 extern crate glutin;
 
@@ -19,8 +20,8 @@ fn main() {
         .unwrap();
 
     //load the models in to vec<Vertex>
-    let mut vertex_data = support::load_wavefront(include_bytes!("assets/untitled.obj"));
-    vertex_data.append(&mut support::load_wavefront(include_bytes!("assets/teapot.obj")));
+    let mut vertex_data = support::load_wavefront(include_bytes!("assets/floor3.obj"));
+    vertex_data.append(&mut support::load_wavefront(include_bytes!("assets/floor3.obj")));
 
     // building the vertex and index buffers
     let vertex_buffer = glium::vertex::VertexBuffer::new(&display, vertex_data);
@@ -57,7 +58,10 @@ fn main() {
 
             void main() {
                 float lum = max(dot(normalize(g_normal), normalize(LIGHT)), 0.0);
-                vec3 color = (0.3 + 0.7 * lum) * vec3(1.0, 1.0, 1.0);
+
+                vec3 base_color = vec3(1.0, 1.0, 1.0);
+
+                vec3 color = base_color * (0.3 + 0.7 * lum);
                 frag_output = vec4(color, 1.0);
             }
         ",
@@ -87,8 +91,9 @@ fn main() {
         };
     
     //quick and dirty vars for cam movement
-    let mut cam_z = 0.0f32;
-    let mut cam_x = 0.0f32;
+    let mut cam_pos =[ 0.0f32, 0.0, 0.0 ];
+    let mut yaw = 0.0f32;
+    let mut pitch = 0.0f32;
     let move_speed = 0.2f32;
 
     fn update(){
@@ -96,17 +101,24 @@ fn main() {
     }
 
     let mut move_btn_down = [false, false, false, false];
+    let mut yaw_btn_down = [false, false, false, false];
 
     // the main loop
     support::start_loop(|| {
         // building the uniforms
+        
+        let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (yaw.sin(), yaw.cos(), pitch.sin(), pitch.cos());
+        let xaxis = [cos_yaw, 0.0, -sin_yaw, 0.0];
+        let yaxis = [sin_yaw * sin_pitch, cos_pitch, cos_yaw * sin_pitch, 0.0];
+        let zaxis = [sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw, 0.0];
+
         let uniforms = uniform! {
-           projection_matrix: support::build_persp_proj_mat(60f32, 800f32/600f32, 0.01f32, 1000f32),
+            projection_matrix: support::build_persp_proj_mat(60f32, 800f32/600f32, 0.01f32, 1000f32),
             modelview_matrix: [
-                [1.0f32, 0.0, 0.0, 0.0],
-                [0.0, 1.0f32, 0.0, 0.0],
-                [0.0, 0.0, 1.0f32, 0.0],
-                [cam_x, 0.0, cam_z, 1.0f32]
+                [ xaxis[0], yaxis[0], zaxis[0], 0.0],
+                [ xaxis[1], yaxis[1], zaxis[1], 0.0],
+                [ xaxis[2], yaxis[2], zaxis[2], 0.0],
+                [ cam_pos[0], cam_pos[1], cam_pos[2], 1.0f32]
             ]
         };
 
@@ -119,7 +131,7 @@ fn main() {
 
         // drawing a frame
         let mut target = display.draw();
-        target.clear_color_and_depth((0.0, 0.0, 0.0, 0.0), 1.0);
+        target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
         target.draw(&vertex_buffer,
                     &glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList),
                     &program, &uniforms, &params).unwrap();
@@ -137,6 +149,10 @@ fn main() {
                         Some(glutin::VirtualKeyCode::S) => move_btn_down[1] = true,
                         Some(glutin::VirtualKeyCode::A) => move_btn_down[2] = true,
                         Some(glutin::VirtualKeyCode::D) => move_btn_down[3] = true,
+                        Some(glutin::VirtualKeyCode::Left) => yaw_btn_down[0] = true,
+                        Some(glutin::VirtualKeyCode::Right) => yaw_btn_down[1] = true,
+                        Some(glutin::VirtualKeyCode::Up) => yaw_btn_down[2] = true,
+                        Some(glutin::VirtualKeyCode::Down) => yaw_btn_down[3] = true,
                         Some(k) => println!("pressed key: {:?}", k),
                         _ => ()
                     }
@@ -147,6 +163,10 @@ fn main() {
                         Some(glutin::VirtualKeyCode::S) => move_btn_down[1] = false,
                         Some(glutin::VirtualKeyCode::A) => move_btn_down[2] = false,
                         Some(glutin::VirtualKeyCode::D) => move_btn_down[3] = false,
+                        Some(glutin::VirtualKeyCode::Left) => yaw_btn_down[0] = false,
+                        Some(glutin::VirtualKeyCode::Right) => yaw_btn_down[1] = false,
+                        Some(glutin::VirtualKeyCode::Up) => yaw_btn_down[2] = false,
+                        Some(glutin::VirtualKeyCode::Down) => yaw_btn_down[3] = false,
                         Some(k) => println!("released key: {:?}", k),
                         _ => ()
                     }
@@ -157,19 +177,35 @@ fn main() {
         
         //changing the camera position based on input events
         if move_btn_down[0] {
-            cam_z += move_speed;
+            cam_pos[2] += move_speed;
         }
 
         if move_btn_down[1] {
-            cam_z -= move_speed;
+            cam_pos[2] -= move_speed;
         }
 
         if move_btn_down[2] {
-            cam_x += move_speed;
+            cam_pos[0] += move_speed;
         }
 
         if move_btn_down[3] {
-            cam_x -= move_speed;
+            cam_pos[0] -= move_speed;
+        }
+
+        if yaw_btn_down[0] {
+            yaw += move_speed; 
+        }
+
+        if yaw_btn_down[1] {
+            yaw -= move_speed;
+        }
+
+        if yaw_btn_down[2] {
+            pitch += move_speed;
+        }
+
+        if yaw_btn_down[3] {
+            pitch -= move_speed;
         }
 
         support::Action::Continue
