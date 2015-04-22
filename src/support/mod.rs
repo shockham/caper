@@ -111,7 +111,7 @@ pub fn build_persp_proj_mat(fov:f32,aspect:f32,znear:f32,zfar:f32) -> [[f32; 4];
     return m;
 }
 
-fn dotp<T>(this: &[T], other: &[T]) -> T where T:Add<T, Output=T> + Mul<T, Output=T> + Zero + Copy {
+pub fn dotp<T>(this: &[T], other: &[T]) -> T where T:Add<T, Output=T> + Mul<T, Output=T> + Zero + Copy {
     assert!(this.len() == other.len(), "The dimensions must be equal");
 
     let zero : T = Zero::zero();

@@ -10,6 +10,8 @@ use glium::Surface;
 
 mod support;
 
+use support::dotp;
+
 fn main() {
     use glium::DisplayBuild;
 
@@ -95,6 +97,7 @@ fn main() {
     let mut yaw = 0.0f32;
     let mut pitch = 0.0f32;
     let move_speed = 0.2f32;
+    let look_speed = 0.02f32;
 
     fn update(){
         //put updates here
@@ -108,9 +111,9 @@ fn main() {
         // building the uniforms
         
         let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (yaw.sin(), yaw.cos(), pitch.sin(), pitch.cos());
-        let xaxis = [cos_yaw, 0.0, -sin_yaw, 0.0];
-        let yaxis = [sin_yaw * sin_pitch, cos_pitch, cos_yaw * sin_pitch, 0.0];
-        let zaxis = [sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw, 0.0];
+        let xaxis = [cos_yaw, 0.0, -sin_yaw];
+        let yaxis = [sin_yaw * sin_pitch, cos_pitch, cos_yaw * sin_pitch];
+        let zaxis = [sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw];
 
         let uniforms = uniform! {
             projection_matrix: support::build_persp_proj_mat(60f32, 800f32/600f32, 0.01f32, 1000f32),
@@ -118,7 +121,7 @@ fn main() {
                 [ xaxis[0], yaxis[0], zaxis[0], 0.0],
                 [ xaxis[1], yaxis[1], zaxis[1], 0.0],
                 [ xaxis[2], yaxis[2], zaxis[2], 0.0],
-                [ cam_pos[0], cam_pos[1], cam_pos[2], 1.0f32]
+                [ dotp(&xaxis, &cam_pos), dotp(&yaxis, &cam_pos), dotp(&zaxis, &cam_pos), 1.0f32]
             ]
         };
 
@@ -193,19 +196,19 @@ fn main() {
         }
 
         if yaw_btn_down[0] {
-            yaw += move_speed; 
+            yaw += look_speed; 
         }
 
         if yaw_btn_down[1] {
-            yaw -= move_speed;
+            yaw -= look_speed;
         }
 
         if yaw_btn_down[2] {
-            pitch += move_speed;
+            pitch += look_speed;
         }
 
         if yaw_btn_down[3] {
-            pitch -= move_speed;
+            pitch -= look_speed;
         }
 
         support::Action::Continue
