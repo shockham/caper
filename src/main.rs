@@ -9,8 +9,9 @@ extern crate glium;
 use glium::Surface;
 
 mod utils;
-
 use utils::*;
+
+mod input;
 
 fn main() {
     use glium::DisplayBuild;
@@ -92,37 +93,23 @@ fn main() {
             Err(e) => panic!("glsl error: {}", e), 
         };
     
-    //quick and dirty vars for cam movement
-    let mut cam_pos =[ 0.0f32, 0.0, 0.0 ];
-    let mut yaw = 0.0f32;
-    let mut pitch = 0.0f32;
-    let move_speed = 0.2f32;
-    let look_speed = 0.02f32;
+    // state for buttons and camera pos
+    let mut btns_down = [false, false, false, false, false, false, false, false, false];
+    let mut cam_pos = [ 0.0f32, 0.0, 0.0 ];
+    let mut cam_rot = [ 0.0f32, 0.0, 0.0 ];
 
     fn update(){
         //put updates here
     }
 
-    let mut move_btn_down = [false, false, false, false];
-    let mut yaw_btn_down = [false, false, false, false];
-
     // the main loop
     start_loop(|| {
         // building the uniforms
         
-        let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (yaw.sin(), yaw.cos(), pitch.sin(), pitch.cos());
-        let xaxis = [cos_yaw, 0.0, -sin_yaw];
-        let yaxis = [sin_yaw * sin_pitch, cos_pitch, cos_yaw * sin_pitch];
-        let zaxis = [sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw];
-
+        let mv_matrix = build_fp_view_matrix(cam_pos, cam_rot);
         let uniforms = uniform! {
             projection_matrix: build_persp_proj_mat(60f32, 800f32/600f32, 0.01f32, 1000f32),
-            modelview_matrix: [
-                [ xaxis[0], yaxis[0], zaxis[0], 0.0],
-                [ xaxis[1], yaxis[1], zaxis[1], 0.0],
-                [ xaxis[2], yaxis[2], zaxis[2], 0.0],
-                [ dotp(&xaxis, &cam_pos), dotp(&yaxis, &cam_pos), dotp(&zaxis, &cam_pos), 1.0f32]
-            ]
+            modelview_matrix: mv_matrix,
         };
 
         // draw parameters
@@ -141,86 +128,11 @@ fn main() {
         target.finish();
         
         // polling and handling the events received by the window
-        // I kind of feel like this is a bit ugly
-        for event in display.poll_events() {
-            match event {
-                glutin::Event::Closed => return Action::Stop,
-                glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, vkey) => {
-                    match vkey{
-                        Some(glutin::VirtualKeyCode::Escape) => return Action::Stop,
-                        Some(glutin::VirtualKeyCode::W) => move_btn_down[0] = true,
-                        Some(glutin::VirtualKeyCode::S) => move_btn_down[1] = true,
-                        Some(glutin::VirtualKeyCode::A) => move_btn_down[2] = true,
-                        Some(glutin::VirtualKeyCode::D) => move_btn_down[3] = true,
-                        Some(glutin::VirtualKeyCode::Left) => yaw_btn_down[0] = true,
-                        Some(glutin::VirtualKeyCode::Right) => yaw_btn_down[1] = true,
-                        Some(glutin::VirtualKeyCode::Up) => yaw_btn_down[2] = true,
-                        Some(glutin::VirtualKeyCode::Down) => yaw_btn_down[3] = true,
-                        Some(k) => println!("pressed key: {:?}", k),
-                        _ => ()
-                    }
-                }, 
-                glutin::Event::KeyboardInput(glutin::ElementState::Released, _, vkey) => {
-                    match vkey{
-                        Some(glutin::VirtualKeyCode::W) => move_btn_down[0] = false,
-                        Some(glutin::VirtualKeyCode::S) => move_btn_down[1] = false,
-                        Some(glutin::VirtualKeyCode::A) => move_btn_down[2] = false,
-                        Some(glutin::VirtualKeyCode::D) => move_btn_down[3] = false,
-                        Some(glutin::VirtualKeyCode::Left) => yaw_btn_down[0] = false,
-                        Some(glutin::VirtualKeyCode::Right) => yaw_btn_down[1] = false,
-                        Some(glutin::VirtualKeyCode::Up) => yaw_btn_down[2] = false,
-                        Some(glutin::VirtualKeyCode::Down) => yaw_btn_down[3] = false,
-                        Some(k) => println!("released key: {:?}", k),
-                        _ => ()
-                    }
-                }, 
-                _ => ()
-            }
-        }
-        
-        //changing the camera position based on input events
-        //forward
-        if move_btn_down[0] {
-            for i in 0..cam_pos.len() {
-                cam_pos[i] += zaxis[i] * move_speed; 
-            }
-        }
-        
-        //backwards
-        if move_btn_down[1] {
-            for i in 0..cam_pos.len() {
-                cam_pos[i] -= zaxis[i] * move_speed; 
-            }
-        }
-        
-        //left
-        if move_btn_down[2] {
-            for i in 0..cam_pos.len() {
-                cam_pos[i] += xaxis[i] * move_speed; 
-            }
-        }
+        btns_down = input::get_inputs(&display, btns_down);
+        input::handle_inputs(&mut btns_down, &mut cam_pos, &mut cam_rot, mv_matrix); 
 
-        //right
-        if move_btn_down[3] {
-            for i in 0..cam_pos.len() {
-                cam_pos[i] -= xaxis[i] * move_speed; 
-            }
-        }
-
-        if yaw_btn_down[0] {
-            yaw += look_speed; 
-        }
-
-        if yaw_btn_down[1] {
-            yaw -= look_speed;
-        }
-
-        if yaw_btn_down[2] {
-            pitch += look_speed;
-        }
-
-        if yaw_btn_down[3] {
-            pitch -= look_speed;
+        if btns_down[8]{
+            return Action::Stop;
         }
 
         Action::Continue

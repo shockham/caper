@@ -111,6 +111,22 @@ pub fn build_persp_proj_mat(fov:f32,aspect:f32,znear:f32,zfar:f32) -> [[f32; 4];
     return m;
 }
 
+pub fn build_fp_view_matrix(cam_pos: [f32; 3], cam_rot: [f32; 3]) -> [[f32; 4]; 4] {
+
+    let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (cam_rot[1].sin(), cam_rot[1].cos(), cam_rot[0].sin(), cam_rot[0].cos());
+    let xaxis = [cos_yaw, 0.0, -sin_yaw];
+    let yaxis = [sin_yaw * sin_pitch, cos_pitch, cos_yaw * sin_pitch];
+    let zaxis = [sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw];
+    
+    [
+        [ xaxis[0], yaxis[0], zaxis[0], 0.0],
+        [ xaxis[1], yaxis[1], zaxis[1], 0.0],
+        [ xaxis[2], yaxis[2], zaxis[2], 0.0],
+        [ dotp(&xaxis, &cam_pos), dotp(&yaxis, &cam_pos), dotp(&zaxis, &cam_pos), 1.0f32]
+    ]
+
+}
+
 pub fn dotp<T>(this: &[T], other: &[T]) -> T where T:Add<T, Output=T> + Mul<T, Output=T> + Zero + Copy {
     assert!(this.len() == other.len(), "The dimensions must be equal");
 
