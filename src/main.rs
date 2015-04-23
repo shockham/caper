@@ -131,9 +131,8 @@ fn main() {
         btns_down = input::get_inputs(&display, btns_down);
         input::handle_inputs(&mut btns_down, &mut cam_pos, &mut cam_rot, mv_matrix); 
 
-        if btns_down[8]{
-            return Action::Stop;
-        }
+        //quit
+        if btns_down[8]{ return Action::Stop; }
 
         Action::Continue
     }, update);
