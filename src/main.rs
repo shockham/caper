@@ -8,9 +8,9 @@ extern crate glium;
 
 use glium::Surface;
 
-mod support;
+mod utils;
 
-use support::dotp;
+use utils::*;
 
 fn main() {
     use glium::DisplayBuild;
@@ -22,8 +22,8 @@ fn main() {
         .unwrap();
 
     //load the models in to vec<Vertex>
-    let mut vertex_data = support::load_wavefront(include_bytes!("assets/floor3.obj"));
-    vertex_data.append(&mut support::load_wavefront(include_bytes!("assets/floor3.obj")));
+    let mut vertex_data = load_wavefront(include_bytes!("assets/floor3.obj"));
+    vertex_data.append(&mut load_wavefront(include_bytes!("assets/floor3.obj")));
 
     // building the vertex and index buffers
     let vertex_buffer = glium::vertex::VertexBuffer::new(&display, vertex_data);
@@ -107,7 +107,7 @@ fn main() {
     let mut yaw_btn_down = [false, false, false, false];
 
     // the main loop
-    support::start_loop(|| {
+    start_loop(|| {
         // building the uniforms
         
         let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (yaw.sin(), yaw.cos(), pitch.sin(), pitch.cos());
@@ -116,7 +116,7 @@ fn main() {
         let zaxis = [sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw];
 
         let uniforms = uniform! {
-            projection_matrix: support::build_persp_proj_mat(60f32, 800f32/600f32, 0.01f32, 1000f32),
+            projection_matrix: build_persp_proj_mat(60f32, 800f32/600f32, 0.01f32, 1000f32),
             modelview_matrix: [
                 [ xaxis[0], yaxis[0], zaxis[0], 0.0],
                 [ xaxis[1], yaxis[1], zaxis[1], 0.0],
@@ -144,10 +144,10 @@ fn main() {
         // I kind of feel like this is a bit ugly
         for event in display.poll_events() {
             match event {
-                glutin::Event::Closed => return support::Action::Stop,
+                glutin::Event::Closed => return Action::Stop,
                 glutin::Event::KeyboardInput(glutin::ElementState::Pressed, _, vkey) => {
                     match vkey{
-                        Some(glutin::VirtualKeyCode::Escape) => return support::Action::Stop,
+                        Some(glutin::VirtualKeyCode::Escape) => return Action::Stop,
                         Some(glutin::VirtualKeyCode::W) => move_btn_down[0] = true,
                         Some(glutin::VirtualKeyCode::S) => move_btn_down[1] = true,
                         Some(glutin::VirtualKeyCode::A) => move_btn_down[2] = true,
@@ -211,6 +211,6 @@ fn main() {
             pitch -= look_speed;
         }
 
-        support::Action::Continue
+        Action::Continue
     }, update);
 }
