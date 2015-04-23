@@ -179,20 +179,32 @@ fn main() {
         }
         
         //changing the camera position based on input events
+        //forward
         if move_btn_down[0] {
-            cam_pos[2] += move_speed;
+            for i in 0..cam_pos.len() {
+                cam_pos[i] += zaxis[i] * move_speed; 
+            }
         }
-
+        
+        //backwards
         if move_btn_down[1] {
-            cam_pos[2] -= move_speed;
+            for i in 0..cam_pos.len() {
+                cam_pos[i] -= zaxis[i] * move_speed; 
+            }
         }
-
+        
+        //left
         if move_btn_down[2] {
-            cam_pos[0] += move_speed;
+            for i in 0..cam_pos.len() {
+                cam_pos[i] += xaxis[i] * move_speed; 
+            }
         }
 
+        //right
         if move_btn_down[3] {
-            cam_pos[0] -= move_speed;
+            for i in 0..cam_pos.len() {
+                cam_pos[i] -= xaxis[i] * move_speed; 
+            }
         }
 
         if yaw_btn_down[0] {
