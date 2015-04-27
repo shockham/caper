@@ -1,15 +1,17 @@
 
 use glium::Display;
 use glutin::VirtualKeyCode::*;
-use glutin::Event::KeyboardInput;
+use glutin::Event::{ KeyboardInput, MouseMoved };
 use glutin::ElementState::{ Pressed, Released };
 
 static MOVE_SPEED: f32 = 0.2f32;
 static LOOK_SPEED: f32 = 0.02f32;
+static MOUSE_SPEED: f32 = 5f32;
 
-pub fn get_inputs(display: &Display, inputs: [bool; 9]) -> [bool; 9] {
+pub fn get_inputs(display: &Display, inputs: [bool; 9], prev_pos: (i32, i32)) -> ([bool; 9], (i32, i32)) {
 
     let mut btns_down = inputs;
+    let mut mouse_pos = prev_pos;
 
     for event in display.poll_events() {
         match event {
@@ -42,15 +44,16 @@ pub fn get_inputs(display: &Display, inputs: [bool; 9]) -> [bool; 9] {
                     Some(k) => println!("released key: {:?}", k),
                     _ => ()
                 }
-            }, 
+            },
+            MouseMoved(a) => mouse_pos = a,
             _ => ()
         }
     }
 
-    btns_down
+    (btns_down, mouse_pos)
 }
 
-pub fn handle_inputs(btns_down: &mut [bool; 9], cam_pos: &mut [f32; 3], cam_rot: &mut [f32; 3], mv_matrix: [[f32; 4]; 4]){
+pub fn handle_inputs(cam_pos: &mut [f32; 3], cam_rot: &mut [f32; 3], btns_down: [bool; 9], mouse_delta: (f32, f32), mv_matrix: [[f32; 4]; 4]){
     //changing the camera position based on input events
     for b in 0..btns_down.len() {
         if btns_down[b] {
@@ -82,5 +85,8 @@ pub fn handle_inputs(btns_down: &mut [bool; 9], cam_pos: &mut [f32; 3], cam_rot:
                 _ => { },
             }
         }
-    } 
+    }
+
+    cam_rot[0] += mouse_delta.1 * MOUSE_SPEED;
+    cam_rot[1] += mouse_delta.0 * MOUSE_SPEED;
 }
