@@ -12,6 +12,7 @@ mod utils;
 use utils::*;
 
 mod input;
+mod shader;
 
 fn main() {
     use glium::DisplayBuild;
@@ -25,81 +26,21 @@ fn main() {
         .unwrap();
 
     let window = display.get_window().unwrap();
+    window.set_cursor_state(glutin::CursorState::Grab).ok();
 
     //load the models in to vec<Vertex>
-    let mut vertex_data = load_wavefront(include_bytes!("assets/floor3.obj"));
-    vertex_data.append(&mut load_wavefront(include_bytes!("assets/screenolith.obj")));
+    let mut vertex_data = load_wavefront(include_bytes!("assets/birdbuilding.obj"));
+    vertex_data.append(&mut load_wavefront(include_bytes!("assets/floor.obj")));
 
     // building the vertex and index buffers
     let vertex_buffer = glium::vertex::VertexBuffer::new(&display, vertex_data);
     
     // the shader programs
     let program = match glium::Program::from_source(&display,
-        // vertex shader
-        "
-            #version 330
-            
-            uniform mat4 projection_matrix;
-            uniform mat4 modelview_matrix;
-            
-            layout(location = 0) in vec3 position;
-            layout(location = 1) in vec3 normal;
-
-            out vec3 v_normal;
-            out vec3 v_pos;
-
-            void main() {
-                v_normal = normal;
-                v_pos = position;
-                gl_Position = projection_matrix * modelview_matrix * vec4(position, 1.0);
-            }
-        ",
-
-        // fragment shader
-        "
-            #version 330
-
-            const vec3 LIGHT = vec3(-0.2, 0.8, 0.1);
-
-            in vec3 g_normal;
-            in vec3 g_pos;
-            
-            out vec4 frag_output;
-
-            void main() {
-                float lum = max(dot(normalize(g_normal), normalize(LIGHT)), 0.0);
-                float dist = max(dot(normalize(g_pos), normalize(LIGHT)), 0.0);
-
-                vec3 base_color = vec3(1.0, 1.0, 1.0);
-
-                vec3 color = base_color * (0.3 + (0.2 * lum) + (0.5 * dist));
-                frag_output = vec4(color, 1.0);
-            }
-        ",
-
-        // geometry shader
-        Some("
-            #version 330
-
-            layout(triangles) in;
-            layout(triangle_strip, max_vertices=3) out;
-
-            in vec3 v_normal[3];
-            in vec3 v_pos[3];
-
-            out vec3 g_normal;
-            out vec3 g_pos;
-
-            void main(void) {   
-                for(int i=0; i<3; i++){
-                    g_normal = v_normal[i];
-                    g_pos = v_pos[i];
-                    gl_Position = gl_in[i].gl_Position;
-                    EmitVertex();
-                }
-                EndPrimitive();
-            }
-        ")){
+        shader::get_dist_vert(),
+        shader::get_dist_frag(),
+        Some(shader::get_dist_geom())
+        ){
             Ok(p) => p,
             Err(e) => panic!("glsl error: {}", e), 
         };
