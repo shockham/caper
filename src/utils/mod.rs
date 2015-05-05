@@ -85,7 +85,7 @@ pub fn load_wavefront( data: &[u8]) -> Vec<Vertex> {
     vertex_data
 }
 
-
+/// Returns perspective matrix given fov, aspect ratio, z near and far
 pub fn build_persp_proj_mat(fov:f32,aspect:f32,znear:f32,zfar:f32) -> [[f32; 4]; 4] {
     let ymax = znear * (fov * (PI/360.0)).tan();
     let ymin = -ymax;
@@ -127,6 +127,7 @@ pub fn build_fp_view_matrix(cam_pos: [f32; 3], cam_rot: [f32; 3]) -> [[f32; 4]; 
 
 }
 
+/// Returns the dot product of two vectors
 pub fn dotp<T>(this: &[T], other: &[T]) -> T where T:Add<T, Output=T> + Mul<T, Output=T> + Zero + Copy {
     assert!(this.len() == other.len(), "The dimensions must be equal");
 

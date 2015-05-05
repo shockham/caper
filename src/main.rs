@@ -12,7 +12,10 @@ mod utils;
 use utils::*;
 
 mod input;
+use input::Input;
+
 mod shader;
+use shader::dist::*;
 
 fn main() {
     use glium::DisplayBuild;
@@ -24,7 +27,8 @@ fn main() {
         .with_title("caper".to_string())
         .build_glium()
         .unwrap();
-
+    
+    // get the window for various values
     let window = display.get_window().unwrap();
     window.set_cursor_state(glutin::CursorState::Grab).ok();
 
@@ -37,30 +41,32 @@ fn main() {
     
     // the shader programs
     let program = match glium::Program::from_source(&display,
-        shader::get_dist_vert(),
-        shader::get_dist_frag(),
-        Some(shader::get_dist_geom())
+            shader::dist::vert(),
+            shader::dist::frag(),
+            Some(shader::dist::geom())
         ){
             Ok(p) => p,
             Err(e) => panic!("glsl error: {}", e), 
         };
     
     // state for buttons and camera pos
-    let mut btns_down = [false, false, false, false, false, false, false, false, false];
-    let mut mouse_pos = (0, 0);
+    let input = Input::new();
     let mut cam_pos = [ 0.0f32, 0.0, 0.0 ];
     let mut cam_rot = [ 0.0f32, 0.0, 0.0 ];
-
-    let update = || {
-    };
+    
+    // define the update function
+    // TODO make this less useless
+    let update = || { };
 
     // the main loop
     start_loop(|| {
-        // building the uniforms
-        
+        // building the uniforms, and getting various values for this 
         let mv_matrix = build_fp_view_matrix(cam_pos, cam_rot);
+        // possibly set this to an event
+        let (width, height) = window.get_inner_size().unwrap_or((800, 600));
+        
         let uniforms = uniform! {
-            projection_matrix: build_persp_proj_mat(60f32, 800f32/600f32, 0.01f32, 1000f32),
+            projection_matrix: build_persp_proj_mat(60f32, width as f32/height as f32, 0.01f32, 1000f32),
             modelview_matrix: mv_matrix,
         };
 
@@ -80,18 +86,11 @@ fn main() {
         target.finish();
         
         // polling and handling the events received by the window
-        let inputs = input::get_inputs(&display, btns_down, mouse_pos);
-        btns_down = inputs.0;
-
-        let mouse_diff = (mouse_pos.0 - (inputs.1).0, mouse_pos.1 - (inputs.1).1);
-        let win_size = window.get_inner_size().unwrap();
-        let mouse_delta = ((mouse_diff.0 as f32)/(win_size.0 as f32), (mouse_diff.1 as f32)/(win_size.1 as f32));
-
-        input::handle_inputs(&mut cam_pos, &mut cam_rot, btns_down, mouse_delta,  mv_matrix);
-        mouse_pos = inputs.1;
+        input.update_inputs(&display);
+        input.handle_inputs(&mut cam_pos, &mut cam_rot, mv_matrix);
 
         //quit
-        if btns_down[8]{ return Action::Stop; }
+        if input.btns_down[8].get() { return Action::Stop; }
 
         Action::Continue
     }, update);
