@@ -49,7 +49,7 @@ fn main() {
             Err(e) => panic!("glsl error: {}", e), 
         };
     
-    // state for buttons and camera pos
+    // state for input and camera
     let input = Input::new();
     let mut cam_pos = [ 0.0f32, 0.0, 0.0 ];
     let mut cam_rot = [ 0.0f32, 0.0, 0.0 ];
@@ -85,7 +85,7 @@ fn main() {
                     &program, &uniforms, &params).unwrap();
         target.finish();
         
-        // polling and handling the events received by the window
+        // updating and handling the inputs
         input.update_inputs(&display);
         input.handle_inputs(&mut cam_pos, &mut cam_rot, mv_matrix);
 

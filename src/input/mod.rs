@@ -39,6 +39,7 @@ impl Input {
         self.mouse_delta.0.set(0f32);
         self.mouse_delta.1.set(0f32);
 
+        // polling and handling the events received by the display
         for event in display.poll_events() {
             match event {
                 KeyboardInput(Pressed, _, vkey) => {
