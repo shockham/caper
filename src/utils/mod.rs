@@ -16,7 +16,7 @@ pub enum Action {
 
 pub const FIXED_TIME_STAMP: u64 = 16666667;
 
-pub fn start_loop<F, G: Fn()>(mut callback: F, update: G) where F: FnMut() -> Action {
+pub fn start_loop<F>(mut callback: F) where F: FnMut() -> Action {
     let mut accumulator = 0;
     let mut previous_clock = clock_ticks::precise_time_ns();
 
@@ -32,8 +32,7 @@ pub fn start_loop<F, G: Fn()>(mut callback: F, update: G) where F: FnMut() -> Ac
 
         while accumulator >= FIXED_TIME_STAMP {
             accumulator -= FIXED_TIME_STAMP;
-            //call the update function
-            update();
+            //updates
         }
 
         thread::sleep_ms(((FIXED_TIME_STAMP - accumulator) / 1000000) as u32);

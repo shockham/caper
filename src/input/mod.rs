@@ -4,6 +4,7 @@ use glutin::VirtualKeyCode::*;
 use glutin::Event::{ KeyboardInput, MouseMoved };
 use glutin::ElementState::{ Pressed, Released };
 use std::cell::Cell;
+use utils::build_fp_view_matrix;
 
 static MOVE_SPEED: f32 = 0.2f32;
 static LOOK_SPEED: f32 = 0.02f32;
@@ -71,7 +72,9 @@ impl Input {
                         _ => ()
                     }
                 },
-                MouseMoved(a) => {
+                MouseMoved(a) => { 
+                    //TODO write this so it doesn't rely on mouse position as this does not change
+                    // when grabbed
                     let mouse_diff = (self.mouse_pos.get().0 - a.0, self.mouse_pos.get().1 - a.1);
                     self.mouse_delta.0.set((mouse_diff.0 as f32)/(width as f32));
                     self.mouse_delta.1.set((mouse_diff.1 as f32)/(height as f32));
@@ -83,7 +86,9 @@ impl Input {
     }
     
     /// This method is where data transforms take place due to inputs
-    pub fn handle_inputs(&self, cam_pos: &mut [f32; 3], cam_rot: &mut [f32; 3], mv_matrix: [[f32; 4]; 4]){
+    pub fn handle_inputs(&self, cam_pos: &mut [f32; 3], cam_rot: &mut [f32; 3]) {
+        let mv_matrix = build_fp_view_matrix(*cam_pos, *cam_rot);
+
         //changing the camera position based on input events
         for b in 0..self.btns_down.len() {
             if self.btns_down[b].get() {

@@ -7,6 +7,7 @@ extern crate glutin;
 extern crate glium;
 
 use glium::Surface;
+use glium::DisplayBuild;
 
 mod utils;
 use utils::*;
@@ -18,7 +19,6 @@ mod shader;
 use shader::dist::*;
 
 fn main() {
-    use glium::DisplayBuild;
 
     // building the display, ie. the main object
     let display = glutin::WindowBuilder::new()
@@ -31,6 +31,7 @@ fn main() {
     // get the window for various values
     let window = display.get_window().unwrap();
     window.set_cursor_state(glutin::CursorState::Grab).ok();
+    window.set_cursor_state(glutin::CursorState::Hide).ok();
 
     //load the models in to vec<Vertex>
     let mut vertex_data = load_wavefront(include_bytes!("assets/birdbuilding.obj"));
@@ -48,33 +49,27 @@ fn main() {
             Ok(p) => p,
             Err(e) => panic!("glsl error: {}", e), 
         };
+
+    // draw parameters
+    let params = glium::DrawParameters {
+        depth_test: glium::DepthTest::IfLess,
+        depth_write: true,
+        .. std::default::Default::default()
+    };
     
     // state for input and camera
     let input = Input::new();
     let mut cam_pos = [ 0.0f32, 0.0, 0.0 ];
     let mut cam_rot = [ 0.0f32, 0.0, 0.0 ];
-    
-    // define the update function
-    // TODO make this less useless
-    let update = || { };
 
     // the main loop
     start_loop(|| {
-        // building the uniforms, and getting various values for this 
-        let mv_matrix = build_fp_view_matrix(cam_pos, cam_rot);
         // possibly set this to an event
         let (width, height) = window.get_inner_size().unwrap_or((800, 600));
-        
+
         let uniforms = uniform! {
             projection_matrix: build_persp_proj_mat(60f32, width as f32/height as f32, 0.01f32, 1000f32),
-            modelview_matrix: mv_matrix,
-        };
-
-        // draw parameters
-        let params = glium::DrawParameters {
-            depth_test: glium::DepthTest::IfLess,
-            depth_write: true,
-            .. std::default::Default::default()
+            modelview_matrix: build_fp_view_matrix(cam_pos, cam_rot),
         };
 
         // drawing a frame
@@ -87,11 +82,11 @@ fn main() {
         
         // updating and handling the inputs
         input.update_inputs(&display);
-        input.handle_inputs(&mut cam_pos, &mut cam_rot, mv_matrix);
-
+        input.handle_inputs(&mut cam_pos, &mut cam_rot);
+        
         //quit
         if input.btns_down[8].get() { return Action::Stop; }
 
         Action::Continue
-    }, update);
+    });
 }

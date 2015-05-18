@@ -4,10 +4,8 @@ version = "0.0.1"
 authors = ["shockham <samuel.hockham@gmail.com>"]
 
 [dependencies]
+glium = "*"
 glutin = "*"
 genmesh = "*"
 clock_ticks = "*"
 obj = "*"
-
-[dependencies.glium]
-git = "https://github.com/tomaka/glium.git"
