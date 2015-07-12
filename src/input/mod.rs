@@ -1,15 +1,14 @@
 
 use glium::Display;
-use glutin::VirtualKeyCode::*;
-use glutin::Event::{ KeyboardInput, MouseMoved };
-use glutin::ElementState::{ Pressed, Released };
+use glium::glutin::VirtualKeyCode::*;
+use glium::glutin::Event::{ KeyboardInput, MouseMoved };
+use glium::glutin::ElementState::{ Pressed, Released };
 use std::cell::Cell;
-use utils::build_fp_view_matrix;
+use renderer::Renderer;
 
 static MOVE_SPEED: f32 = 0.2f32;
 static LOOK_SPEED: f32 = 0.02f32;
 static MOUSE_SPEED: f32 = 5f32;
-
 
 pub struct Input {
     pub btns_down: [Cell<bool>; 9],
@@ -18,7 +17,7 @@ pub struct Input {
 }
 
 impl Input {
-
+    /// Creates a new Input instance
     pub fn new() -> Input {
         Input {
             btns_down : [
@@ -87,7 +86,7 @@ impl Input {
     
     /// This method is where data transforms take place due to inputs
     pub fn handle_inputs(&self, cam_pos: &mut [f32; 3], cam_rot: &mut [f32; 3]) {
-        let mv_matrix = build_fp_view_matrix(*cam_pos, *cam_rot);
+        let mv_matrix = Renderer::build_fp_view_matrix(*cam_pos, *cam_rot);
 
         //changing the camera position based on input events
         for b in 0..self.btns_down.len() {

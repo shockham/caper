@@ -8,6 +8,7 @@ pub struct Shaders {
 }
 
 impl Shaders {
+    /// Creates a new instance of Shaders
     pub fn new(display: &Display) -> Shaders {
         // the shader programs
         let program_dist = match Program::from_source(display, dist::vert(), dist::frag(), Some(dist::geom())) {

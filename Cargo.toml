@@ -5,6 +5,7 @@ authors = ["shockham <samuel.hockham@gmail.com>"]
 
 [dependencies]
 glium = "*"
+glium_text = "*"
 glutin = "*"
 genmesh = "*"
 clock_ticks = "*"
