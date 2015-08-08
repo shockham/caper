@@ -1,4 +1,3 @@
-
 use glium::Display;
 use glium::glutin::VirtualKeyCode::*;
 use glium::glutin::Event::{ KeyboardInput, MouseMoved };

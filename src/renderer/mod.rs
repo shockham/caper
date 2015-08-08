@@ -69,7 +69,7 @@ impl Renderer {
 
         for item in render_items.iter() { 
             // building the vertex and index buffers
-            let vertex_buffer = VertexBuffer::new(&self.display, item.vertices.clone());
+            let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices).unwrap();
 
             target.draw(&vertex_buffer,
                         &NoIndices(TrianglesList),
