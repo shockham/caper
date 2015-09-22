@@ -7,7 +7,6 @@ use caper::utils::load_wavefront;
 use caper::input::Input;
 use caper::shader::Shaders;
 
-#[test]
 fn main() {
 
     let input = Input::new();
@@ -60,4 +59,5 @@ fn main() {
 
         thread::sleep_ms(((FIXED_TIME_STAMP - accumulator) / 1000000) as u32);
     }
+    assert!(true);
 }

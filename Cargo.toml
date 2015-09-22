@@ -2,6 +2,7 @@
 name = "caper"
 version = "0.0.1"
 authors = ["shockham <samuel.hockham@gmail.com>"]
+license = "MIT"
 
 [dependencies]
 glium = "*"
@@ -10,3 +11,7 @@ glutin = "*"
 genmesh = "*"
 clock_ticks = "*"
 obj = "*"
+
+[[example]]
+name = "main_example"
+path = "examples/main_example.rs"
