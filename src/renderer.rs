@@ -19,6 +19,11 @@ pub struct RenderItem {
     pub shader_index: usize,
 }
 
+pub struct CamState {
+    pub cam_pos:[f32; 3],
+    pub cam_rot:[f32; 3]
+}
+
 pub struct Renderer {
     pub display: Display,
 }
@@ -63,7 +68,6 @@ impl Renderer {
             projection_matrix: Renderer::build_persp_proj_mat(60f32, width as f32/height as f32, 0.01f32, 1000f32),
             modelview_matrix: Renderer::build_fp_view_matrix(cam_pos, cam_rot),
         };
-
 
         // drawing a frame
         let mut target = self.display.draw();

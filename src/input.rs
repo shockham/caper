@@ -71,8 +71,6 @@ impl Input {
                     }
                 },
                 MouseMoved(a) => { 
-                    //TODO write this so it doesn't rely on mouse position as this does not change
-                    // when grabbed
                     let mouse_diff = (self.mouse_pos.get().0 - a.0, self.mouse_pos.get().1 - a.1);
                     self.mouse_delta.0.set((mouse_diff.0 as f32)/(width as f32));
                     self.mouse_delta.1.set((mouse_diff.1 as f32)/(height as f32));

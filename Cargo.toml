@@ -11,7 +11,3 @@ glutin = "*"
 genmesh = "*"
 clock_ticks = "*"
 obj = "*"
-
-[[example]]
-name = "main_example"
-path = "examples/main_example.rs"
