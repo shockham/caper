@@ -4,7 +4,8 @@ use glium::index::PrimitiveType::TrianglesList;
 use glium::DepthTest::IfLess;
 use glium::vertex::VertexBuffer;
 use glium::glutin::WindowBuilder;
-use glium::glutin::CursorState::{ Grab, Hide };
+use glium::glutin::CursorState::Hide;//{ Grab, Hide };
+use glium::draw_parameters::BackfaceCullingMode::CullClockWise;
 
 use utils::*;
 use shader::Shaders;
@@ -40,7 +41,7 @@ impl Renderer {
     pub fn setup(&self) {
         // get the window for various values
         let window = self.display.get_window().unwrap();
-        window.set_cursor_state(Grab).ok();
+        //window.set_cursor_state(Grab).ok();
         window.set_cursor_state(Hide).ok();
 
     } 
@@ -54,6 +55,7 @@ impl Renderer {
         let params = DrawParameters {
             depth_test: IfLess,
             depth_write: true,
+            backface_culling: CullClockWise,
             .. Default::default()
         };
 

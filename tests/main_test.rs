@@ -1,24 +1,13 @@
-#![feature(zero_one)]
-#[macro_use]
-extern crate glium;
-extern crate glium_text;
 extern crate clock_ticks;
+extern crate caper;
 
 use std::thread;
+use caper::renderer::{ Renderer, RenderItem, FIXED_TIME_STAMP };
+use caper::utils::load_wavefront;
+use caper::input::Input;
+use caper::shader::Shaders;
 
-mod renderer;
-use renderer::{ Renderer, RenderItem, FIXED_TIME_STAMP };
-
-mod utils;
-use utils::load_wavefront;
-
-mod input;
-use input::Input;
-
-mod shader;
-use shader::Shaders;
-
-
+#[test]
 fn main() {
 
     let input = Input::new();
@@ -57,6 +46,9 @@ fn main() {
 
         while accumulator >= FIXED_TIME_STAMP {
             accumulator -= FIXED_TIME_STAMP;
+
+            // keeping the camera on a single plane
+            cam_pos[1] = -1.0f32;
 
             // updating and handling the inputs
             input.update_inputs(&renderer.display);

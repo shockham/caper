@@ -7,7 +7,7 @@ use renderer::Renderer;
 
 static MOVE_SPEED: f32 = 0.2f32;
 static LOOK_SPEED: f32 = 0.02f32;
-static MOUSE_SPEED: f32 = 5f32;
+static MOUSE_SPEED: f32 = 10f32;
 
 pub struct Input {
     pub btns_down: [Cell<bool>; 9],
@@ -81,6 +81,10 @@ impl Input {
                 _ => ()
             }
         }
+        // possible fix for grabbed cursor but not implemented on osx yet
+        /*display.get_window()
+            .unwrap()
+            .set_cursor_position(0, 0);*/
     }
     
     /// This method is where data transforms take place due to inputs
