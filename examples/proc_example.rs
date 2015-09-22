@@ -2,7 +2,7 @@ extern crate clock_ticks;
 extern crate caper;
 
 use std::thread;
-use caper::renderer::{ Renderer, RenderItem, FIXED_TIME_STAMP };
+use caper::renderer::{ Renderer, RenderItem, CamState, FIXED_TIME_STAMP };
 use caper::utils::load_wavefront;
 use caper::input::Input;
 use caper::shader::Shaders;
@@ -29,15 +29,16 @@ fn main() {
     ];
 
     //cam state
-    let mut cam_pos = [ 0.0f32, 0.0, 0.0 ];
-    let mut cam_rot = [ 0.0f32, 0.0, 0.0 ];
+    let mut cam_state = CamState {
+        cam_pos: [ 0.0f32, 0.0, 0.0 ],
+        cam_rot: [ 0.0f32, 0.0, 0.0 ]
+    };
 
     // the main loop
     let mut accumulator = 0;
     let mut previous_clock = clock_ticks::precise_time_ns();
-
     loop {
-        renderer.draw(cam_pos, cam_rot, &render_items, &shaders);
+        renderer.draw(cam_state.cam_pos, cam_state.cam_rot, &render_items, &shaders);
 
         let now = clock_ticks::precise_time_ns();
         accumulator += now - previous_clock;
@@ -47,11 +48,11 @@ fn main() {
             accumulator -= FIXED_TIME_STAMP;
 
             // keeping the camera on a single plane
-            cam_pos[1] = -1.0f32;
+            cam_state.cam_pos[1] = -1.0f32;
 
             // updating and handling the inputs
             input.update_inputs(&renderer.display);
-            input.handle_inputs(&mut cam_pos, &mut cam_rot);
+            input.handle_inputs(&mut cam_state.cam_pos, &mut cam_state.cam_rot);
         }
 
         //quit
