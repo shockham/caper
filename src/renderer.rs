@@ -17,6 +17,7 @@ pub const FIXED_TIME_STAMP: u64 = 16666667;
 pub struct RenderItem {
     pub vertices: Vec<Vertex>,
     pub shader_index: usize,
+    pub world_position: (f32, f32, f32),
 }
 
 #[derive(Copy, Clone)]
@@ -42,7 +43,7 @@ impl Renderer {
                 .unwrap(),
         }
     }
-    
+
     /// Sets up the render window
     pub fn setup(&self) {
         // get the window for various values
@@ -51,7 +52,7 @@ impl Renderer {
         window.set_cursor_state(Hide).ok();
 
     } 
-    
+
     /// Draws a frame
     pub fn draw(&self, cam_state: CamState, render_items: &Vec<RenderItem>, shaders: &Shaders){
         // possibly set this to an event
@@ -70,6 +71,9 @@ impl Renderer {
             modelview_matrix: Renderer::build_fp_view_matrix(cam_state.cam_pos, cam_state.cam_rot),
         };
 
+
+
+
         // drawing a frame
         let mut target = self.display.draw();
         target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
@@ -78,11 +82,29 @@ impl Renderer {
             // building the vertex and index buffers
             let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices).unwrap();
 
-            target.draw(&vertex_buffer,
-                        &NoIndices(TrianglesList),
-                        &shaders.shaders[item.shader_index],
-                        &uniforms, 
-                        &params).unwrap();
+            // add positions for instances 
+            let per_instance = {
+                #[derive(Copy, Clone)]
+                struct Attr {
+                    world_position: (f32, f32, f32),
+                }
+
+                implement_vertex!(Attr, world_position);
+
+                let data = vec![
+                    Attr {
+                        world_position: item.world_position,
+                    }
+                ];
+
+                VertexBuffer::dynamic(&self.display, &data).unwrap()
+            };
+
+            target.draw((&vertex_buffer, per_instance.per_instance().unwrap()),
+            &NoIndices(TrianglesList),
+            &shaders.shaders[item.shader_index],
+            &uniforms, 
+            &params).unwrap();
         }
 
         match target.finish() {
@@ -90,7 +112,7 @@ impl Renderer {
             Err(e) => println!("{:?}", e),
         };
     }
-    
+
     /// Returns perspective matrix given fov, aspect ratio, z near and far
     pub fn build_persp_proj_mat(fov:f32,aspect:f32,znear:f32,zfar:f32) -> [[f32; 4]; 4] {
         let ymax = znear * (fov * (PI/360.0)).tan();
@@ -116,7 +138,7 @@ impl Renderer {
 
         return m;
     }
-    
+
     /// Returns the model view matrix for a first person view given cam position and rotation
     pub fn build_fp_view_matrix(cam_pos: [f32; 3], cam_rot: [f32; 3]) -> [[f32; 4]; 4] {
 
@@ -129,7 +151,7 @@ impl Renderer {
             [ xaxis[0], yaxis[0], zaxis[0], 0.0],
             [ xaxis[1], yaxis[1], zaxis[1], 0.0],
             [ xaxis[2], yaxis[2], zaxis[2], 0.0],
-            [ dotp(&xaxis, &cam_pos), dotp(&yaxis, &cam_pos), dotp(&zaxis, &cam_pos), 1.0f32]
+                [ dotp(&xaxis, &cam_pos), dotp(&yaxis, &cam_pos), dotp(&zaxis, &cam_pos), 1.0f32]
         ]
 
     }
