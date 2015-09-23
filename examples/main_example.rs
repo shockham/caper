@@ -21,12 +21,15 @@ fn main() {
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/sphere.obj")),
             shader_index: 0,
-            world_position: (0.0, (0.0 as f32).sin(), 0.0)
+            instance_positions: vec![
+                (0.0, (0.0 as f32).sin(), 0.0),
+                (5.0, 0.0, 0.0)
+            ]
         },
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/floor.obj")),
             shader_index: 1,
-            world_position: (0.0, 0.0, 0.0)
+            instance_positions: vec![(0.0, 0.0, 0.0)]
         }
     ];
 
@@ -57,7 +60,7 @@ fn main() {
             input.handle_inputs(&mut cam_state);
 
             // update an item
-            render_items[0].world_position = (0.0, ((clock_ticks::precise_time_ns() as f32) / 30.0).sin(), 0.0);
+            render_items[0].instance_positions[0] = (0.0, ((clock_ticks::precise_time_ns() as f32) / 30.0).sin(), 0.0);
         }
 
         //quit

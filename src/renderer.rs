@@ -17,13 +17,18 @@ pub const FIXED_TIME_STAMP: u64 = 16666667;
 pub struct RenderItem {
     pub vertices: Vec<Vertex>,
     pub shader_index: usize,
-    pub world_position: (f32, f32, f32),
+    pub instance_positions: Vec<(f32, f32, f32)>,
 }
 
 #[derive(Copy, Clone)]
 pub struct CamState {
     pub cam_pos:[f32; 3],
     pub cam_rot:[f32; 3]
+}
+
+#[derive(Copy, Clone)]
+struct Attr {
+    world_position: (f32, f32, f32),
 }
 
 pub struct Renderer {
@@ -84,18 +89,19 @@ impl Renderer {
 
             // add positions for instances 
             let per_instance = {
-                #[derive(Copy, Clone)]
-                struct Attr {
-                    world_position: (f32, f32, f32),
-                }
-
                 implement_vertex!(Attr, world_position);
 
-                let data = vec![
+                /*let data = vec![
                     Attr {
                         world_position: item.world_position,
                     }
-                ];
+                ];*/
+
+                let data = item.instance_positions.iter().map(|p| {
+                    Attr {
+                        world_position: *p,
+                    }
+                }).collect::<Vec<_>>();
 
                 VertexBuffer::dynamic(&self.display, &data).unwrap()
             };
