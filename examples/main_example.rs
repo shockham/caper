@@ -38,7 +38,7 @@ fn main() {
     let mut accumulator = 0;
     let mut previous_clock = clock_ticks::precise_time_ns();
     loop {
-        renderer.draw(cam_state.cam_pos, cam_state.cam_rot, &render_items, &shaders);
+        renderer.draw(cam_state, &render_items, &shaders);
 
         let now = clock_ticks::precise_time_ns();
         accumulator += now - previous_clock;
@@ -52,7 +52,7 @@ fn main() {
 
             // updating and handling the inputs
             input.update_inputs(&renderer.display);
-            input.handle_inputs(&mut cam_state.cam_pos, &mut cam_state.cam_rot);
+            input.handle_inputs(&mut cam_state);
         }
 
         //quit

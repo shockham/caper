@@ -19,6 +19,7 @@ pub struct RenderItem {
     pub shader_index: usize,
 }
 
+#[derive(Copy, Clone)]
 pub struct CamState {
     pub cam_pos:[f32; 3],
     pub cam_rot:[f32; 3]
@@ -52,7 +53,7 @@ impl Renderer {
     } 
     
     /// Draws a frame
-    pub fn draw(&self, cam_pos: [f32; 3], cam_rot: [f32; 3], render_items: &Vec<RenderItem>, shaders: &Shaders){
+    pub fn draw(&self, cam_state: CamState, render_items: &Vec<RenderItem>, shaders: &Shaders){
         // possibly set this to an event
         let (width, height) = self.display.get_framebuffer_dimensions(); 
 
@@ -66,7 +67,7 @@ impl Renderer {
 
         let uniforms = uniform! {
             projection_matrix: Renderer::build_persp_proj_mat(60f32, width as f32/height as f32, 0.01f32, 1000f32),
-            modelview_matrix: Renderer::build_fp_view_matrix(cam_pos, cam_rot),
+            modelview_matrix: Renderer::build_fp_view_matrix(cam_state.cam_pos, cam_state.cam_rot),
         };
 
         // drawing a frame
