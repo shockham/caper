@@ -76,9 +76,6 @@ impl Renderer {
             modelview_matrix: Renderer::build_fp_view_matrix(cam_state.cam_pos, cam_state.cam_rot),
         };
 
-
-
-
         // drawing a frame
         let mut target = self.display.draw();
         target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);

@@ -101,7 +101,6 @@ pub fn load_wavefront( data: &[u8]) -> Vec<Vertex> {
     vertex_data
 }
 
-
 /// Returns the dot product of two vectors
 pub fn dotp<T>(this: &[T], other: &[T]) -> T where T:Add<T, Output=T> + Mul<T, Output=T> + Zero + Copy {
     assert!(this.len() == other.len(), "The dimensions must be equal");

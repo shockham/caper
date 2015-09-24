@@ -39,5 +39,4 @@ fn main() {
         render_items[0].instance_positions[1] = 
             ((update_time / 40.0).sin() * 3.0, 0.0, (update_time / 40.0).cos() * 3.0);
     }
-
 }
