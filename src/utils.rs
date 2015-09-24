@@ -5,6 +5,55 @@ extern crate obj;
 use std::ops::{Add, Mul};
 use std::num::Zero;
 
+#[macro_export]
+macro_rules! game_loop {
+    ( $items:ident, $( $x:stmt; )* ) => {
+        {
+
+            let input = Input::new();
+            let renderer = Renderer::new();
+            let shaders = Shaders::new(&renderer.display);
+
+            renderer.setup();
+
+            //cam state
+            let mut cam_state = CamState {
+                cam_pos: [ 0.0f32, 0.0, 0.0 ],
+                cam_rot: [ 0.0f32, 0.0, 0.0 ]
+            };
+
+            // the main loop
+            let mut accumulator = 0;
+            let mut previous_clock = clock_ticks::precise_time_ns();
+            loop {
+                renderer.draw(cam_state, &$items, &shaders);
+
+                let now = clock_ticks::precise_time_ns();
+                accumulator += now - previous_clock;
+                previous_clock = now;
+
+                while accumulator >= FIXED_TIME_STAMP {
+                    accumulator -= FIXED_TIME_STAMP;
+
+                    // keeping the camera on a single plane
+                    cam_state.cam_pos[1] = -1.0f32;
+
+                    // updating and handling the inputs
+                    input.update_inputs(&renderer.display);
+                    input.handle_inputs(&mut cam_state);
+
+                    //quit
+                    if input.btns_down[8].get() { break; }
+
+                    $( $x );*
+                }
+
+                thread::sleep_ms(((FIXED_TIME_STAMP - accumulator) / 1000000) as u32);
+            }
+        }
+    };
+}
+
 #[derive(Copy, Clone)]
 pub struct Vertex {
     position: [f32; 3],

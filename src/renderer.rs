@@ -91,12 +91,6 @@ impl Renderer {
             let per_instance = {
                 implement_vertex!(Attr, world_position);
 
-                /*let data = vec![
-                    Attr {
-                        world_position: item.world_position,
-                    }
-                ];*/
-
                 let data = item.instance_positions.iter().map(|p| {
                     Attr {
                         world_position: *p,
