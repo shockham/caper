@@ -1,6 +1,6 @@
 Caper
 ========
-Small game engine using glium.
+Small game engine using [glium](https://github.com/tomaka/glium).
 
 Run example with:
 ```
