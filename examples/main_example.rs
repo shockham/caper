@@ -29,10 +29,11 @@ fn main() {
     ];
 
     game_loop! {
+        // pass the items to be rendered
         render_items,
 
-        let update_time = clock_ticks::precise_time_ns() as f32;
         // update some items
+        let update_time = clock_ticks::precise_time_ns() as f32;
         render_items[0].instance_positions[0] = 
             (0.0, (update_time / 30.0).sin(), 0.0);
         render_items[0].instance_positions[1] = 
