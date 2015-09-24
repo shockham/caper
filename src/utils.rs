@@ -46,11 +46,11 @@ macro_rules! game_loop {
                     input.update_inputs(&renderer.display);
                     input.handle_inputs(&mut cam_state);
 
-                    //quit
-                    if input.btns_down[8].get() { break; }
-
                     $( $x );*
                 }
+
+                //quit
+                if input.btns_down[8].get() { break; }
 
                 thread::sleep_ms(((FIXED_TIME_STAMP - accumulator) / 1000000) as u32);
             }
