@@ -3,11 +3,8 @@ extern crate clock_ticks;
 #[macro_use]
 extern crate caper;
 
-use std::thread;
-use caper::renderer::{ Renderer, RenderItem, CamState, FIXED_TIME_STAMP };
 use caper::utils::load_wavefront;
-use caper::input::Input;
-use caper::shader::Shaders;
+use caper::renderer::RenderItem;
 
 fn main() {
     // load the models in to vec<Vertex>

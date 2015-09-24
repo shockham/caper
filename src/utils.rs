@@ -9,6 +9,10 @@ use std::num::Zero;
 macro_rules! game_loop {
     ( $items:ident, $( $x:stmt; )* ) => {
         {
+            use std::thread;
+            use caper::renderer::{ Renderer, CamState, FIXED_TIME_STAMP };
+            use caper::input::Input;
+            use caper::shader::Shaders;
 
             let input = Input::new();
             let renderer = Renderer::new();
@@ -104,6 +108,6 @@ pub fn dotp<T>(this: &[T], other: &[T]) -> T where T:Add<T, Output=T> + Mul<T, O
 
     let zero : T = Zero::zero();
     this.iter().zip(other.iter())
-             .map(|(&a, &b)| a * b)
-             .fold(zero, |sum, n| sum + n)
+        .map(|(&a, &b)| a * b)
+        .fold(zero, |sum, n| sum + n)
 }
