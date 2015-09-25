@@ -29,8 +29,9 @@ fn main() {
 
         // update some items
         let update_time = clock_ticks::precise_time_ns() as f32 / 100000000.0f32;
-        for v in render_items[0].instance_positions.iter_mut() {
-            v.1 = (v.0.sin() * v.2.cos() * update_time.sin()) * 2f32;
-        };
+        
+        render_items[0].instance_positions =  render_items[0].instance_positions.iter().map(|v| {
+            (v.0, (v.0.sin() * v.2.cos() * update_time.sin()) * 2f32, v.2)
+        }).collect::<Vec<_>>();
     }
 }
