@@ -33,10 +33,10 @@ fn main() {
         render_items,
 
         // update some items
-        let update_time = clock_ticks::precise_time_ns() as f32;
+        let update_time = clock_ticks::precise_time_ns() as f32 / 100000000.0f32;
         render_items[0].instance_positions[0] = 
-            (0.0, (update_time / 30.0).sin(), 0.0);
+            (0.0, update_time.sin(), 0.0);
         render_items[0].instance_positions[1] = 
-            ((update_time / 40.0).sin() * 3.0, 0.0, (update_time / 40.0).cos() * 3.0);
+            (update_time.sin() * 3.0, 0.0, update_time.cos() * 3.0);
     }
 }
