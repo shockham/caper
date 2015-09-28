@@ -10,7 +10,7 @@ fn main() {
     // generate the instance positions 
     let positions = (0 .. 100)
         .map(|i| {
-            ((i as f32 % 10f32) * 5.0f32, 0.0f32, (i as f32 / 10f32) * 5f32)
+            ((i as f32 % 10f32) * 2f32, 0.0f32, (i as f32 / 10f32) * 2f32)
         })
         .collect::<Vec<_>>();
 
@@ -28,10 +28,10 @@ fn main() {
         render_items,
 
         // update some items
-        let update_time = clock_ticks::precise_time_ns() as f32 / 100000000.0f32;
+        let update_time = clock_ticks::precise_time_ns() as f32 / 200000000.0f32;
         
-        render_items[0].instance_positions =  render_items[0].instance_positions.iter().map(|v| {
-            (v.0, (v.0.sin() * v.2.cos() * update_time.sin()) * 2f32, v.2)
+        render_items[0].instance_positions = render_items[0].instance_positions.iter().map(|v| {
+            (v.0, ((v.0 / 5f32).sin() * (v.2 / 5f32).cos() * update_time.sin()) * 2f32, v.2)
         }).collect::<Vec<_>>();
     }
 }
