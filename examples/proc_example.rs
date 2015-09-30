@@ -32,7 +32,7 @@ fn main() {
         render_items,
 
         // update some items
-        let update_time = clock_ticks::precise_time_ns() as f32 / 200000000.0f32;
+        let update_time = clock_ticks::precise_time_ns() as f32 / 500000000.0f32;
         
         render_items[0].instance_transforms = render_items[0].instance_transforms.iter().map(|t| {
             Transform {
@@ -40,7 +40,7 @@ fn main() {
                       ((t.pos.0 / 5f32).sin() * (t.pos.2 / 5f32).cos() * update_time.sin()) * 2f32,
                       t.pos.2),
                 rot: (0f32, 0f32, 0f32),
-                scale: (1f32, 1f32, 1f32)
+                scale: (update_time.sin(), update_time.sin(), update_time.sin())
             }
         }).collect::<Vec<_>>();
     }
