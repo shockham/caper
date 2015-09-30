@@ -9,6 +9,8 @@ pub fn vert() -> &'static str{
         layout(location = 0) in vec3 position;
         layout(location = 1) in vec3 normal;
         layout(location = 2) in vec3 world_position;
+        layout(location = 3) in vec3 world_rotation;
+        layout(location = 4) in vec3 world_scale;
 
         out vec3 v_normal;
         out vec3 v_pos;
@@ -16,7 +18,9 @@ pub fn vert() -> &'static str{
         void main() {
             v_normal = normal;
             v_pos = position;
-            gl_Position = projection_matrix * modelview_matrix * vec4(position + world_position, 1.0);
+            gl_Position = projection_matrix *
+                modelview_matrix *
+                vec4((position * world_scale) + world_position, 1.0);
         }
     "
 }

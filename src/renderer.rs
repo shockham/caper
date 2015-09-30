@@ -1,4 +1,4 @@
-use glium::{ Display, DrawParameters, DisplayBuild, Surface };
+use glium::{ Display, DrawParameters, DisplayBuild, Surface, Depth };
 use glium::index::NoIndices;
 use glium::index::PrimitiveType::TrianglesList;
 use glium::DepthTest::IfLess;
@@ -14,10 +14,16 @@ use std::f32::consts::PI;
 
 pub const FIXED_TIME_STAMP: u64 = 16666667;
 
+pub struct Transform {
+    pub pos: (f32, f32, f32),
+    pub rot: (f32, f32, f32),
+    pub scale: (f32, f32, f32)
+}
+
 pub struct RenderItem {
     pub vertices: Vec<Vertex>,
     pub shader_index: usize,
-    pub instance_positions: Vec<(f32, f32, f32)>,
+    pub instance_transforms: Vec<Transform>,
 }
 
 #[derive(Copy, Clone)]
@@ -29,6 +35,8 @@ pub struct CamState {
 #[derive(Copy, Clone)]
 struct Attr {
     world_position: (f32, f32, f32),
+    world_rotation: (f32, f32, f32),
+    world_scale: (f32, f32, f32)
 }
 
 pub struct Renderer {
@@ -55,7 +63,6 @@ impl Renderer {
         let window = self.display.get_window().unwrap();
         //window.set_cursor_state(Grab).ok();
         window.set_cursor_state(Hide).ok();
-
     } 
 
     /// Draws a frame
@@ -65,8 +72,11 @@ impl Renderer {
 
         // draw parameters
         let params = DrawParameters {
-            depth_test: IfLess,
-            depth_write: true,
+            depth: Depth {
+                test: IfLess,
+                write: true,
+                .. Default::default()
+            },
             backface_culling: CullClockWise,
             .. Default::default()
         };
@@ -86,11 +96,13 @@ impl Renderer {
 
             // add positions for instances 
             let per_instance = {
-                implement_vertex!(Attr, world_position);
+                implement_vertex!(Attr, world_position, world_rotation, world_scale);
 
-                let data = item.instance_positions.iter().map(|p| {
+                let data = item.instance_transforms.iter().map(|t| {
                     Attr {
-                        world_position: *p,
+                        world_position: t.pos,
+                        world_rotation: t.rot,
+                        world_scale: t.scale
                     }
                 }).collect::<Vec<_>>();
 

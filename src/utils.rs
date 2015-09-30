@@ -40,7 +40,7 @@ macro_rules! game_loop {
                     accumulator -= FIXED_TIME_STAMP;
 
                     // keeping the camera on a single plane
-                    cam_state.cam_pos[1] = -1.0f32;
+                    //cam_state.cam_pos[1] = -1.0f32;
 
                     // updating and handling the inputs
                     input.update_inputs(&renderer.display);
