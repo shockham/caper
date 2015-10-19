@@ -49,7 +49,7 @@ impl Renderer {
         Renderer {
             display: WindowBuilder::new()
                 .with_depth_buffer(24)
-                .with_multisampling(16)
+                //.with_multisampling(16) // multisampling doesn't work on chromebook
                 .with_title("caper".to_string())
                 .with_vsync()
                 .build_glium()
@@ -160,7 +160,7 @@ impl Renderer {
             [ xaxis[0], yaxis[0], zaxis[0], 0.0],
             [ xaxis[1], yaxis[1], zaxis[1], 0.0],
             [ xaxis[2], yaxis[2], zaxis[2], 0.0],
-                [ dotp(&xaxis, &cam_pos), dotp(&yaxis, &cam_pos), dotp(&zaxis, &cam_pos), 1.0f32]
+            [ dotp(&xaxis, &cam_pos), dotp(&yaxis, &cam_pos), dotp(&zaxis, &cam_pos), 1.0f32]
         ]
 
     }

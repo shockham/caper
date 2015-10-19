@@ -7,7 +7,6 @@ license = "MIT"
 [dependencies]
 glium = "*"
 glium_text = "*"
-glutin = "*"
 genmesh = "*"
 clock_ticks = "*"
 obj = "*"
