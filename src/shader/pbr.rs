@@ -16,11 +16,14 @@ pub fn vert() -> &'static str{
         out vec3 v_pos;
 
         void main() {
-            v_normal = normal;
-            v_pos = position;
+            vec3 pos_scaled = position * world_scale;
+
             gl_Position = projection_matrix *
                 modelview_matrix *
-                vec4((position * world_scale) + world_position, 1.0);
+                vec4(pos_scaled + world_position, 1.0);
+            
+            v_normal = normal;
+            v_pos = gl_Position.xyz;
         }
     "
 }

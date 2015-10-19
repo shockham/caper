@@ -22,7 +22,7 @@ fn main() {
     let mut render_items = vec![
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/sphere.obj")),
-            shader_index: 0,
+            shader_index: 1,
             instance_transforms: transforms
         }
     ];
