@@ -5,7 +5,7 @@ use glium::DepthTest::IfLess;
 use glium::vertex::VertexBuffer;
 use glium::glutin::WindowBuilder;
 use glium::glutin::CursorState::Hide;//{ Grab, Hide };
-use glium::draw_parameters::BackfaceCullingMode::CullClockWise;
+use glium::draw_parameters::BackfaceCullingMode::CullClockwise;
 
 use utils::*;
 use shader::Shaders;
@@ -77,7 +77,7 @@ impl Renderer {
                 write: true,
                 .. Default::default()
             },
-            backface_culling: CullClockWise,
+            backface_culling: CullClockwise,
             .. Default::default()
         };
 
