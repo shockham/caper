@@ -49,11 +49,11 @@ fn main() {
         render_items,
 
         // update some items
-        let update_time = clock_ticks::precise_time_ns() as f32 / 500000000.0f32;
+        let update_time = clock_ticks::precise_time_s();
 
         render_items[0].instance_transforms[0].pos = 
-            (0.0, update_time.sin(), 0.0);
+            (0.0, update_time.sin() as f32, 0.0);
         render_items[0].instance_transforms[1].pos = 
-            (update_time.sin() * 3.0, 0.0, update_time.cos() * 3.0);
+            (update_time.sin() as f32 * 3.0, 0.0, update_time.cos() as f32 * 3.0);
     }
 }
