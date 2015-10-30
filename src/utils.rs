@@ -65,7 +65,7 @@ pub struct Vertex {
     texture: [f32; 2],
 }
 
-/// Returns a vertex buffer that should be rendered as `TrianglesList`.
+/// Returns a Vec<Vertex> that should be converted to buffer and rendered as `TrianglesList`.
 pub fn load_wavefront( data: &[u8]) -> Vec<Vertex> {
 
     implement_vertex!(Vertex, position, normal, texture);

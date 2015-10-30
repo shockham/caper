@@ -16,12 +16,12 @@ fn main() {
             instance_transforms: vec![
                 Transform {
                     pos: (0.0, (0.0 as f32).sin(), 0.0),
-                    rot: (0f32, 0f32, 0f32),
+                    rot: (0f32, 0f32, 0f32, 0f32),
                     scale: (0.5f32, 0.5f32, 0.5f32)
                 },
                 Transform {
                     pos: (0.0f32.sin(), 0.0, 0.0f32.cos()),
-                    rot: (0f32, 0f32, 0f32),
+                    rot: (0f32, 0f32, 0f32, 0f32),
                     scale: (1f32, 1f32, 1f32)
                 }
             ]
@@ -32,12 +32,12 @@ fn main() {
             instance_transforms: vec![
                 Transform {
                     pos: (0.0, 0.0, 0.0),
-                    rot: (0f32, 0f32, 0f32),
+                    rot: (0f32, 0f32, 0f32, 0f32),
                     scale: (1f32, 1f32, 1f32)
                 },
                 Transform {
                     pos: (15.0, 0.0, 0.0),
-                    rot: (0f32, 0f32, 0f32),
+                    rot: (0f32, 0f32, 0f32, 0f32),
                     scale: (2.0f32, 2.0f32, 2.0f32)
                 }
             ]

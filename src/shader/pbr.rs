@@ -10,7 +10,7 @@ pub mod gl330 {
         layout(location = 0) in vec3 position;
         layout(location = 1) in vec3 normal;
         layout(location = 2) in vec3 world_position;
-        layout(location = 3) in vec3 world_rotation;
+        layout(location = 3) in vec4 world_rotation;
         layout(location = 4) in vec3 world_scale;
 
         out vec3 v_normal;
@@ -126,7 +126,7 @@ pub mod gl110 {
         attribute vec3 position;
         attribute vec3 normal;
         attribute vec3 world_position;
-        attribute vec3 world_rotation;
+        attribute vec4 world_rotation;
         attribute vec3 world_scale;
 
         varying vec3 v_normal;

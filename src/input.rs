@@ -80,7 +80,7 @@ impl Input {
             }
         }
         // possible fix for grabbed cursor but not implemented on osx yet
-        /*display.get_window()
+        /*let _ = display.get_window()
             .unwrap()
             .set_cursor_position(0, 0);*/
     }
