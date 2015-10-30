@@ -18,10 +18,13 @@ pub mod gl330 {
 
         void main() {
             vec3 pos_scaled = position * world_scale;
+            
+            vec3 temp = cross(world_rotation.xyz, pos_scaled) + world_rotation.w * pos_scaled;
+            vec3 pos_rotated = pos_scaled + 2.0 * cross(world_rotation.xyz, temp);
 
             gl_Position = projection_matrix *
                 modelview_matrix *
-                vec4(pos_scaled + world_position, 1.0);
+                vec4(pos_rotated + world_position, 1.0);
             
             v_normal = normal;
             v_pos = gl_Position.xyz;
