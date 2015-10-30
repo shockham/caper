@@ -12,7 +12,7 @@ fn main() {
         .map(|i| {
             Transform {
                 pos: ((i as f32 % 10f32) * 2f32, 0.0f32, (i as f32 / 10f32) * 2f32),
-                rot: (0f32, 0f32, 0f32, 0f32),
+                rot: (0f32, 0f32, 0f32, 1f32),
                 scale: (1f32, 1f32, 1f32)
             }
         })
@@ -39,7 +39,7 @@ fn main() {
                 pos: (t.pos.0,
                       ((t.pos.0 / 5f32).sin() * (t.pos.2 / 5f32).cos() * update_time.sin() as f32) * 2f32,
                       t.pos.2),
-                rot: (0f32, 0f32, 0f32, 0f32),
+                rot: (0f32, 0f32, 0f32, 1f32),
                 scale: (update_time.sin() as f32, update_time.sin() as f32, update_time.sin() as f32)
             }
         }).collect::<Vec<_>>();

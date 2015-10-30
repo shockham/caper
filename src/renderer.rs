@@ -14,10 +14,13 @@ use std::f32::consts::PI;
 
 pub const FIXED_TIME_STAMP: u64 = 16666667;
 
+pub type Vector3 = (f32, f32, f32);
+pub type Quaternion = (f32, f32, f32, f32);
+
 pub struct Transform {
-    pub pos: (f32, f32, f32), // (x, y, z)
-    pub rot: (f32, f32, f32, f32), // (x, y, z, w)
-    pub scale: (f32, f32, f32) // (x, y, z)
+    pub pos: Vector3,
+    pub rot: Quaternion, 
+    pub scale: Vector3 
 }
 
 pub struct RenderItem {
@@ -34,9 +37,9 @@ pub struct CamState {
 
 #[derive(Copy, Clone)]
 struct Attr {
-    world_position: (f32, f32, f32),
-    world_rotation: (f32, f32, f32, f32),
-    world_scale: (f32, f32, f32)
+    world_position: Vector3,
+    world_rotation: Quaternion,
+    world_scale: Vector3
 }
 
 pub struct Renderer {

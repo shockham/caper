@@ -57,6 +57,6 @@ fn main() {
             (update_time.sin() as f32 * 3.0, 0.0, update_time.cos() as f32 * 3.0);
 
         render_items[1].instance_transforms[1].rot =
-            (update_time.cos() as f32, 0.0, 0.0, update_time.cos() as f32);
+            (update_time.cos() as f32, 0.0, 0.0, 1.0);
     }
 }
