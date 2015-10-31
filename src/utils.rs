@@ -7,7 +7,7 @@ use std::num::Zero;
 
 #[macro_export]
 macro_rules! game_loop {
-    ( $items:ident, $( $x:stmt; )* ) => {
+    ( $items:ident, $update:block ) => {
         {
             use std::thread;
             use caper::renderer::{ Renderer, CamState, FIXED_TIME_STAMP };
@@ -46,7 +46,7 @@ macro_rules! game_loop {
                     input.update_inputs(&renderer.display);
                     input.handle_inputs(&mut cam_state);
 
-                    $( $x );*
+                    $update
                 }
 
                 //quit

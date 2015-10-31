@@ -47,16 +47,17 @@ fn main() {
     game_loop! {
         // pass the items to be rendered
         render_items,
+        {
+            // update some items
+            let update_time = clock_ticks::precise_time_s();
 
-        // update some items
-        let update_time = clock_ticks::precise_time_s();
+            render_items[0].instance_transforms[0].pos = 
+                (0.0, update_time.sin() as f32, 0.0);
+            render_items[0].instance_transforms[1].pos = 
+                (update_time.sin() as f32 * 3.0, 0.0, update_time.cos() as f32 * 3.0);
 
-        render_items[0].instance_transforms[0].pos = 
-            (0.0, update_time.sin() as f32, 0.0);
-        render_items[0].instance_transforms[1].pos = 
-            (update_time.sin() as f32 * 3.0, 0.0, update_time.cos() as f32 * 3.0);
-
-        render_items[1].instance_transforms[1].rot =
-            (update_time.cos() as f32, 0.0, 0.0, update_time.sin() as f32);
+            render_items[1].instance_transforms[1].rot =
+                (update_time.cos() as f32, 0.0, 0.0, update_time.sin() as f32);
+        }
     }
 }
