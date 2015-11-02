@@ -30,6 +30,7 @@ fn main() {
     game_loop! {
         // pass the items to be rendered
         render_items,
+        // define a block for update
         { 
             // update some items
             let update_time = clock_ticks::precise_time_s();
