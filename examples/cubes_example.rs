@@ -3,18 +3,24 @@ extern crate clock_ticks;
 #[macro_use]
 extern crate caper;
 
+extern crate noise;
+
 use caper::utils::load_wavefront;
 use caper::renderer::{ RenderItem, Transform };
+use noise::{ perlin2, Seed };
 
 fn main() {
     // generate the instance positions 
-    let transforms = (0 .. 200)
+    let map_size = 50f32;
+    let transforms = (0 .. 2500)
         .map(|i| {
-            let size = (i as f32 / 20f32).sin().abs();
+            //let size = ((i as f32 % map_size) + (i as f32 / map_size)).sin().abs();
+            let pos = ((i as f32 % map_size) * 2f32, ((i / map_size as i32) * 2) as f32);
+            let size = perlin2(&Seed::new(0), &[pos.0 / 10f32, pos.1 / 10f32]).abs();
             Transform {
-                pos: ((i as f32 % 10f32) * 2f32, size, ((i / 10) * 2) as f32),
+                pos: (pos.0, size, pos.1),
                 rot: (0f32, 0f32, 0f32, 1f32),
-                scale: (1f32, size, 1f32)
+                scale: (0.8f32, size, 0.8f32)
             }
         })
     .collect::<Vec<_>>();

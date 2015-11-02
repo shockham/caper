@@ -10,3 +10,6 @@ glium_text = "*"
 genmesh = "*"
 clock_ticks = "*"
 obj = "*"
+
+[dev-dependencies]
+noise = "*"
