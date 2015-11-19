@@ -10,6 +10,7 @@ macro_rules! game_loop {
     ( $items:ident, $update:block ) => {
         {
             use std::thread;
+            use std::time::Duration;
             use caper::renderer::{ Renderer, CamState, FIXED_TIME_STAMP };
             use caper::input::Input;
             use caper::shader::Shaders;
@@ -52,7 +53,9 @@ macro_rules! game_loop {
                 //quit
                 if input.btns_down[8].get() { break; }
 
-                thread::sleep_ms(((FIXED_TIME_STAMP - accumulator) / 1000000) as u32);
+                let sleep_duration =
+                    Duration::from_millis(((FIXED_TIME_STAMP - accumulator) / 1000000) as u64);
+                thread::sleep(sleep_duration);
             }
         }
     };
