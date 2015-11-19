@@ -15,7 +15,7 @@ macro_rules! game_loop {
             use caper::input::Input;
             use caper::shader::Shaders;
 
-            let input = Input::new();
+            let mut input = Input::new();
             let renderer = Renderer::new();
             let shaders = Shaders::new(&renderer.display);
 
@@ -51,7 +51,7 @@ macro_rules! game_loop {
                 }
 
                 //quit
-                if input.btns_down[8].get() { break; }
+                //if input.keys_down.contains(&VirtualKeyCode::Esc) { break; }
 
                 let sleep_duration =
                     Duration::from_millis(((FIXED_TIME_STAMP - accumulator) / 1000000) as u64);
