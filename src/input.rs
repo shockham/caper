@@ -61,30 +61,30 @@ impl Input {
         let mv_matrix = Renderer::build_fp_view_matrix(cam_state.cam_pos, cam_state.cam_rot); 
 
         if self.keys_down.contains(&Key::W) {
-            for i in 0..cam_state.cam_pos.len() {
-                cam_state.cam_pos[i] += mv_matrix[i][2] * MOVE_SPEED; 
-            }
+            cam_state.cam_pos.0 += mv_matrix[0][2] * MOVE_SPEED; 
+            cam_state.cam_pos.1 += mv_matrix[1][2] * MOVE_SPEED; 
+            cam_state.cam_pos.2 += mv_matrix[2][2] * MOVE_SPEED; 
         }
 
         if self.keys_down.contains(&Key::S) {
-            for i in 0..cam_state.cam_pos.len() {
-                cam_state.cam_pos[i] -= mv_matrix[i][2] * MOVE_SPEED; 
-            }
+            cam_state.cam_pos.0 -= mv_matrix[0][2] * MOVE_SPEED; 
+            cam_state.cam_pos.1 -= mv_matrix[1][2] * MOVE_SPEED; 
+            cam_state.cam_pos.2 -= mv_matrix[2][2] * MOVE_SPEED; 
         }
 
         if self.keys_down.contains(&Key::A) {
-            for i in 0..cam_state.cam_pos.len() {
-                cam_state.cam_pos[i] += mv_matrix[i][0] * MOVE_SPEED; 
-            }
+            cam_state.cam_pos.0 += mv_matrix[0][0] * MOVE_SPEED; 
+            cam_state.cam_pos.1 += mv_matrix[1][0] * MOVE_SPEED; 
+            cam_state.cam_pos.2 += mv_matrix[2][0] * MOVE_SPEED; 
         }
 
         if self.keys_down.contains(&Key::D) {
-            for i in 0..cam_state.cam_pos.len() {
-                cam_state.cam_pos[i] -= mv_matrix[i][0] * MOVE_SPEED; 
-            }
+            cam_state.cam_pos.0 -= mv_matrix[0][0] * MOVE_SPEED; 
+            cam_state.cam_pos.1 -= mv_matrix[1][0] * MOVE_SPEED; 
+            cam_state.cam_pos.2 -= mv_matrix[2][0] * MOVE_SPEED; 
         }
 
-        cam_state.cam_rot[0] += self.mouse_delta.1 * MOUSE_SPEED;
-        cam_state.cam_rot[1] += self.mouse_delta.0 * MOUSE_SPEED;
+        cam_state.cam_rot.0 += self.mouse_delta.1 * MOUSE_SPEED;
+        cam_state.cam_rot.1 += self.mouse_delta.0 * MOUSE_SPEED;
     }
 }

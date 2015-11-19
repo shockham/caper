@@ -31,8 +31,8 @@ pub struct RenderItem {
 
 #[derive(Copy, Clone)]
 pub struct CamState {
-    pub cam_pos:[f32; 3],
-    pub cam_rot:[f32; 3]
+    pub cam_pos:Vector3,
+    pub cam_rot:Vector3
 }
 
 #[derive(Copy, Clone)]
@@ -152,18 +152,19 @@ impl Renderer {
     }
 
     /// Returns the model view matrix for a first person view given cam position and rotation
-    pub fn build_fp_view_matrix(cam_pos: [f32; 3], cam_rot: [f32; 3]) -> [[f32; 4]; 4] {
+    pub fn build_fp_view_matrix(cam_pos: Vector3, cam_rot: Vector3) -> [[f32; 4]; 4] {
 
-        let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (cam_rot[1].sin(), cam_rot[1].cos(), cam_rot[0].sin(), cam_rot[0].cos());
+        let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (cam_rot.1.sin(), cam_rot.1.cos(), cam_rot.0.sin(), cam_rot.0.cos());
         let xaxis = [cos_yaw, 0.0, -sin_yaw];
         let yaxis = [sin_yaw * sin_pitch, cos_pitch, cos_yaw * sin_pitch];
         let zaxis = [sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw];
 
+        let cam_arr = [cam_pos.0, cam_pos.1, cam_pos.2];
         [
             [ xaxis[0], yaxis[0], zaxis[0], 0.0],
             [ xaxis[1], yaxis[1], zaxis[1], 0.0],
             [ xaxis[2], yaxis[2], zaxis[2], 0.0],
-            [ dotp(&xaxis, &cam_pos), dotp(&yaxis, &cam_pos), dotp(&zaxis, &cam_pos), 1.0f32]
+            [ dotp(&xaxis, &cam_arr), dotp(&yaxis, &cam_arr), dotp(&zaxis, &cam_arr), 1.0f32]
         ]
 
     }

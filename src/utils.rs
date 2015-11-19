@@ -23,8 +23,8 @@ macro_rules! game_loop {
 
             //cam state
             let mut cam_state = CamState {
-                cam_pos: [ 0.0f32, 0.0, 0.0 ],
-                cam_rot: [ 0.0f32, 0.0, 0.0 ]
+                cam_pos: (0.0f32, 0.0, 0.0),
+                cam_rot: (0.0f32, 0.0, 0.0)
             };
 
             // the main loop
@@ -39,9 +39,6 @@ macro_rules! game_loop {
 
                 while accumulator >= FIXED_TIME_STAMP {
                     accumulator -= FIXED_TIME_STAMP;
-
-                    // keeping the camera on a single plane
-                    //cam_state.cam_pos[1] = -1.0f32;
 
                     // updating and handling the inputs
                     input.update_inputs(&renderer.display);
