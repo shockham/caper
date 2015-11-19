@@ -1,5 +1,5 @@
 use glium::Display;
-use glium::glutin::VirtualKeyCode;
+pub use glium::glutin::VirtualKeyCode as Key;
 use glium::glutin::Event::{ KeyboardInput, MouseMoved };
 use glium::glutin::ElementState::{ Pressed, Released };
 use renderer::{ Renderer, CamState };
@@ -10,7 +10,7 @@ static MOUSE_SPEED: f32 = 10f32;
 pub struct Input {
     mouse_pos: (i32, i32),
     mouse_delta: (f32, f32),
-    pub keys_down: Vec<VirtualKeyCode>
+    pub keys_down: Vec<Key>
 }
 
 impl Input {
@@ -60,25 +60,25 @@ impl Input {
     pub fn handle_inputs(&self, cam_state: &mut CamState) {
         let mv_matrix = Renderer::build_fp_view_matrix(cam_state.cam_pos, cam_state.cam_rot); 
 
-        if self.keys_down.contains(&VirtualKeyCode::W) {
+        if self.keys_down.contains(&Key::W) {
             for i in 0..cam_state.cam_pos.len() {
                 cam_state.cam_pos[i] += mv_matrix[i][2] * MOVE_SPEED; 
             }
         }
 
-        if self.keys_down.contains(&VirtualKeyCode::S) {
+        if self.keys_down.contains(&Key::S) {
             for i in 0..cam_state.cam_pos.len() {
                 cam_state.cam_pos[i] -= mv_matrix[i][2] * MOVE_SPEED; 
             }
         }
 
-        if self.keys_down.contains(&VirtualKeyCode::A) {
+        if self.keys_down.contains(&Key::A) {
             for i in 0..cam_state.cam_pos.len() {
                 cam_state.cam_pos[i] += mv_matrix[i][0] * MOVE_SPEED; 
             }
         }
 
-        if self.keys_down.contains(&VirtualKeyCode::D) {
+        if self.keys_down.contains(&Key::D) {
             for i in 0..cam_state.cam_pos.len() {
                 cam_state.cam_pos[i] -= mv_matrix[i][0] * MOVE_SPEED; 
             }

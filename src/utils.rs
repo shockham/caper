@@ -12,7 +12,7 @@ macro_rules! game_loop {
             use std::thread;
             use std::time::Duration;
             use caper::renderer::{ Renderer, CamState, FIXED_TIME_STAMP };
-            use caper::input::Input;
+            use caper::input::{ Input, Key };
             use caper::shader::Shaders;
 
             let mut input = Input::new();
@@ -51,7 +51,7 @@ macro_rules! game_loop {
                 }
 
                 //quit
-                //if input.keys_down.contains(&VirtualKeyCode::Esc) { break; }
+                if input.keys_down.contains(&Key::Escape) { break; }
 
                 let sleep_duration =
                     Duration::from_millis(((FIXED_TIME_STAMP - accumulator) / 1000000) as u64);
