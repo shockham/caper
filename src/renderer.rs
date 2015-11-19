@@ -86,7 +86,7 @@ impl Renderer {
 
         let uniforms = uniform! {
             projection_matrix: Renderer::build_persp_proj_mat(60f32, width as f32/height as f32, 0.01f32, 1000f32),
-            modelview_matrix: Renderer::build_fp_view_matrix(cam_state.cam_pos, cam_state.cam_rot),
+            modelview_matrix: Renderer::build_fp_view_matrix(cam_state),
         };
 
         // drawing a frame
@@ -152,14 +152,15 @@ impl Renderer {
     }
 
     /// Returns the model view matrix for a first person view given cam position and rotation
-    pub fn build_fp_view_matrix(cam_pos: Vector3, cam_rot: Vector3) -> [[f32; 4]; 4] {
+    pub fn build_fp_view_matrix(cam_state: CamState) -> [[f32; 4]; 4] {
 
-        let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (cam_rot.1.sin(), cam_rot.1.cos(), cam_rot.0.sin(), cam_rot.0.cos());
+        let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) =
+            (cam_state.cam_rot.1.sin(), cam_state.cam_rot.1.cos(), cam_state.cam_rot.0.sin(), cam_state.cam_rot.0.cos());
         let xaxis = [cos_yaw, 0.0, -sin_yaw];
         let yaxis = [sin_yaw * sin_pitch, cos_pitch, cos_yaw * sin_pitch];
         let zaxis = [sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw];
 
-        let cam_arr = [cam_pos.0, cam_pos.1, cam_pos.2];
+        let cam_arr = [cam_state.cam_pos.0, cam_state.cam_pos.1, cam_state.cam_pos.2];
         [
             [ xaxis[0], yaxis[0], zaxis[0], 0.0],
             [ xaxis[1], yaxis[1], zaxis[1], 0.0],

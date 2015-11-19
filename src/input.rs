@@ -58,8 +58,9 @@ impl Input {
 
     /// This method is where data transforms take place due to inputs
     pub fn handle_inputs(&self, cam_state: &mut CamState) {
-        let mv_matrix = Renderer::build_fp_view_matrix(cam_state.cam_pos, cam_state.cam_rot); 
+        let mv_matrix = Renderer::build_fp_view_matrix(*cam_state); 
 
+        // this can probably be cleaned up a bit
         if self.keys_down.contains(&Key::W) {
             cam_state.cam_pos.0 += mv_matrix[0][2] * MOVE_SPEED; 
             cam_state.cam_pos.1 += mv_matrix[1][2] * MOVE_SPEED; 
