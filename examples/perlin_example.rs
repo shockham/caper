@@ -19,7 +19,7 @@ fn main() {
 
     renderer.setup();
 
-    let map_size = 15f32;
+    let map_size = 20f32;
     let fixed_val = -(map_size/2f32);
 
     //cam state
