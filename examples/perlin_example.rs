@@ -19,16 +19,21 @@ fn main() {
 
     renderer.setup();
 
+    let map_size = 15f32;
+    let fixed_val = -(map_size/2f32);
+
     //cam state
     let mut cam_state = CamState {
-        cam_pos: (0.0f32, 0.0, 0.0),
+        cam_pos: (fixed_val, -1f32, fixed_val),
         cam_rot: (0.0f32, 0.0, 0.0)
     };
     
+    let mut pseu_cam_pos = (0f32, 0f32);
+    
     // create a vector of render items
-    let render_items = vec![
+    let mut render_items = vec![
         RenderItem {
-            vertices: gen_perlin_mesh(),
+            vertices: gen_perlin_mesh(pseu_cam_pos, map_size),
             shader_index: 2,
             instance_transforms: vec![
                 Transform {
@@ -56,12 +61,30 @@ fn main() {
             // updating and handling the inputs
             input.update_inputs(&renderer.display);
             input.handle_fp_inputs(&mut cam_state);
+            cam_state.cam_pos = (fixed_val, -1f32, fixed_val);
 
             { 
                 // update some items
                 //let update_time = clock_ticks::precise_time_s();
+
+                if input.keys_down.contains(&Key::W) {
+                    pseu_cam_pos.0 += 0.1f32; 
+                }
+                if input.keys_down.contains(&Key::S) {
+                    pseu_cam_pos.0 -= 0.1f32; 
+                }
+                if input.keys_down.contains(&Key::D) {
+                    pseu_cam_pos.1 += 0.1f32; 
+                }
+                if input.keys_down.contains(&Key::A) {
+                    pseu_cam_pos.1 -= 0.1f32; 
+                }
             }
         }
+
+        render_items[0].vertices = gen_perlin_mesh(pseu_cam_pos, map_size);
+        cam_state.cam_pos.1 = -2f32 - perlin2(&Seed::new(0),
+            &[(pseu_cam_pos.0 - fixed_val) / 10f32, (pseu_cam_pos.1 - fixed_val) / 10f32]).abs() * 8f32;
 
         //quit
         if input.keys_down.contains(&Key::Escape) { break; }
@@ -72,19 +95,23 @@ fn main() {
     }
 }
 
-fn gen_perlin_mesh() -> Vec<Vertex> {
+fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
     // generate the instance positions 
-    let map_size = 50f32;
     let mut vertices = Vec::new();
 
-    for i in 0 .. 2500 {
-        let pos = ((i as f32 % map_size), ((i / map_size as i32)) as f32);
+    let point_total = (map_size * map_size) as i32;
 
+    for i in 0 .. point_total {
+        let pos = ((i as f32 % map_size), (i / map_size as i32) as f32);
+        let seed = Seed::new(0);
+
+        let p_pos = (pos.0 + pseu_pos.0, pos.1 + pseu_pos.1);
         // get all four possible heights for the chunk
-        let size_00 = perlin2(&Seed::new(0), &[pos.0 / 10f32, pos.1 / 10f32]).abs() * 8f32;
-        let size_10 = perlin2(&Seed::new(0), &[(pos.0 + 1f32) / 10f32, pos.1 / 10f32]).abs() * 8f32;
-        let size_01 = perlin2(&Seed::new(0), &[pos.0 / 10f32, (pos.1 + 1f32) / 10f32]).abs() * 8f32;
-        let size_11 = perlin2(&Seed::new(0), &[(pos.0 + 1f32) / 10f32, (pos.1 + 1f32) / 10f32]).abs() * 8f32;
+        let size_00 = perlin2(&seed, &[p_pos.0 / 10f32, p_pos.1 / 10f32]).abs() * 8f32;
+        let size_10 = perlin2(&seed, &[(p_pos.0 + 1f32) / 10f32, p_pos.1 / 10f32]).abs() * 8f32;
+        let size_01 = perlin2(&seed, &[p_pos.0 / 10f32, (p_pos.1 + 1f32) / 10f32]).abs() * 8f32;
+        let size_11 = perlin2(&seed, 
+                              &[(p_pos.0 + 1f32) / 10f32, (p_pos.1 + 1f32) / 10f32]).abs() * 8f32;
 
         // create the two tris for this chunk
         vertices.push(Vertex {
