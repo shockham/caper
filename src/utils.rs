@@ -42,7 +42,7 @@ macro_rules! game_loop {
 
                     // updating and handling the inputs
                     input.update_inputs(&renderer.display);
-                    input.handle_inputs(&mut cam_state);
+                    input.handle_fp_inputs(&mut cam_state);
 
                     $update
                 }
@@ -60,9 +60,9 @@ macro_rules! game_loop {
 
 #[derive(Copy, Clone)]
 pub struct Vertex {
-    position: [f32; 3],
-    normal: [f32; 3],
-    texture: [f32; 2],
+    pub position: [f32; 3],
+    pub normal: [f32; 3],
+    pub texture: [f32; 2],
 }
 
 /// Returns a Vec<Vertex> that should be converted to buffer and rendered as `TrianglesList`.

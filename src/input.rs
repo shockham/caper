@@ -57,7 +57,8 @@ impl Input {
     }
 
     /// This method is where data transforms take place due to inputs
-    pub fn handle_inputs(&self, cam_state: &mut CamState) {
+    /// for a first person camera
+    pub fn handle_fp_inputs(&self, cam_state: &mut CamState) {
         let mv_matrix = Renderer::build_fp_view_matrix(*cam_state); 
 
         // this can probably be cleaned up a bit

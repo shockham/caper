@@ -1,5 +1,6 @@
 pub mod dist;
 pub mod pbr;
+pub mod height;
 
 use glium::{ Program, Display };
 
@@ -38,9 +39,23 @@ impl Shaders {
             Ok(p) => p,
             Err(e) => panic!("glsl error: {}", e), 
         };
+        
+        let program_height = match program!(display,
+                                    330 => {
+                                        vertex: height::gl330::vert(),
+                                        fragment: height::gl330::frag(),
+                                        geometry: height::gl330::geom()
+                                    },
+                                    110 => {
+                                        vertex: height::gl110::vert(),
+                                        fragment: height::gl110::frag()
+                                    }) {
+            Ok(p) => p,
+            Err(e) => panic!("glsl error: {}", e), 
+        };
        
         Shaders {
-            shaders: vec![program_dist, program_pbr]
+            shaders: vec![program_dist, program_pbr, program_height]
         }
     }
 }
