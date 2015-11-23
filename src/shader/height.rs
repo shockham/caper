@@ -128,7 +128,8 @@ pub mod gl110 {
             float lum = max(dot(normalize(v_normal), normalize(LIGHT)), 0.0);
             float dist = max(dot(normalize(v_pos), normalize(LIGHT)), 0.0);
 
-            vec3 base_color = vec3(1.0, 1.0, 1.0);
+            float col_val = normalize(g_pos).y;
+            vec3 base_color = vec3(col_val);
 
             vec3 color = base_color * (0.3 + (0.2 * lum) + (0.5 * dist));
             gl_FragColor = vec4(color, 1.0);
