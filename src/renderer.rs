@@ -29,6 +29,11 @@ pub struct RenderItem {
     pub instance_transforms: Vec<Transform>,
 }
 
+pub trait Entity {
+    fn start(&self) -> ();
+    fn update(&self) -> ();
+}
+
 #[derive(Copy, Clone)]
 pub struct CamState {
     pub cam_pos:Vector3,
@@ -154,8 +159,11 @@ impl Renderer {
     /// Returns the model view matrix for a first person view given cam position and rotation
     pub fn build_fp_view_matrix(cam_state: CamState) -> [[f32; 4]; 4] {
 
-        let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) =
-            (cam_state.cam_rot.1.sin(), cam_state.cam_rot.1.cos(), cam_state.cam_rot.0.sin(), cam_state.cam_rot.0.cos());
+        let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (
+            cam_state.cam_rot.1.sin(),
+            cam_state.cam_rot.1.cos(),
+            cam_state.cam_rot.0.sin(),
+            cam_state.cam_rot.0.cos());
         let xaxis = [cos_yaw, 0.0, -sin_yaw];
         let yaxis = [sin_yaw * sin_pitch, cos_pitch, cos_yaw * sin_pitch];
         let zaxis = [sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw];
