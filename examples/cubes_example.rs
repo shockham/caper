@@ -1,4 +1,4 @@
-extern crate clock_ticks;
+extern crate time;
 
 #[macro_use]
 extern crate caper;
@@ -39,7 +39,7 @@ fn main() {
         // define a block for update
         { 
             // update some items
-            //let update_time = clock_ticks::precise_time_s();
+            //let update_time = time::precise_time_s();
         }
     }
 }

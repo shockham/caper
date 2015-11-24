@@ -1,4 +1,4 @@
-extern crate clock_ticks;
+extern crate time;
 
 #[macro_use]
 extern crate caper;
@@ -21,6 +21,7 @@ fn main() {
 
     let map_size = 20f32;
     let fixed_val = -(map_size/2f32);
+    let move_speed = 0.01f32;
 
     //cam state
     let mut cam_state = CamState {
@@ -47,11 +48,11 @@ fn main() {
 
     // the main loop
     let mut accumulator = 0;
-    let mut previous_clock = clock_ticks::precise_time_ns();
+    let mut previous_clock = time::precise_time_ns();
     loop {
         renderer.draw(cam_state, &render_items, &shaders);
 
-        let now = clock_ticks::precise_time_ns();
+        let now = time::precise_time_ns();
         accumulator += now - previous_clock;
         previous_clock = now;
 
@@ -64,20 +65,17 @@ fn main() {
             cam_state.cam_pos = (fixed_val, -1f32, fixed_val);
 
             { 
-                // update some items
-                //let update_time = clock_ticks::precise_time_s();
-
                 if input.keys_down.contains(&Key::W) {
-                    pseu_cam_pos.0 += 0.1f32; 
+                    pseu_cam_pos.0 += move_speed; 
                 }
                 if input.keys_down.contains(&Key::S) {
-                    pseu_cam_pos.0 -= 0.1f32; 
+                    pseu_cam_pos.0 -= move_speed; 
                 }
                 if input.keys_down.contains(&Key::D) {
-                    pseu_cam_pos.1 += 0.1f32; 
+                    pseu_cam_pos.1 += move_speed; 
                 }
                 if input.keys_down.contains(&Key::A) {
-                    pseu_cam_pos.1 -= 0.1f32; 
+                    pseu_cam_pos.1 -= move_speed; 
                 }
             }
         }

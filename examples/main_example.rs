@@ -1,4 +1,4 @@
-extern crate clock_ticks;
+extern crate time;
 
 #[macro_use]
 extern crate caper;
@@ -49,7 +49,7 @@ fn main() {
         render_items,
         {
             // update some items
-            let update_time = clock_ticks::precise_time_s();
+            let update_time = time::precise_time_s();
 
             render_items[0].instance_transforms[0].pos = 
                 (0.0, update_time.sin() as f32, 0.0);
