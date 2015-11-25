@@ -22,9 +22,9 @@ fn main() {
 
     renderer.setup();
 
-    let map_size = 10f32;
+    let map_size = 50f32;
     let fixed_val = -(map_size/2f32);
-    let move_speed = 0.01f32;
+    let move_speed = 0.05f32;
 
     //cam state
     let mut cam_state = CamState {
@@ -112,18 +112,22 @@ fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
     let mut vertices = Vec::new();
 
     let point_total = (map_size * map_size) as i32;
+    let seed = Seed::new(0);
 
+    // get all heights for first chunk 
+    let mut size_00 = perlin2(&seed, &[0f32, 0f32]).abs() * 8f32;
+    let mut size_10;
+    let mut size_01 = perlin2(&seed, &[0f32, 0f32]).abs() * 8f32;
+    let mut size_11;
+    
     for i in 0 .. point_total {
         let pos = ((i as f32 % map_size), (i / map_size as i32) as f32);
-        let seed = Seed::new(0);
 
         let p_pos = (pos.0 + pseu_pos.0, pos.1 + pseu_pos.1);
-        // get all four possible heights for the chunk
-        let size_00 = perlin2(&seed, &[p_pos.0 / 10f32, p_pos.1 / 10f32]).abs() * 8f32;
-        let size_10 = perlin2(&seed, &[(p_pos.0 + 1f32) / 10f32, p_pos.1 / 10f32]).abs() * 8f32;
-        let size_01 = perlin2(&seed, &[p_pos.0 / 10f32, (p_pos.1 + 1f32) / 10f32]).abs() * 8f32;
-        let size_11 = perlin2(&seed, 
-                              &[(p_pos.0 + 1f32) / 10f32, (p_pos.1 + 1f32) / 10f32]).abs() * 8f32;
+        
+        size_10 = perlin2(&seed, &[(p_pos.0 + 1f32) / 10f32, p_pos.1 / 10f32]).abs() * 8f32;
+        size_11 = perlin2(&seed, 
+                          &[(p_pos.0 + 1f32) / 10f32, (p_pos.1 + 1f32) / 10f32]).abs() * 8f32;
 
         // create the two tris for this chunk
         vertices.push(Vertex {
@@ -156,6 +160,9 @@ fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
             normal: [0f32, 0f32, 0f32],
             texture: [0f32, 0f32]
         });
+
+        size_00 = size_10;
+        size_01 = size_11;
     }
 
     vertices
