@@ -9,7 +9,7 @@ static MOUSE_SPEED: f32 = 10f32;
 
 pub struct Input {
     mouse_pos: (i32, i32),
-    mouse_delta: (f32, f32),
+    pub mouse_delta: (f32, f32),
     pub keys_down: Vec<Key>
 }
 

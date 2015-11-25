@@ -25,15 +25,16 @@ fn main() {
     let map_size = 50f32;
     let fixed_val = -(map_size/2f32);
     let move_speed = 0.05f32;
+    let mouse_speed = 10f32;
 
     //cam state
     let mut cam_state = CamState {
         cam_pos: (fixed_val, -1f32, fixed_val),
         cam_rot: (0.0f32, 0.0, 0.0)
     };
-    
+
     let mut pseu_cam_pos = (0f32, 0f32);
-    
+
     // create a vector of render items
     let mut render_items = vec![
         RenderItem {
@@ -66,34 +67,47 @@ fn main() {
 
             // updating and handling the inputs
             input.update_inputs(&renderer.display);
-            input.handle_fp_inputs(&mut cam_state);
+            //input.handle_fp_inputs(&mut cam_state);
             cam_state.cam_pos = (fixed_val, cam_state.cam_pos.1, fixed_val);
 
-            { 
-                if input.keys_down.contains(&Key::W) {
-                    pseu_cam_pos.0 += move_speed; 
-                    movement_dirty = true;
-                }
+            {
+                let mv_matrix = Renderer::build_fp_view_matrix(cam_state); 
+
+                // this can probably be cleaned up a bit
                 if input.keys_down.contains(&Key::S) {
-                    pseu_cam_pos.0 -= move_speed; 
+                    pseu_cam_pos.0 += mv_matrix[0][2] * move_speed; 
+                    pseu_cam_pos.1 += mv_matrix[2][2] * move_speed; 
                     movement_dirty = true;
                 }
+
+                if input.keys_down.contains(&Key::W) {
+                    pseu_cam_pos.0 -= mv_matrix[0][2] * move_speed; 
+                    pseu_cam_pos.1 -= mv_matrix[2][2] * move_speed; 
+                    movement_dirty = true;
+                }
+
                 if input.keys_down.contains(&Key::D) {
-                    pseu_cam_pos.1 += move_speed; 
+                    pseu_cam_pos.0 += mv_matrix[0][0] * move_speed; 
+                    pseu_cam_pos.1 += mv_matrix[2][0] * move_speed; 
                     movement_dirty = true;
                 }
+
                 if input.keys_down.contains(&Key::A) {
-                    pseu_cam_pos.1 -= move_speed; 
+                    pseu_cam_pos.0 -= mv_matrix[0][0] * move_speed; 
+                    pseu_cam_pos.1 -= mv_matrix[2][0] * move_speed; 
                     movement_dirty = true;
                 }
+
+                cam_state.cam_rot.0 += input.mouse_delta.1 * mouse_speed;
+                cam_state.cam_rot.1 += input.mouse_delta.0 * mouse_speed;
             }
         }
 
         if movement_dirty {
             render_items[0].vertices = gen_perlin_mesh(pseu_cam_pos, map_size);
             cam_state.cam_pos.1 = -2f32 - perlin2(&Seed::new(0),
-                &[(pseu_cam_pos.0 - fixed_val) / 10f32,
-                (pseu_cam_pos.1 - fixed_val) / 10f32]).abs() * 8f32;
+            &[(pseu_cam_pos.0 - fixed_val) / 10f32,
+            (pseu_cam_pos.1 - fixed_val) / 10f32]).abs() * 8f32;
         }
 
         //quit
@@ -119,12 +133,15 @@ fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
     let mut size_10;
     let mut size_01 = perlin2(&seed, &[0f32, 0f32]).abs() * 8f32;
     let mut size_11;
-    
+
+    let def_normal = [0f32, 0f32, 0f32];
+    let def_uv = [0f32, 0f32];
+
     for i in 0 .. point_total {
         let pos = ((i as f32 % map_size), (i / map_size as i32) as f32);
 
         let p_pos = (pos.0 + pseu_pos.0, pos.1 + pseu_pos.1);
-        
+
         size_10 = perlin2(&seed, &[(p_pos.0 + 1f32) / 10f32, p_pos.1 / 10f32]).abs() * 8f32;
         size_11 = perlin2(&seed, 
                           &[(p_pos.0 + 1f32) / 10f32, (p_pos.1 + 1f32) / 10f32]).abs() * 8f32;
@@ -132,33 +149,33 @@ fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
         // create the two tris for this chunk
         vertices.push(Vertex {
             position: [pos.0 + 1f32, size_10, pos.1],
-            normal: [0f32, 0f32, 0f32],
-            texture: [0f32, 0f32]
+            normal: def_normal,
+            texture: def_uv
         });
         vertices.push(Vertex {
             position: [pos.0, size_00, pos.1],
-            normal: [0f32, 0f32, 0f32],
-            texture: [0f32, 0f32]
+            normal: def_normal,
+            texture: def_uv
         });
         vertices.push(Vertex {
             position: [pos.0 + 1f32, size_11, pos.1 + 1f32],
-            normal: [0f32, 0f32, 0f32],
-            texture: [0f32, 0f32]
+            normal: def_normal,
+            texture: def_uv
         });
         vertices.push(Vertex {
             position: [pos.0, size_00, pos.1],
-            normal: [0f32, 0f32, 0f32],
-            texture: [0f32, 0f32]
+            normal: def_normal,
+            texture: def_uv
         });
         vertices.push(Vertex {
             position: [pos.0 , size_01, pos.1 + 1f32],
-            normal: [0f32, 0f32, 0f32],
-            texture: [0f32, 0f32]
+            normal: def_normal,
+            texture: def_uv
         });
         vertices.push(Vertex {
             position: [pos.0 + 1f32, size_11, pos.1 + 1f32],
-            normal: [0f32, 0f32, 0f32],
-            texture: [0f32, 0f32]
+            normal: def_normal,
+            texture: def_uv
         });
 
         size_00 = size_10;
