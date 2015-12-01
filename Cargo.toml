@@ -7,9 +7,9 @@ license = "MIT"
 [dependencies]
 glium = "*"
 glium_text = "*"
-genmesh = "*"
 time = "*"
-obj = "*"
+genmesh = "0.2.1"
+obj = "0.2.1"
 
 [dev-dependencies]
 noise = "*"
