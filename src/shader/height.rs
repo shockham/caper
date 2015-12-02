@@ -39,7 +39,7 @@ pub mod gl330 {
         "
         #version 330
 
-        const vec3 LIGHT = vec3(-0.2, 0.8, 0.1);
+        const vec3 LIGHT = vec3(-25.0, 0.8, -25.0);
 
         in vec3 g_normal;
         in vec3 g_pos;
@@ -48,12 +48,12 @@ pub mod gl330 {
 
         void main() {
             float lum = max(dot(normalize(g_normal), normalize(LIGHT)), 0.0);
-            float dist = max(dot(normalize(g_pos), normalize(LIGHT)), 0.0);
+            float dist = 1.0 - max(dot(normalize(g_pos), normalize(LIGHT)), 0.0);
 
             float col_val = normalize(g_pos).y;
             vec3 base_color = vec3(col_val);
 
-            vec3 color = base_color * (0.3 + (0.2 * lum) + (0.5 * dist));
+            vec3 color = base_color * ((0.2 * lum) + (0.8 * dist));
             frag_output = vec4(color, 1.0);
         }
     "
@@ -119,19 +119,19 @@ pub mod gl110 {
         "
         #version 110
 
-        const vec3 LIGHT = vec3(-0.2, 0.8, 0.1);
+        const vec3 LIGHT = vec3(-25.0, 0.8, -25.0);
 
         varying vec3 v_normal;
         varying vec3 v_pos;
 
         void main() {
             float lum = max(dot(normalize(v_normal), normalize(LIGHT)), 0.0);
-            float dist = max(dot(normalize(v_pos), normalize(LIGHT)), 0.0);
+            float dist = 1.0 - max(dot(normalize(g_pos), normalize(LIGHT)), 0.0);
 
             float col_val = normalize(g_pos).y;
             vec3 base_color = vec3(col_val);
 
-            vec3 color = base_color * (0.3 + (0.2 * lum) + (0.5 * dist));
+            vec3 color = base_color * ((0.2 * lum) + (0.8 * dist));
             gl_FragColor = vec4(color, 1.0);
         }
     "
