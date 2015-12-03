@@ -29,7 +29,7 @@ fn main() {
 
     //cam state
     let mut cam_state = CamState {
-        cam_pos: (fixed_val, -1f32, fixed_val),
+        cam_pos: (0f32, -1f32, 0f32),
         cam_rot: (0.0f32, 0.0, 0.0)
     };
 
@@ -42,7 +42,7 @@ fn main() {
             shader_index: 2,
             instance_transforms: vec![
                 Transform {
-                    pos: (0.0, 0.0, 0.0),
+                    pos: (fixed_val, 0.0, fixed_val),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (1f32, 1f32, 1f32)
                 }
@@ -68,7 +68,7 @@ fn main() {
             // updating and handling the inputs
             input.update_inputs(&renderer.display);
             //input.handle_fp_inputs(&mut cam_state);
-            cam_state.cam_pos = (fixed_val, cam_state.cam_pos.1, fixed_val);
+            //cam_state.cam_pos = (fixed_val, cam_state.cam_pos.1, fixed_val);
 
             {
                 let mv_matrix = Renderer::build_fp_view_matrix(cam_state); 
