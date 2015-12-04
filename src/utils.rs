@@ -111,14 +111,17 @@ pub fn dotp<T>(this: &[T], other: &[T]) -> T where T:Add<T, Output=T> + Mul<T, O
         .fold(zero, |sum, n| sum + n)
 }
 
+/// returns the cross product of two vectors
 pub fn crossp(a: [f32; 3], b: [f32; 3]) -> [f32; 3] {
     [(a[1] * b[2]) - (a[2] * b[1]), (a[2] * b[0]) - (a[0] * b[2]), (a[0] * b[1]) - (a[1] * b[0])]
 }
 
+/// returns the resultant vector of a - b
 pub fn sub_vec3(a: [f32; 3], b: [f32; 3]) -> [f32; 3] {
     [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
 }
 
+/// returns the normal calculated from the three vectors supplied
 pub fn calc_normal(p0: [f32; 3], p1: [f32; 3], p2: [f32; 3]) -> [f32; 3] {
     let a = sub_vec3(p1, p0);
     let b = sub_vec3(p2, p0);
