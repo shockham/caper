@@ -9,7 +9,7 @@ use std::thread;
 use std::time::Duration;
 use caper::input::{ Input, Key };
 use caper::shader::Shaders;
-use caper::utils::{ Vertex, crossp };
+use caper::utils::{ Vertex, calc_normal };
 use caper::renderer::{ RenderItem, Transform, Renderer, CamState, FIXED_TIME_STAMP};
 use noise::{ perlin2, Seed };
 use fps_counter::FPSCounter;
@@ -150,10 +150,7 @@ fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
         let p1 = [pos.0, size_00, pos.1];
         let p2 = [pos.0 + 1f32, size_11, pos.1 + 1f32];
 
-        let a = [p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]];
-        let b = [p2[0] - p0[0], p2[1] - p0[1], p2[2] - p0[2]];
-
-        let calc_normal = crossp(a, b);
+        let calc_normal = calc_normal(p0, p1, p2);
 
         // create the two tris for this chunk
         vertices.push(Vertex {
