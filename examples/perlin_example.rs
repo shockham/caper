@@ -9,12 +9,13 @@ use std::thread;
 use std::time::Duration;
 use caper::input::{ Input, Key };
 use caper::shader::Shaders;
-use caper::utils::Vertex;
+use caper::utils::{ Vertex, crossp };
 use caper::renderer::{ RenderItem, Transform, Renderer, CamState, FIXED_TIME_STAMP};
 use noise::{ perlin2, Seed };
 use fps_counter::FPSCounter;
 
 fn main() {
+    // init the systems
     let mut input = Input::new();
     let renderer = Renderer::new();
     let shaders = Shaders::new(&renderer.display);
@@ -67,8 +68,6 @@ fn main() {
 
             // updating and handling the inputs
             input.update_inputs(&renderer.display);
-            //input.handle_fp_inputs(&mut cam_state);
-            //cam_state.cam_pos = (fixed_val, cam_state.cam_pos.1, fixed_val);
 
             {
                 let mv_matrix = Renderer::build_fp_view_matrix(cam_state); 
@@ -134,7 +133,7 @@ fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
     let mut size_01 = perlin2(&seed, &[0f32, 0f32]).abs() * 8f32;
     let mut size_11;
 
-    let def_normal = [0f32, 0f32, 0f32];
+    //let def_normal = [0f32, 0f32, 0f32];
     let def_uv = [0f32, 0f32];
 
     for i in 0 .. point_total {
@@ -146,35 +145,45 @@ fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
         size_11 = perlin2(&seed, 
                           &[(p_pos.0 + 1f32) / 10f32, (p_pos.1 + 1f32) / 10f32]).abs() * 8f32;
 
+
+        let p0 = [pos.0 + 1f32, size_10, pos.1];
+        let p1 = [pos.0, size_00, pos.1];
+        let p2 = [pos.0 + 1f32, size_11, pos.1 + 1f32];
+
+        let a = [p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]];
+        let b = [p2[0] - p0[0], p2[1] - p0[1], p2[2] - p0[2]];
+
+        let calc_normal = crossp(a, b);
+
         // create the two tris for this chunk
         vertices.push(Vertex {
-            position: [pos.0 + 1f32, size_10, pos.1],
-            normal: def_normal,
+            position: p0,
+            normal: calc_normal,
+            texture: def_uv
+        });
+        vertices.push(Vertex {
+            position: p1,
+            normal: calc_normal,
+            texture: def_uv
+        });
+        vertices.push(Vertex {
+            position: p2,
+            normal: calc_normal,
             texture: def_uv
         });
         vertices.push(Vertex {
             position: [pos.0, size_00, pos.1],
-            normal: def_normal,
-            texture: def_uv
-        });
-        vertices.push(Vertex {
-            position: [pos.0 + 1f32, size_11, pos.1 + 1f32],
-            normal: def_normal,
-            texture: def_uv
-        });
-        vertices.push(Vertex {
-            position: [pos.0, size_00, pos.1],
-            normal: def_normal,
+            normal: calc_normal,
             texture: def_uv
         });
         vertices.push(Vertex {
             position: [pos.0 , size_01, pos.1 + 1f32],
-            normal: def_normal,
+            normal: calc_normal,
             texture: def_uv
         });
         vertices.push(Vertex {
             position: [pos.0 + 1f32, size_11, pos.1 + 1f32],
-            normal: def_normal,
+            normal: calc_normal,
             texture: def_uv
         });
 
