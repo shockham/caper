@@ -9,7 +9,7 @@ use std::thread;
 use std::time::Duration;
 use caper::input::{ Input, Key };
 use caper::shader::Shaders;
-use caper::utils::{ Vertex, calc_normal };
+use caper::utils::Vertex;
 use caper::renderer::{ RenderItem, Transform, Renderer, CamState, FIXED_TIME_STAMP};
 use noise::{ perlin2, Seed };
 use fps_counter::FPSCounter;
@@ -133,7 +133,7 @@ fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
     let mut size_01 = perlin2(&seed, &[0f32, 0f32]).abs() * 8f32;
     let mut size_11;
 
-    //let def_normal = [0f32, 0f32, 0f32];
+    let def_normal = [0f32, 0f32, 0f32];
     let def_uv = [0f32, 0f32];
 
     for i in 0 .. point_total {
@@ -146,43 +146,25 @@ fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
                           &[(p_pos.0 + 1f32) / 10f32, (p_pos.1 + 1f32) / 10f32]).abs() * 8f32;
 
 
-        let p0 = [pos.0 + 1f32, size_10, pos.1];
-        let p1 = [pos.0, size_00, pos.1];
-        let p2 = [pos.0 + 1f32, size_11, pos.1 + 1f32];
-
-        let calc_normal = calc_normal(p0, p1, p2);
-
         // create the two tris for this chunk
-        vertices.push(Vertex {
-            position: p0,
-            normal: calc_normal,
-            texture: def_uv
-        });
-        vertices.push(Vertex {
-            position: p1,
-            normal: calc_normal,
-            texture: def_uv
-        });
-        vertices.push(Vertex {
-            position: p2,
-            normal: calc_normal,
-            texture: def_uv
-        });
-        vertices.push(Vertex {
-            position: [pos.0, size_00, pos.1],
-            normal: calc_normal,
-            texture: def_uv
-        });
-        vertices.push(Vertex {
-            position: [pos.0 , size_01, pos.1 + 1f32],
-            normal: calc_normal,
-            texture: def_uv
-        });
-        vertices.push(Vertex {
-            position: [pos.0 + 1f32, size_11, pos.1 + 1f32],
-            normal: calc_normal,
-            texture: def_uv
-        });
+        let verts = vec!(
+            [pos.0 + 1f32, size_10, pos.1],
+            [pos.0, size_00, pos.1],
+            [pos.0 + 1f32, size_11, pos.1 + 1f32],
+            [pos.0, size_00, pos.1],
+            [pos.0 , size_01, pos.1 + 1f32],
+            [pos.0 + 1f32, size_11, pos.1 + 1f32]);
+
+        //let calc_normal = calc_normal(verts[0], verts[1], verts[2]);
+        
+        // create each Vertex from the verts vec
+        for v in verts {
+            vertices.push(Vertex {
+                position: v,
+                normal: def_normal,
+                texture: def_uv
+            });
+        }
 
         size_00 = size_10;
         size_01 = size_11;
