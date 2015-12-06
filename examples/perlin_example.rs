@@ -102,6 +102,7 @@ fn main() {
             }
         }
 
+        // only regenerate the mesh if movement
         if movement_dirty {
             render_items[0].vertices = gen_perlin_mesh(pseu_cam_pos, map_size);
             cam_state.cam_pos.1 = -2f32 - perlin2(&Seed::new(0),
@@ -138,13 +139,12 @@ fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
 
     for i in 0 .. point_total {
         let pos = ((i as f32 % map_size), (i / map_size as i32) as f32);
-
         let p_pos = (pos.0 + pseu_pos.0, pos.1 + pseu_pos.1);
 
+        // get the heights of the next two corners
         size_10 = perlin2(&seed, &[(p_pos.0 + 1f32) / 10f32, p_pos.1 / 10f32]).abs() * 8f32;
         size_11 = perlin2(&seed, 
                           &[(p_pos.0 + 1f32) / 10f32, (p_pos.1 + 1f32) / 10f32]).abs() * 8f32;
-
 
         // create the two tris for this chunk
         let verts = vec!(
@@ -166,6 +166,7 @@ fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
             });
         }
 
+        // reuse calculated heights for efficiency
         size_00 = size_10;
         size_01 = size_11;
     }
