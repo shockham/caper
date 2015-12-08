@@ -5,6 +5,7 @@ extern crate obj;
 use std::ops::{Add, Mul};
 use std::num::Zero;
 
+/// quick macro to use in the examples for easily defining all the modules and game loop
 #[macro_export]
 macro_rules! game_loop {
     ( $items:ident, $update:block ) => {
@@ -58,6 +59,7 @@ macro_rules! game_loop {
     };
 }
 
+/// struct for defining a Vector for creating meshes
 #[derive(Copy, Clone)]
 pub struct Vertex {
     pub position: [f32; 3],

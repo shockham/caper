@@ -4,9 +4,8 @@ use glium::glutin::Event::{ KeyboardInput, MouseMoved };
 use glium::glutin::ElementState::{ Pressed, Released };
 use renderer::{ Renderer, CamState };
 
-static MOVE_SPEED: f32 = 0.2f32;
-static MOUSE_SPEED: f32 = 10f32;
 
+/// struct for abstracting the state for all the inputs
 pub struct Input {
     mouse_pos: (i32, i32),
     pub mouse_delta: (f32, f32),
@@ -59,6 +58,10 @@ impl Input {
     /// This method is where data transforms take place due to inputs
     /// for a first person camera
     pub fn handle_fp_inputs(&self, cam_state: &mut CamState) {
+        // some static vals to use the fp inputs
+        static MOVE_SPEED: f32 = 0.2f32;
+        static MOUSE_SPEED: f32 = 10f32;
+
         let mv_matrix = Renderer::build_fp_view_matrix(*cam_state); 
 
         // this can probably be cleaned up a bit

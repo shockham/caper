@@ -66,9 +66,10 @@ fn main() {
         while accumulator >= FIXED_TIME_STAMP {
             accumulator -= FIXED_TIME_STAMP;
 
-            // updating and handling the inputs
+            // updating the inputs
             input.update_inputs(&renderer.display);
 
+            // block for handling the inputs
             {
                 let mv_matrix = Renderer::build_fp_view_matrix(cam_state); 
 

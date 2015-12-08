@@ -14,32 +14,40 @@ use std::f32::consts::PI;
 
 pub const FIXED_TIME_STAMP: u64 = 16666667;
 
+/// type definition for a Vector3
 pub type Vector3 = (f32, f32, f32);
+
+/// type definition for a Quaternion
 pub type Quaternion = (f32, f32, f32, f32);
 
+/// struct for handling transform data
 pub struct Transform {
     pub pos: Vector3,
     pub rot: Quaternion, 
     pub scale: Vector3 
 }
 
+/// struct for abstracting items to be sent to render
 pub struct RenderItem {
     pub vertices: Vec<Vertex>,
     pub shader_index: usize,
     pub instance_transforms: Vec<Transform>,
 }
 
+/// trait for updateable entities
 pub trait Entity {
     fn start(&self) -> ();
     fn update(&self) -> ();
 }
 
+/// struct for abstracting the camera state
 #[derive(Copy, Clone)]
 pub struct CamState {
     pub cam_pos:Vector3,
     pub cam_rot:Vector3
 }
 
+/// struct for shader attributes
 #[derive(Copy, Clone)]
 struct Attr {
     world_position: Vector3,
@@ -47,6 +55,7 @@ struct Attr {
     world_scale: Vector3
 }
 
+/// struct for abstracting the render state
 pub struct Renderer {
     pub display: Display,
 }
