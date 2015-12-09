@@ -17,7 +17,7 @@ macro_rules! game_loop {
             use caper::shader::Shaders;
 
             let mut input = Input::new();
-            let renderer = Renderer::new();
+            let renderer = Renderer::new("Caper".to_string());
             let shaders = Shaders::new(&renderer.display);
 
             renderer.setup();

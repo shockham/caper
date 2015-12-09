@@ -62,12 +62,12 @@ pub struct Renderer {
 
 impl Renderer {
     /// Creates new Renderer instance
-    pub fn new() -> Renderer {    
+    pub fn new(title:String) -> Renderer {    
         Renderer {
             display: WindowBuilder::new()
                 .with_depth_buffer(24)
                 //.with_multisampling(16) // multisampling doesn't work on chromebook
-                .with_title("caper".to_string())
+                .with_title(title)
                 .with_vsync()
                 .build_glium()
                 .unwrap(),

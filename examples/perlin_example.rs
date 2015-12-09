@@ -17,7 +17,7 @@ use fps_counter::FPSCounter;
 fn main() {
     // init the systems
     let mut input = Input::new();
-    let renderer = Renderer::new();
+    let renderer = Renderer::new("Caper: Perlin Example".to_string());
     let shaders = Shaders::new(&renderer.display);
     let mut fps = FPSCounter::new();
 
