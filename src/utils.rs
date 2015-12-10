@@ -32,7 +32,7 @@ macro_rules! game_loop {
             let mut accumulator = 0;
             let mut previous_clock = time::precise_time_ns();
             loop {
-                renderer.draw(cam_state, &$items, &shaders);
+                renderer.draw(cam_state, &$items, &Vec::new(), &shaders);
 
                 let now = time::precise_time_ns();
                 accumulator += now - previous_clock;

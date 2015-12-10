@@ -7,6 +7,9 @@ use glium::glutin::WindowBuilder;
 use glium::glutin::CursorState::Hide;//{ Grab, Hide };
 use glium::draw_parameters::BackfaceCullingMode::CullClockwise;
 
+use glium_text;
+use glium_text::{ TextSystem, FontTexture, TextDisplay };
+
 use utils::*;
 use shader::Shaders;
 use std::default::Default;
@@ -34,6 +37,14 @@ pub struct RenderItem {
     pub instance_transforms: Vec<Transform>,
 }
 
+/// struct for abstacting text items to be rendered
+pub struct TextItem {
+    pub text: String,
+    pub font: FontTexture,
+    pub color: (f32, f32, f32, f32),
+    pub pos: Vector3,
+}
+
 /// trait for updateable entities
 pub trait Entity {
     fn start(&self) -> ();
@@ -58,19 +69,27 @@ struct Attr {
 /// struct for abstracting the render state
 pub struct Renderer {
     pub display: Display,
+    pub text_system: TextSystem,
 }
 
 impl Renderer {
     /// Creates new Renderer instance
     pub fn new(title:String) -> Renderer {    
+        // create a diplay instance
+        let display = WindowBuilder::new()
+            .with_depth_buffer(24)
+            //.with_multisampling(16) // multisampling doesn't work on chromebook
+            .with_title(title)
+            .with_vsync()
+            .build_glium()
+            .unwrap();
+
+        // create a text system instance
+        let text_system = TextSystem::new(&display);
+
         Renderer {
-            display: WindowBuilder::new()
-                .with_depth_buffer(24)
-                //.with_multisampling(16) // multisampling doesn't work on chromebook
-                .with_title(title)
-                .with_vsync()
-                .build_glium()
-                .unwrap(),
+            display: display,
+            text_system: text_system,
         }
     }
 
@@ -83,7 +102,7 @@ impl Renderer {
     } 
 
     /// Draws a frame
-    pub fn draw(&self, cam_state: CamState, render_items: &Vec<RenderItem>, shaders: &Shaders){
+    pub fn draw(&self, cam_state: CamState, render_items: &Vec<RenderItem>, text_items: &Vec<TextItem>, shaders: &Shaders){
         // possibly set this to an event
         let (width, height) = self.display.get_framebuffer_dimensions(); 
 
@@ -128,10 +147,27 @@ impl Renderer {
             };
 
             target.draw((&vertex_buffer, per_instance.per_instance().unwrap()),
-            &NoIndices(TrianglesList),
-            &shaders.shaders[item.shader_index],
-            &uniforms, 
-            &params).unwrap();
+                &NoIndices(TrianglesList),
+                &shaders.shaders[item.shader_index],
+                &uniforms, 
+                &params).unwrap();
+        }
+
+
+
+        for text_item in text_items.iter() {
+            let matrix = [[text_item.pos.0, 0.0, 0.0, 0.0],
+                [0.0, text_item.pos.1, 0.0, 0.0],
+                [0.0, 0.0, text_item.pos.2, 0.0],
+                [0.0, 0.0, 0.0, 1.0]];
+
+            let text = glium_text::TextDisplay::new(&self.text_system, &text_item.font, text_item.text.as_str());
+
+            glium_text::draw(&text,
+                             &self.text_system,
+                             &mut target,
+                             matrix,
+                             text_item.color);
         }
 
         match target.finish() {
@@ -183,7 +219,7 @@ impl Renderer {
             [ xaxis[0], yaxis[0], zaxis[0], 0.0],
             [ xaxis[1], yaxis[1], zaxis[1], 0.0],
             [ xaxis[2], yaxis[2], zaxis[2], 0.0],
-            [ dotp(&xaxis, &cam_arr), dotp(&yaxis, &cam_arr), dotp(&zaxis, &cam_arr), 1.0f32]
+                [ dotp(&xaxis, &cam_arr), dotp(&yaxis, &cam_arr), dotp(&zaxis, &cam_arr), 1.0f32]
         ]
 
     }

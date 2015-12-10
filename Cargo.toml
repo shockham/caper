@@ -6,6 +6,7 @@ license = "MIT"
 
 [dependencies]
 glium = "*"
+glium_text = "*"
 time = "*"
 genmesh = "0.2.1"
 obj = "0.2.1"

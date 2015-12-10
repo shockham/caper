@@ -1,6 +1,7 @@
 extern crate time;
 extern crate fps_counter;
 extern crate noise;
+extern crate glium_text;
 
 #[macro_use]
 extern crate caper;
@@ -10,9 +11,11 @@ use std::time::Duration;
 use caper::input::{ Input, Key };
 use caper::shader::Shaders;
 use caper::utils::Vertex;
-use caper::renderer::{ RenderItem, Transform, Renderer, CamState, FIXED_TIME_STAMP};
+use caper::renderer::{ RenderItem, TextItem, Transform, Renderer, CamState, FIXED_TIME_STAMP};
 use noise::{ perlin2, Seed };
 use fps_counter::FPSCounter;
+
+use glium_text::FontTexture;
 
 fn main() {
     // init the systems
@@ -51,11 +54,22 @@ fn main() {
         }
     ];
 
+    let font = FontTexture::new(&renderer.display, &include_bytes!("font.otf")[..], 70).unwrap();
+
+    let mut text_items = vec![
+        TextItem {
+            text: "text".to_string(),
+            font: font,
+            pos: (0.1f32, 0.1f32, 1f32),
+            color: (0f32, 0f32, 0f32, 1f32),
+        } 
+    ];
+
     // the main loop
     let mut accumulator = 0;
     let mut previous_clock = time::precise_time_ns();
     loop {
-        renderer.draw(cam_state, &render_items, &shaders);
+        renderer.draw(cam_state, &render_items, &text_items, &shaders);
 
         let now = time::precise_time_ns();
         accumulator += now - previous_clock;
@@ -114,7 +128,8 @@ fn main() {
         //quit
         if input.keys_down.contains(&Key::Escape) { break; }
 
-        println!("fps:{}", fps.tick());
+        //println!("fps:{}", fps.tick());
+        text_items[0].text = format!("fps:{}", fps.tick());
 
         let sleep_duration =
             Duration::from_millis(((FIXED_TIME_STAMP - accumulator) / 1000000) as u64);
