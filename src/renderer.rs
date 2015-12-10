@@ -127,6 +127,7 @@ impl Renderer {
         let mut target = self.display.draw();
         target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
+        // drawing the render items TODO batching
         for item in render_items.iter() { 
             // building the vertex and index buffers
             let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices).unwrap();
@@ -153,15 +154,18 @@ impl Renderer {
                 &params).unwrap();
         }
 
-
-
+        // drawing the text items
         for text_item in text_items.iter() {
-            let matrix = [[text_item.pos.0, 0.0, 0.0, 0.0],
-                [0.0, text_item.pos.1, 0.0, 0.0],
-                [0.0, 0.0, text_item.pos.2, 0.0],
-                [0.0, 0.0, 0.0, 1.0]];
+            // create the matrix for the text
+            let matrix = [
+                [0.1, 0.0, 0.0, 0.0],
+                [0.0, 0.1 * (width as f32) / (height as f32), 0.0, 0.0],
+                [0.0, 0.0, 1.0, 0.0],
+                [text_item.pos.0, text_item.pos.1, text_item.pos.2, 1.0f32]
+            ];
 
-            let text = glium_text::TextDisplay::new(&self.text_system, &text_item.font, text_item.text.as_str());
+            // create TextDisplay for item, TODO change this to not be done every frame
+            let text = TextDisplay::new(&self.text_system, &text_item.font, text_item.text.as_str());
 
             glium_text::draw(&text,
                              &self.text_system,
@@ -193,13 +197,12 @@ impl Renderer {
         let w = 2.0 * znear / width;
         let h = 2.0 * znear / height;
 
-        let mut m:[[f32; 4]; 4] = [[0.0f32; 4]; 4];
-        m[0]  = [w, 0.0f32, 0.0f32, 0.0f32];
-        m[1]  = [0.0f32, h, 0.0f32, 0.0f32];
-        m[2]  = [0.0f32, 0.0f32, q, -1.0f32];
-        m[3] = [0.0f32, 0.0f32, qn, 0.0f32];
-
-        return m;
+        [
+            [w, 0.0f32, 0.0f32, 0.0f32],
+            [0.0f32, h, 0.0f32, 0.0f32],
+            [0.0f32, 0.0f32, q, -1.0f32],
+            [0.0f32, 0.0f32, qn, 0.0f32]
+        ]
     }
 
     /// Returns the model view matrix for a first person view given cam position and rotation
@@ -215,12 +218,12 @@ impl Renderer {
         let zaxis = [sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw];
 
         let cam_arr = [cam_state.cam_pos.0, cam_state.cam_pos.1, cam_state.cam_pos.2];
+
         [
             [ xaxis[0], yaxis[0], zaxis[0], 0.0],
             [ xaxis[1], yaxis[1], zaxis[1], 0.0],
             [ xaxis[2], yaxis[2], zaxis[2], 0.0],
-                [ dotp(&xaxis, &cam_arr), dotp(&yaxis, &cam_arr), dotp(&zaxis, &cam_arr), 1.0f32]
+            [ dotp(&xaxis, &cam_arr), dotp(&yaxis, &cam_arr), dotp(&zaxis, &cam_arr), 1.0f32]
         ]
-
     }
 }

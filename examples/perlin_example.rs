@@ -54,13 +54,13 @@ fn main() {
         }
     ];
 
-    let font = FontTexture::new(&renderer.display, &include_bytes!("font.otf")[..], 70).unwrap();
+    let font = FontTexture::new(&renderer.display, &include_bytes!("font.otf")[..], 100).unwrap();
 
     let mut text_items = vec![
         TextItem {
             text: "text".to_string(),
             font: font,
-            pos: (0.1f32, 0.1f32, 1f32),
+            pos: (-1.0f32, 0.85f32, 0f32),
             color: (0f32, 0f32, 0f32, 1f32),
         } 
     ];
@@ -128,7 +128,6 @@ fn main() {
         //quit
         if input.keys_down.contains(&Key::Escape) { break; }
 
-        //println!("fps:{}", fps.tick());
         text_items[0].text = format!("fps:{}", fps.tick());
 
         let sleep_duration =
