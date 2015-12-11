@@ -3,7 +3,7 @@ use glium::index::NoIndices;
 use glium::index::PrimitiveType::TrianglesList;
 use glium::DepthTest::IfLess;
 use glium::vertex::VertexBuffer;
-use glium::glutin::WindowBuilder;
+use glium::glutin::{ WindowBuilder, get_primary_monitor };
 use glium::glutin::CursorState::Hide;//{ Grab, Hide };
 use glium::draw_parameters::BackfaceCullingMode::CullClockwise;
 
@@ -81,6 +81,7 @@ impl Renderer {
             //.with_multisampling(16) // multisampling doesn't work on chromebook
             .with_title(title)
             .with_vsync()
+            .with_fullscreen(get_primary_monitor())
             .build_glium()
             .unwrap();
 
