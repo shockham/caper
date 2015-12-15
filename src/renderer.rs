@@ -159,8 +159,8 @@ impl Renderer {
         for text_item in text_items.iter() {
             // create the matrix for the text
             let matrix = [
-                [0.1, 0.0, 0.0, 0.0],
-                [0.0, 0.1 * (width as f32) / (height as f32), 0.0, 0.0],
+                [0.01, 0.0, 0.0, 0.0],
+                [0.0, 0.01 * (width as f32) / (height as f32), 0.0, 0.0],
                 [0.0, 0.0, 1.0, 0.0],
                 [text_item.pos.0, text_item.pos.1, text_item.pos.2, 1.0f32]
             ];

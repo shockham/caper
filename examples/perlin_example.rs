@@ -60,7 +60,7 @@ fn main() {
         TextItem {
             text: "text".to_string(),
             font: font,
-            pos: (-1.0f32, 0.85f32, 0f32),
+            pos: (-1.0f32, 0.9f32, 0f32),
             color: (0f32, 0f32, 0f32, 1f32),
         } 
     ];
