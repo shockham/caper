@@ -9,7 +9,7 @@ use std::thread;
 use std::time::Duration;
 use caper::input::{ Input, Key };
 use caper::shader::Shaders;
-use caper::utils::Vertex;
+use caper::utils::{ Vertex, calc_normal };
 use caper::renderer::{ RenderItem, TextItem, Transform, Renderer, CamState, FIXED_TIME_STAMP};
 use noise::{ perlin2, Seed };
 use fps_counter::FPSCounter;
@@ -17,9 +17,7 @@ use fps_counter::FPSCounter;
 fn main() {
     // init the systems
     let mut input = Input::new();
-    
     let renderer = Renderer::new("Caper: Perlin Example".to_string());
-    
     let shaders = Shaders::new(&renderer.display);
     let mut fps = FPSCounter::new();
 
@@ -146,7 +144,7 @@ fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
     let mut size_01 = perlin2(&seed, &[0f32, 0f32]).abs() * 8f32;
     let mut size_11;
 
-    let def_normal = [0f32, 0f32, 0f32];
+    //let def_normal = [0f32, 0f32, 0f32];
     let def_uv = [0f32, 0f32];
 
     for i in 0 .. point_total {
@@ -167,13 +165,13 @@ fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
             [pos.0 , size_01, pos.1 + 1f32],
             [pos.0 + 1f32, size_11, pos.1 + 1f32]);
 
-        //let calc_normal = calc_normal(verts[0], verts[1], verts[2]);
+        let calc_normal = calc_normal(verts[0], verts[1], verts[2]);
         
         // create each Vertex from the verts vec
         for v in verts {
             vertices.push(Vertex {
                 position: v,
-                normal: def_normal,
+                normal: calc_normal,
                 texture: def_uv
             });
         }
