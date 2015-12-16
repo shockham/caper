@@ -5,7 +5,7 @@ authors = ["shockham <samuel.hockham@gmail.com>"]
 license = "MIT"
 
 [dependencies]
-glium = "*"
+glium = "0.12"
 glium_text = "*"
 time = "*"
 genmesh = "0.2.1"
