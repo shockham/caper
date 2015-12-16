@@ -40,7 +40,6 @@ pub struct RenderItem {
 /// struct for abstacting text items to be rendered
 pub struct TextItem {
     pub text: String,
-    pub font: FontTexture,
     pub color: (f32, f32, f32, f32),
     pub pos: Vector3,
 }
@@ -70,6 +69,7 @@ struct Attr {
 pub struct Renderer {
     pub display: Display,
     pub text_system: TextSystem,
+    default_font: FontTexture,
 }
 
 impl Renderer {
@@ -85,12 +85,14 @@ impl Renderer {
             .build_glium()
             .unwrap();
 
-        // create a text system instance
+        // create a text system instance and font
         let text_system = TextSystem::new(&display);
+        let font = FontTexture::new(&display, &include_bytes!("../examples/font.otf")[..], 100).unwrap();
 
         Renderer {
             display: display,
             text_system: text_system,
+            default_font: font,
         }
     }
 
@@ -166,7 +168,7 @@ impl Renderer {
             ];
 
             // create TextDisplay for item, TODO change this to not be done every frame
-            let text = TextDisplay::new(&self.text_system, &text_item.font, text_item.text.as_str());
+            let text = TextDisplay::new(&self.text_system, &self.default_font, text_item.text.as_str());
 
             glium_text::draw(&text,
                              &self.text_system,

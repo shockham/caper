@@ -1,7 +1,6 @@
 extern crate time;
 extern crate fps_counter;
 extern crate noise;
-extern crate glium_text;
 
 #[macro_use]
 extern crate caper;
@@ -15,12 +14,12 @@ use caper::renderer::{ RenderItem, TextItem, Transform, Renderer, CamState, FIXE
 use noise::{ perlin2, Seed };
 use fps_counter::FPSCounter;
 
-use glium_text::FontTexture;
-
 fn main() {
     // init the systems
     let mut input = Input::new();
+    
     let renderer = Renderer::new("Caper: Perlin Example".to_string());
+    
     let shaders = Shaders::new(&renderer.display);
     let mut fps = FPSCounter::new();
 
@@ -54,12 +53,10 @@ fn main() {
         }
     ];
 
-    let font = FontTexture::new(&renderer.display, &include_bytes!("font.otf")[..], 100).unwrap();
 
     let mut text_items = vec![
         TextItem {
             text: "text".to_string(),
-            font: font,
             pos: (-1.0f32, 0.9f32, 0f32),
             color: (0f32, 0f32, 0f32, 1f32),
         } 
