@@ -4,6 +4,7 @@ extern crate obj;
 
 use std::ops::{Add, Mul};
 use std::num::Zero;
+use renderer::{ RenderItem, Transform };
 
 /// quick macro to use in the examples for easily defining all the modules and game loop
 #[macro_export]
@@ -99,8 +100,23 @@ pub fn load_wavefront( data: &[u8]) -> Vec<Vertex> {
         }
     }
 
-    //glium::vertex::VertexBuffer::new(display, vertex_data).into_vertex_buffer_any()
     vertex_data
+}
+
+
+/// Returns a RenderItem for the skydome
+pub fn create_skydome() -> RenderItem {
+    RenderItem {
+        vertices: load_wavefront(include_bytes!("./resources/skydome.obj")),
+        shader_index: 0,
+        instance_transforms: vec![
+            Transform {
+                pos: (0.0, 0.0, 0.0),
+                rot: (0f32, 0f32, 0f32, 1f32),
+                scale: (100f32, 100f32, 100f32)
+            }
+        ]
+    }
 }
 
 /// Returns the dot product of two vectors

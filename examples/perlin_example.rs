@@ -9,7 +9,7 @@ use std::thread;
 use std::time::Duration;
 use caper::input::{ Input, Key };
 use caper::shader::Shaders;
-use caper::utils::{ Vertex, calc_normal };
+use caper::utils::{ Vertex, calc_normal, create_skydome };
 use caper::renderer::{ RenderItem, TextItem, Transform, Renderer, CamState, FIXED_TIME_STAMP};
 use noise::{ perlin2, Seed };
 use fps_counter::FPSCounter;
@@ -48,7 +48,8 @@ fn main() {
                     scale: (1f32, 1f32, 1f32)
                 }
             ]
-        }
+        },
+        create_skydome()
     ];
 
 
