@@ -10,7 +10,7 @@ glium_text = "*"
 time = "*"
 genmesh = "0.2.1"
 obj = "0.2.1"
+noise = "*"
 
 [dev-dependencies]
-noise = "*"
 fps_counter = "*"
