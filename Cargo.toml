@@ -8,8 +8,8 @@ license = "MIT"
 glium = "0.12"
 glium_text = "*"
 time = "*"
-genmesh = "0.2.1"
-obj = "0.2.1"
+genmesh = "*"
+obj = { version = "*", features = ["usegenmesh"] }
 noise = "*"
 
 [dev-dependencies]
