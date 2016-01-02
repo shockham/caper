@@ -87,7 +87,7 @@ impl Renderer {
 
         // create a text system instance and font
         let text_system = TextSystem::new(&display);
-        let font = FontTexture::new(&display, &include_bytes!("../examples/font.otf")[..], 100).unwrap();
+        let font = FontTexture::new(&display, &include_bytes!("./resources/font.otf")[..], 100).unwrap();
 
         Renderer {
             display: display,
