@@ -1,6 +1,45 @@
 use utils::{ calc_normal, Vertex };
 use noise::{ perlin2, Seed };
 
+/// Generates a quad with each side length 1
+pub fn gen_quad() -> Vec<Vertex> {
+    let def_normal = [0f32, 0f32, 0f32];
+    
+    vec!(
+        Vertex {
+            position: [0f32, 0f32, 0f32],
+            normal: def_normal,
+            texture: [0f32, 0f32]
+        },
+        Vertex {
+            position: [0f32, 1f32, 0f32],
+            normal: def_normal,
+            texture: [0f32, 1f32]
+        },
+        Vertex {
+            position: [1f32, 1f32, 0f32],
+            normal: def_normal,
+            texture: [1f32, 1f32]
+        },
+        Vertex {
+            position: [0f32, 0f32, 0f32],
+            normal: def_normal,
+            texture: [0f32, 0f32]
+        },
+        Vertex {
+            position: [1f32, 1f32, 0f32],
+            normal: def_normal,
+            texture: [1f32, 1f32]
+        },
+        Vertex {
+            position: [1f32, 0f32, 0f32],
+            normal: def_normal,
+            texture: [1f32, 0f32]
+        }
+    )
+}
+
+/// Generates a perlin mesh from pseu_pos with each side of vert length map_size
 pub fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
     // generate the instance positions 
     let mut vertices = Vec::new();

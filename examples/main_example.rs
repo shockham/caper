@@ -5,6 +5,7 @@ extern crate caper;
 
 use caper::utils::load_wavefront;
 use caper::renderer::{ RenderItem, Transform };
+use caper::mesh::gen_quad;
 
 fn main() {
     // load the models in to vec<Vertex>
@@ -39,6 +40,17 @@ fn main() {
                     pos: (15.0, 0.0, 0.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (2.0f32, 2.0f32, 2.0f32)
+                }
+            ]
+        },
+        RenderItem {
+            vertices: gen_quad(),
+            shader_index: 0,
+            instance_transforms: vec![
+                Transform {
+                    pos: (0.0, 1.0, 0.0),
+                    rot: (0f32, 0f32, 0f32, 1f32),
+                    scale: (1f32, 1f32, 1f32)
                 }
             ]
         }
