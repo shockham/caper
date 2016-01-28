@@ -24,8 +24,8 @@ impl Input {
 
     /// This method updates the state of the inputs
     pub fn update_inputs(&mut self, display: &Display) {
-
-        let (width, height) = display.get_window().unwrap().get_inner_size().unwrap_or((800, 600));
+        let (width, height) = display.get_window().unwrap()
+            .get_inner_size().unwrap_or((800, 600));
 
         // reset the delta incase the mouse does not move
         self.mouse_delta.0 = 0f32;
@@ -41,18 +41,19 @@ impl Input {
                     self.keys_down.retain(|&k| k != vkey.unwrap());
                 },
                 MouseMoved(a) => { 
-                    let mouse_diff = (self.mouse_pos.0 - a.0, self.mouse_pos.1 - a.1);
+                    let mouse_diff = ((width / 2) as i32 - a.0, (height / 2) as i32 - a.1);
                     self.mouse_delta.0 = (mouse_diff.0 as f32)/(width as f32);
                     self.mouse_delta.1 = (mouse_diff.1 as f32)/(height as f32);
-                    self.mouse_pos = a
+                    self.mouse_pos = a;
                 },
                 _ => ()
             }
         }
-        // possible fix for grabbed cursor but not implemented on osx yet
-        /*let _ = display.get_window()
+
+        // set the mouse to the centre of the screen
+        let _ = display.get_window()
           .unwrap()
-          .set_cursor_position(0, 0);*/
+          .set_cursor_position((width / 2) as i32, (height / 2) as i32);
     }
 
     /// This method is where data transforms take place due to inputs
