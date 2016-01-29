@@ -44,7 +44,9 @@ impl Shaders {
                                     330 => {
                                         vertex: height::gl330::vert(),
                                         fragment: height::gl330::frag(),
-                                        geometry: height::gl330::geom()
+                                        geometry: height::gl330::geom(),
+                                        tessellation_control: height::gl330::tess_control(),
+                                        tessellation_evaluation: height::gl330::tess_eval()
                                     },
                                     110 => {
                                         vertex: height::gl110::vert(),
