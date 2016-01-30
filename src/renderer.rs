@@ -1,6 +1,6 @@
 use glium::{ Display, DrawParameters, DisplayBuild, Surface, Depth };
 use glium::index::NoIndices;
-use glium::index::PrimitiveType::TrianglesList;
+use glium::index::PrimitiveType;
 use glium::DepthTest::IfLess;
 use glium::vertex::VertexBuffer;
 use glium::glutin::{ WindowBuilder, get_primary_monitor };
@@ -151,7 +151,8 @@ impl Renderer {
             };
 
             target.draw((&vertex_buffer, per_instance.per_instance().unwrap()),
-                &NoIndices(TrianglesList),
+                &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
+                //&NoIndices(TrianglesList),
                 &shaders.shaders[item.shader_index],
                 &uniforms, 
                 &params).unwrap();

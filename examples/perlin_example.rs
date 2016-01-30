@@ -41,7 +41,7 @@ fn main() {
     let mut render_items = vec![
         RenderItem {
             vertices: gen_perlin_mesh(pseu_cam_pos, map_size),
-            shader_index: 2,
+            shader_index: 3,
             instance_transforms: vec![
                 Transform {
                     pos: (fixed_val, 0.0, fixed_val),

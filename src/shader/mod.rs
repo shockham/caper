@@ -1,6 +1,7 @@
 pub mod dist;
 pub mod pbr;
 pub mod height;
+pub mod height_tess;
 
 use glium::{ Program, Display };
 
@@ -45,8 +46,6 @@ impl Shaders {
                                         vertex: height::gl330::vert(),
                                         fragment: height::gl330::frag(),
                                         geometry: height::gl330::geom(),
-                                        tessellation_control: height::gl330::tess_control(),
-                                        tessellation_evaluation: height::gl330::tess_eval()
                                     },
                                     110 => {
                                         vertex: height::gl110::vert(),
@@ -55,9 +54,25 @@ impl Shaders {
             Ok(p) => p,
             Err(e) => panic!("glsl error: {}", e), 
         };
+        
+        let program_height_tess = match program!(display,
+                                    330 => {
+                                        vertex: height_tess::gl330::vert(),
+                                        fragment: height_tess::gl330::frag(),
+                                        geometry: height_tess::gl330::geom(),
+                                        tessellation_control: height_tess::gl330::tess_control(),
+                                        tessellation_evaluation: height_tess::gl330::tess_eval()
+                                    },
+                                    110 => {
+                                        vertex: height_tess::gl110::vert(),
+                                        fragment: height_tess::gl110::frag()
+                                    }) {
+            Ok(p) => p,
+            Err(e) => panic!("glsl error: {}", e), 
+        };
        
         Shaders {
-            shaders: vec![program_dist, program_pbr, program_height]
+            shaders: vec![program_dist, program_pbr, program_height, program_height_tess]
         }
     }
 }
