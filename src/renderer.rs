@@ -89,11 +89,15 @@ impl Renderer {
         let text_system = TextSystem::new(&display);
         let font = FontTexture::new(&display, &include_bytes!("./resources/font.otf")[..], 100).unwrap();
 
-        Renderer {
+        let renderer = Renderer {
             display: display,
             text_system: text_system,
             default_font: font,
-        }
+        };
+
+        renderer.setup();
+
+        renderer
     }
 
     /// Sets up the render window

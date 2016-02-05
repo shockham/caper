@@ -22,8 +22,6 @@ fn main() {
     let shaders = Shaders::new(&renderer.display);
     let mut fps = FPSCounter::new();
 
-    renderer.setup();
-
     let map_size = 50f32;
     let fixed_val = -(map_size/2f32);
     let move_speed = 0.05f32;

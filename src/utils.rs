@@ -21,8 +21,6 @@ macro_rules! game_loop {
             let renderer = Renderer::new("Caper".to_string());
             let shaders = Shaders::new(&renderer.display);
 
-            renderer.setup();
-
             //cam state
             let mut cam_state = CamState {
                 cam_pos: (0.0f32, 0.0, 0.0),

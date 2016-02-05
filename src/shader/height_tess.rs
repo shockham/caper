@@ -11,7 +11,6 @@ pub mod gl330 {
         layout(location = 4) in vec3 world_scale;
 
         out vec3 v_normal;
-        out vec3 v_pos;
 
         void main() {
             vec3 pos_scaled = position * world_scale;
@@ -24,7 +23,6 @@ pub mod gl330 {
             gl_Position = vec4(pos_final, 1.0);
             
             v_normal = normal;
-            v_pos = pos_final;
         }
     "
     }
@@ -85,22 +83,20 @@ pub mod gl330 {
     }
     
     pub fn tess_control() -> &'static str {
+        // tessellation control shader
         "
         #version 400
 
         layout(vertices = 3) out;
         
         in vec3 v_normal[];
-        in vec3 v_pos[];
 
         out vec3 tc_normal[];
-        out vec3 tc_pos[];
 
-        const float tess_level = 2.0;
+        const float tess_level = 5.0;
 
         void main() {
             tc_normal[gl_InvocationID] = v_normal[gl_InvocationID];
-            tc_pos[gl_InvocationID] = v_pos[gl_InvocationID];
             gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
 
             gl_TessLevelOuter[0] = tess_level;
@@ -112,6 +108,7 @@ pub mod gl330 {
     }
     
     pub fn tess_eval() -> &'static str {
+        // tessellation evaluation shader
         "
         #version 400
         
@@ -121,24 +118,24 @@ pub mod gl330 {
         layout(triangles, equal_spacing, ccw) in;
         
         in vec3 tc_normal[];
-        in vec3 tc_pos[];
 
         out vec3 te_normal;
         out vec3 te_pos;
 
         vec3 tess_calc (vec3 one, vec3 two, vec3 three) {
-            return (gl_TessCoord.x * one) +
-                            (gl_TessCoord.y * two) +
-                            (gl_TessCoord.z * three); 
+            return (sin(gl_TessCoord.x) * one) +
+                            (sin(gl_TessCoord.y) * two) +
+                            (sin(gl_TessCoord.z) * three); 
         }
 
         void main() {
             te_normal = tess_calc(tc_normal[0], tc_normal[1], tc_normal[2]);
-            te_pos = tess_calc(tc_pos[0], tc_pos[1], tc_pos[2]);
 
             vec3 position = tess_calc(gl_in[0].gl_Position.xyz,
                 gl_in[1].gl_Position.xyz,
                 gl_in[2].gl_Position.xyz);
+
+            te_pos = position;
 
             gl_Position = projection_matrix *
                 modelview_matrix *

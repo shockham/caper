@@ -28,7 +28,7 @@ fn main() {
     let render_items = vec![
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/cube.obj")),
-            shader_index: 0,
+            shader_index: 3,
             instance_transforms: transforms
         }
     ];
