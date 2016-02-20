@@ -1,6 +1,6 @@
 pub mod gl330 {
+    // fragment shader
     pub const FRAG: &'static str =
-        // fragment shader
         "
         #version 330
 
@@ -26,34 +26,9 @@ pub mod gl330 {
             frag_output = vec4(color, 1.0);
         }
     ";
-
-    pub const GEOM: &'static str =
-        // geometry shader
-        "
-        #version 330
-
-        layout(triangles) in;
-        layout(triangle_strip, max_vertices=3) out;
-
-        in vec3 te_normal[];
-        in vec3 te_pos[];
-
-        out vec3 g_normal;
-        out vec3 g_pos;
-
-        void main(void) {   
-            for(int i = 0; i < gl_in.length(); i++){
-                g_normal = te_normal[i];
-                g_pos = te_pos[i];
-                gl_Position = gl_in[i].gl_Position;
-                EmitVertex();
-            }
-            EndPrimitive();
-        }
-    ";
     
+    // tessellation control shader
     pub const TESS_CONTROL: &'static str =
-        // tessellation control shader
         "
         #version 400
 
@@ -76,8 +51,8 @@ pub mod gl330 {
         }
     ";
     
+    // tessellation evaluation shader
     pub const TESS_EVAL: &'static str =
-        // tessellation evaluation shader
         "
         #version 400
         
@@ -121,34 +96,8 @@ pub mod gl330 {
 }
 
 pub mod gl110 {
-    pub const VERT: &'static str =
-        // vertex shader
-        "
-        #version 110
-
-        uniform mat4 projection_matrix;
-        uniform mat4 modelview_matrix;
-
-        attribute vec3 position;
-        attribute vec3 normal;
-        attribute vec3 world_position;
-        attribute vec4 world_rotation;
-        attribute vec3 world_scale;
-
-        varying vec3 v_normal;
-        varying vec3 v_pos;
-
-        void main() {
-            v_normal = normal;
-            v_pos = position;
-            gl_Position = projection_matrix *
-                modelview_matrix *
-                vec4((position * world_scale) + world_position, 1.0);
-        }
-    ";
-
+    // fragment shader
     pub const FRAG: &'static str =
-        // fragment shader
         "
         #version 110
 

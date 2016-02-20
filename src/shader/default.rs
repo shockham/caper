@@ -112,3 +112,31 @@ pub mod gl330 {
         }
     ";
 }
+
+pub mod gl110 {
+    // vertex shader
+    pub const VERT: &'static str =
+        "
+        #version 110
+
+        uniform mat4 projection_matrix;
+        uniform mat4 modelview_matrix;
+
+        attribute vec3 position;
+        attribute vec3 normal;
+        attribute vec3 world_position;
+        attribute vec4 world_rotation;
+        attribute vec3 world_scale;
+
+        varying vec3 v_normal;
+        varying vec3 v_pos;
+
+        void main() {
+            v_normal = normal;
+            v_pos = position;
+            gl_Position = projection_matrix *
+                modelview_matrix *
+                vec4((position * world_scale) + world_position, 1.0);
+        }
+    ";
+}

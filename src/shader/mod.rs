@@ -23,7 +23,7 @@ impl Shaders {
                                         tessellation_evaluation: default::gl330::TESS_EVAL
                                     },
                                     110 => {
-                                        vertex: dist::gl110::VERT,
+                                        vertex: default::gl110::VERT,
                                         fragment: dist::gl110::FRAG
                                     }) {
             Ok(p) => p,
@@ -39,7 +39,7 @@ impl Shaders {
                                         tessellation_evaluation: default::gl330::TESS_EVAL
                                     },
                                     110 => {
-                                        vertex: pbr::gl110::VERT,
+                                        vertex: default::gl110::VERT,
                                         fragment: pbr::gl110::FRAG
                                     }) {
             Ok(p) => p,
@@ -55,7 +55,7 @@ impl Shaders {
                                         tessellation_evaluation: default::gl330::TESS_EVAL
                                     },
                                     110 => {
-                                        vertex: height::gl110::VERT,
+                                        vertex: default::gl110::VERT,
                                         fragment: height::gl110::FRAG
                                     }) {
             Ok(p) => p,
@@ -66,7 +66,7 @@ impl Shaders {
                                     330 => {
                                         vertex: default::gl330::VERT,
                                         fragment: height_tess::gl330::FRAG,
-                                        geometry: height_tess::gl330::GEOM,
+                                        geometry: default::gl330::GEOM,
                                         tessellation_control: height_tess::gl330::TESS_CONTROL,
                                         tessellation_evaluation: height_tess::gl330::TESS_EVAL
                                     },
