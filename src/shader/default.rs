@@ -1,7 +1,6 @@
 pub mod gl330 {
-    
+    // vertex shader
     pub const VERT: &'static str =
-        // vertex shader
         "
         #version 330
 
@@ -27,8 +26,8 @@ pub mod gl330 {
         }
     ";
 
+    // geometry shader
     pub const GEOM: &'static str =
-        // geometry shader
         "
         #version 330
 
@@ -52,8 +51,8 @@ pub mod gl330 {
         }
     ";
     
+    // tessellation control shader
     pub const TESS_CONTROL: &'static str =
-        // tessellation control shader
         "
         #version 400
 
@@ -76,8 +75,8 @@ pub mod gl330 {
         }
     ";
     
+    // tessellation evaluation shader
     pub const TESS_EVAL: &'static str =
-        // tessellation evaluation shader
         "
         #version 400
         
