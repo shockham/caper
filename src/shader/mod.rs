@@ -15,13 +15,13 @@ impl Shaders {
         // the shader programs
         let program_dist = match program!(display,
                                     330 => {
-                                        vertex: dist::gl330::vert(),
-                                        fragment: dist::gl330::frag(),
-                                        geometry: dist::gl330::geom()
+                                        vertex: dist::gl330::VERT,
+                                        fragment: dist::gl330::FRAG,
+                                        geometry: dist::gl330::GEOM
                                     },
                                     110 => {
-                                        vertex: dist::gl110::vert(),
-                                        fragment: dist::gl110::frag()
+                                        vertex: dist::gl110::VERT,
+                                        fragment: dist::gl110::FRAG
                                     }) {
             Ok(p) => p,
             Err(e) => panic!("glsl error: {}", e), 
@@ -29,13 +29,13 @@ impl Shaders {
 
         let program_pbr = match program!(display,
                                     330 => {
-                                        vertex: pbr::gl330::vert(),
-                                        fragment: pbr::gl330::frag(),
-                                        geometry: pbr::gl330::geom()
+                                        vertex: pbr::gl330::VERT,
+                                        fragment: pbr::gl330::FRAG,
+                                        geometry: pbr::gl330::GEOM
                                     },
                                     110 => {
-                                        vertex: pbr::gl110::vert(),
-                                        fragment: pbr::gl110::frag()
+                                        vertex: pbr::gl110::VERT,
+                                        fragment: pbr::gl110::FRAG
                                     }) {
             Ok(p) => p,
             Err(e) => panic!("glsl error: {}", e), 
@@ -43,13 +43,13 @@ impl Shaders {
         
         let program_height = match program!(display,
                                     330 => {
-                                        vertex: height::gl330::vert(),
-                                        fragment: height::gl330::frag(),
-                                        geometry: height::gl330::geom(),
+                                        vertex: height::gl330::VERT,
+                                        fragment: height::gl330::FRAG,
+                                        geometry: height::gl330::GEOM,
                                     },
                                     110 => {
-                                        vertex: height::gl110::vert(),
-                                        fragment: height::gl110::frag()
+                                        vertex: height::gl110::VERT,
+                                        fragment: height::gl110::FRAG
                                     }) {
             Ok(p) => p,
             Err(e) => panic!("glsl error: {}", e), 
@@ -57,15 +57,15 @@ impl Shaders {
         
         let program_height_tess = match program!(display,
                                     330 => {
-                                        vertex: height_tess::gl330::vert(),
-                                        fragment: height_tess::gl330::frag(),
-                                        geometry: height_tess::gl330::geom(),
-                                        tessellation_control: height_tess::gl330::tess_control(),
-                                        tessellation_evaluation: height_tess::gl330::tess_eval()
+                                        vertex: height_tess::gl330::VERT,
+                                        fragment: height_tess::gl330::FRAG,
+                                        geometry: height_tess::gl330::GEOM,
+                                        tessellation_control: height_tess::gl330::TESS_CONTROL,
+                                        tessellation_evaluation: height_tess::gl330::TESS_EVAL
                                     },
                                     110 => {
-                                        vertex: height_tess::gl110::vert(),
-                                        fragment: height_tess::gl110::frag()
+                                        vertex: height_tess::gl110::VERT,
+                                        fragment: height_tess::gl110::FRAG
                                     }) {
             Ok(p) => p,
             Err(e) => panic!("glsl error: {}", e), 

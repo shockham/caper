@@ -1,6 +1,6 @@
 pub mod gl330 {
-    pub fn vert() -> &'static str{
-        // vertex shader
+    // vertex shader
+    pub const VERT: &'static str =
         "
         #version 330
 
@@ -29,11 +29,10 @@ pub mod gl330 {
             v_normal = normal;
             v_pos = gl_Position.xyz;
         }
-    "
-    }
+    ";
 
-    pub fn frag() -> &'static str {
-        // fragment shader
+    // fragment shader
+    pub const FRAG: &'static str =
         "
         #version 330
 
@@ -53,10 +52,9 @@ pub mod gl330 {
             vec3 color = base_color * (0.3 + (0.2 * lum) + (0.5 * dist));
             frag_output = vec4(color, 1.0);
         }
-    "
-    }
+    ";
 
-    pub fn geom() -> &'static str {
+    pub const GEOM: &'static str =
         // geometry shader
         "
         #version 330
@@ -79,13 +77,12 @@ pub mod gl330 {
             }
             EndPrimitive();
         }
-    "
-    }
+    ";
 }
 
 pub mod gl110 {
-    pub fn vert() -> &'static str{
-        // vertex shader
+    // vertex shader
+    pub const VERT: &'static str =
         "
         #version 110
 
@@ -108,11 +105,10 @@ pub mod gl110 {
                 modelview_matrix *
                 vec4((position * world_scale) + world_position, 1.0);
         }
-    "
-    }
+    ";
 
-    pub fn frag() -> &'static str {
-        // fragment shader
+    // fragment shader
+    pub const FRAG: &'static str =
         "
         #version 110
 
@@ -130,6 +126,5 @@ pub mod gl110 {
             vec3 color = base_color * (0.3 + (0.2 * lum) + (0.5 * dist));
             gl_FragColor = vec4(color, 1.0);
         }
-    "
-    }
+    ";
 }
