@@ -1,31 +1,4 @@
 pub mod gl330 {
-    pub const VERT: &'static str =
-        // vertex shader
-        "
-        #version 330
-
-        layout(location = 0) in vec3 position;
-        layout(location = 1) in vec3 normal;
-        layout(location = 2) in vec3 world_position;
-        layout(location = 3) in vec4 world_rotation;
-        layout(location = 4) in vec3 world_scale;
-
-        out vec3 v_normal;
-
-        void main() {
-            vec3 pos_scaled = position * world_scale;
-
-            vec3 temp = cross(world_rotation.xyz, pos_scaled) + world_rotation.w * pos_scaled;
-            vec3 pos_rotated = pos_scaled + 2.0 * cross(world_rotation.xyz, temp);
-
-            vec3 pos_final = pos_rotated + world_position;
-
-            gl_Position = vec4(pos_final, 1.0);
-            
-            v_normal = normal;
-        }
-    ";
-
     pub const FRAG: &'static str =
         // fragment shader
         "

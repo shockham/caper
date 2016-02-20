@@ -1,3 +1,4 @@
+pub mod default;
 pub mod dist;
 pub mod pbr;
 pub mod height;
@@ -15,9 +16,11 @@ impl Shaders {
         // the shader programs
         let program_dist = match program!(display,
                                     330 => {
-                                        vertex: dist::gl330::VERT,
+                                        vertex: default::gl330::VERT,
                                         fragment: dist::gl330::FRAG,
-                                        geometry: dist::gl330::GEOM
+                                        geometry: default::gl330::GEOM,
+                                        tessellation_control: default::gl330::TESS_CONTROL,
+                                        tessellation_evaluation: default::gl330::TESS_EVAL
                                     },
                                     110 => {
                                         vertex: dist::gl110::VERT,
@@ -29,9 +32,11 @@ impl Shaders {
 
         let program_pbr = match program!(display,
                                     330 => {
-                                        vertex: pbr::gl330::VERT,
+                                        vertex: default::gl330::VERT,
                                         fragment: pbr::gl330::FRAG,
-                                        geometry: pbr::gl330::GEOM
+                                        geometry:default::gl330::GEOM,
+                                        tessellation_control: default::gl330::TESS_CONTROL,
+                                        tessellation_evaluation: default::gl330::TESS_EVAL
                                     },
                                     110 => {
                                         vertex: pbr::gl110::VERT,
@@ -43,9 +48,11 @@ impl Shaders {
         
         let program_height = match program!(display,
                                     330 => {
-                                        vertex: height::gl330::VERT,
+                                        vertex: default::gl330::VERT,
                                         fragment: height::gl330::FRAG,
-                                        geometry: height::gl330::GEOM,
+                                        geometry: default::gl330::GEOM,
+                                        tessellation_control: default::gl330::TESS_CONTROL,
+                                        tessellation_evaluation: default::gl330::TESS_EVAL
                                     },
                                     110 => {
                                         vertex: height::gl110::VERT,
@@ -57,7 +64,7 @@ impl Shaders {
         
         let program_height_tess = match program!(display,
                                     330 => {
-                                        vertex: height_tess::gl330::VERT,
+                                        vertex: default::gl330::VERT,
                                         fragment: height_tess::gl330::FRAG,
                                         geometry: height_tess::gl330::GEOM,
                                         tessellation_control: height_tess::gl330::TESS_CONTROL,
