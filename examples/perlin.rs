@@ -115,7 +115,7 @@ fn main() {
         // only regenerate the mesh if movement
         if movement_dirty {
             render_items[0].vertices = gen_perlin_mesh(pseu_cam_pos, map_size);
-            cam_state.cam_pos.1 = -2f32 - perlin2(&Seed::new(0),
+            cam_state.cam_pos.1 = -2.5f32 - perlin2(&Seed::new(0),
             &[(pseu_cam_pos.0 - fixed_val) / 10f32,
             (pseu_cam_pos.1 - fixed_val) / 10f32]).abs() * 8f32;
         }

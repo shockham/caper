@@ -10,6 +10,7 @@ use glium::draw_parameters::BackfaceCullingMode::CullClockwise;
 use glium_text;
 use glium_text::{ TextSystem, FontTexture, TextDisplay };
 
+use time;
 use utils::*;
 use shader::Shaders;
 use std::default::Default;
@@ -128,6 +129,7 @@ impl Renderer {
             projection_matrix: Renderer::build_persp_proj_mat(60f32, width as f32/height as f32, 0.01f32, 1000f32),
             modelview_matrix: Renderer::build_fp_view_matrix(cam_state),
             cam_pos: cam_state.cam_pos,
+            time: time::precise_time_s() as f32,
         };
 
         // drawing a frame

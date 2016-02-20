@@ -3,6 +3,7 @@
 extern crate glium;
 extern crate glium_text;
 extern crate noise;
+extern crate time;
 
 pub mod renderer;
 pub mod utils;

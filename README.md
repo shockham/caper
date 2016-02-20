@@ -1,10 +1,10 @@
 Caper
 ========
-Small game engine using [rust](https://www.rust-lang.org/) and [glium](https://github.com/tomaka/glium).
+Small game framework using [rust](https://www.rust-lang.org/) and [glium](https://github.com/tomaka/glium).
 
-Run example with:
+Run examples with:
 ```
-cargo run --example main_example
+cargo run --example transforms
 ```
 
 ----

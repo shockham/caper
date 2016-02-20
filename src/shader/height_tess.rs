@@ -114,6 +114,7 @@ pub mod gl330 {
         
         uniform mat4 projection_matrix;
         uniform mat4 modelview_matrix;
+        uniform float time;
 
         layout(triangles, equal_spacing, ccw) in;
         
@@ -122,18 +123,24 @@ pub mod gl330 {
         out vec3 te_normal;
         out vec3 te_pos;
 
-        vec3 tess_calc (vec3 one, vec3 two, vec3 three) {
-            return (sin(gl_TessCoord.x) * one) +
-                            (sin(gl_TessCoord.y) * two) +
-                            (sin(gl_TessCoord.z) * three); 
+        float rand (vec2 s) {
+            return fract(sin(dot(s, vec2(12.9898, 78.233))) * 43758.5453); 
         }
 
-        void main() {
+        vec3 tess_calc (vec3 one, vec3 two, vec3 three) {
+            return ((gl_TessCoord.x) * one) +
+                            ((gl_TessCoord.y) * two) +
+                            ((gl_TessCoord.z) * three); 
+        }
+
+        void main () {
             te_normal = tess_calc(tc_normal[0], tc_normal[1], tc_normal[2]);
 
             vec3 position = tess_calc(gl_in[0].gl_Position.xyz,
                 gl_in[1].gl_Position.xyz,
                 gl_in[2].gl_Position.xyz);
+
+            position += rand(position.xy + time);
 
             te_pos = position;
 
