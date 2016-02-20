@@ -71,7 +71,7 @@ impl Shaders {
                                         tessellation_evaluation: height_tess::gl330::TESS_EVAL
                                     },
                                     110 => {
-                                        vertex: height_tess::gl110::VERT,
+                                        vertex: default::gl110::VERT,
                                         fragment: height_tess::gl110::FRAG
                                     }) {
             Ok(p) => p,
