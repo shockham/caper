@@ -9,20 +9,18 @@ use renderer::{ RenderItem, Transform };
 /// quick macro to use in the examples for easily defining all the modules and game loop
 #[macro_export]
 macro_rules! game_loop {
-    ( $items:ident, $update:block ) => {
+    ( $input:ident, $renderer:ident, $shaders:ident, $cam_state:ident, $render_items:ident, $text_items:ident, $update:block ) => {
         {
-            use std::thread;
-            use std::time::Duration;
             use caper::renderer::{ Renderer, CamState, FIXED_TIME_STAMP };
             use caper::input::{ Input, Key };
             use caper::shader::Shaders;
 
-            let mut input = Input::new();
-            let renderer = Renderer::new("Caper".to_string());
-            let shaders = Shaders::new(&renderer.display);
+            let mut $input = Input::new();
+            let $renderer = Renderer::new("Caper".to_string());
+            let $shaders = Shaders::new(&$renderer.display);
 
             //cam state
-            let mut cam_state = CamState {
+            let mut $cam_state = CamState {
                 cam_pos: (0.0f32, 0.0, 0.0),
                 cam_rot: (0.0f32, 0.0, 0.0)
             };
@@ -31,7 +29,7 @@ macro_rules! game_loop {
             let mut accumulator = 0;
             let mut previous_clock = time::precise_time_ns();
             loop {
-                renderer.draw(cam_state, &$items, &Vec::new(), &shaders);
+                $renderer.draw($cam_state, &$render_items, &$text_items, &$shaders);
 
                 let now = time::precise_time_ns();
                 accumulator += now - previous_clock;
@@ -41,18 +39,13 @@ macro_rules! game_loop {
                     accumulator -= FIXED_TIME_STAMP;
 
                     // updating and handling the inputs
-                    input.update_inputs(&renderer.display);
-                    input.handle_fp_inputs(&mut cam_state);
+                    $input.update_inputs(&$renderer.display);
 
                     $update
                 }
 
                 //quit
-                if input.keys_down.contains(&Key::Escape) { break; }
-
-                let sleep_duration =
-                    Duration::from_millis(((FIXED_TIME_STAMP - accumulator) / 1000000) as u64);
-                thread::sleep(sleep_duration);
+                if $input.keys_down.contains(&Key::Escape) { break; }
             }
         }
     };

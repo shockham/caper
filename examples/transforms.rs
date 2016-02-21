@@ -67,10 +67,20 @@ fn main() {
         }
     ];
 
+    let text_items = Vec::new();
+
     game_loop! {
-        // pass the items to be rendered
+        input,
+        renderer,
+        shaders,
+        cam_state,
         render_items,
+        text_items,
+        // define block for update
         {
+            // first person input
+            input.handle_fp_inputs(&mut cam_state);
+
             // update some items
             let update_time = time::precise_time_s();
 
