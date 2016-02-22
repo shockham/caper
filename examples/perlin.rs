@@ -102,6 +102,7 @@ fn main() {
             //quit
             if input.keys_down.contains(&Key::Escape) { break; }
 
+            // set the fps counter
             text_items[0].text = format!("fps:{}", fps.tick());
         }
     }
