@@ -37,15 +37,14 @@ fn main() {
         create_skydome()
     ];
 
-
     let mut text_items = vec![
         TextItem {
             text: "text".to_string(),
             pos: (-1.0f32, 0.95f32, 0f32),
             color: (0f32, 0f32, 0f32, 1f32),
-        } 
+        }
     ];
-        
+
     let mut movement_dirty = false;
 
     game_loop! {
@@ -57,33 +56,32 @@ fn main() {
         text_items,
         // define a block for update
         {
-    
             // block for handling the inputs
             {
-                let mv_matrix = Renderer::build_fp_view_matrix(cam_state); 
+                let mv_matrix = Renderer::build_fp_view_matrix(cam_state);
 
                 // this can probably be cleaned up a bit
                 if input.keys_down.contains(&Key::S) {
-                    pseu_cam_pos.0 += mv_matrix[0][2] * move_speed; 
-                    pseu_cam_pos.1 += mv_matrix[2][2] * move_speed; 
+                    pseu_cam_pos.0 += mv_matrix[0][2] * move_speed;
+                    pseu_cam_pos.1 += mv_matrix[2][2] * move_speed;
                     movement_dirty = true;
                 }
 
                 if input.keys_down.contains(&Key::W) {
-                    pseu_cam_pos.0 -= mv_matrix[0][2] * move_speed; 
-                    pseu_cam_pos.1 -= mv_matrix[2][2] * move_speed; 
+                    pseu_cam_pos.0 -= mv_matrix[0][2] * move_speed;
+                    pseu_cam_pos.1 -= mv_matrix[2][2] * move_speed;
                     movement_dirty = true;
                 }
 
                 if input.keys_down.contains(&Key::D) {
-                    pseu_cam_pos.0 += mv_matrix[0][0] * move_speed; 
-                    pseu_cam_pos.1 += mv_matrix[2][0] * move_speed; 
+                    pseu_cam_pos.0 += mv_matrix[0][0] * move_speed;
+                    pseu_cam_pos.1 += mv_matrix[2][0] * move_speed;
                     movement_dirty = true;
                 }
 
                 if input.keys_down.contains(&Key::A) {
-                    pseu_cam_pos.0 -= mv_matrix[0][0] * move_speed; 
-                    pseu_cam_pos.1 -= mv_matrix[2][0] * move_speed; 
+                    pseu_cam_pos.0 -= mv_matrix[0][0] * move_speed;
+                    pseu_cam_pos.1 -= mv_matrix[2][0] * move_speed;
                     movement_dirty = true;
                 }
 
@@ -103,7 +101,7 @@ fn main() {
             if input.keys_down.contains(&Key::Escape) { break; }
 
             // set the fps counter
-            text_items[0].text = format!("fps:{}", fps.tick());
+            text_items[0].text = format!("fps:{}|t:{}", fps.tick(), (time::precise_time_s() - renderer.start_time) as f32);
         }
     }
 }

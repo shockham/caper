@@ -20,7 +20,7 @@ pub mod gl330 {
             vec3 base_color = vec3(col_val);
             base_color += dist; 
 
-            //base_color.r *= step(0.05, col_val);
+            base_color.r *= step(0.07, col_val);
 
             vec3 color = base_color * ((0.2 * lum) + (0.8 * dist));
             frag_output = vec4(color, 1.0);
