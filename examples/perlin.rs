@@ -7,7 +7,7 @@ extern crate caper;
 
 use caper::utils::create_skydome;
 use caper::renderer::{ RenderItem, TextItem, Transform };
-use caper::mesh::gen_perlin_mesh;
+use caper::mesh::{ gen_perlin_mesh, gen_sphere };
 use noise::{ perlin2, Seed };
 use fps_counter::FPSCounter;
 
@@ -20,6 +20,7 @@ fn main() {
     let mouse_speed = 10f32;
 
     let mut pseu_cam_pos = (0f32, 0f32);
+    let sphere_pos = (8f32, 10f32);
 
     // create a vector of render items
     let mut render_items = vec![
@@ -34,7 +35,18 @@ fn main() {
                 }
             ]
         },
-        create_skydome()
+        create_skydome(),
+        RenderItem {
+            vertices: gen_sphere(),
+            shader_index: 3,
+            instance_transforms: vec![
+                Transform {
+                    pos: (sphere_pos.0, 3.0, sphere_pos.1),
+                    rot: (0f32, 0f32, 0f32, 1f32),
+                    scale: (1f32, 1f32, 1f32)
+                }
+            ]
+        }
     ];
 
     let mut text_items = vec![
@@ -95,6 +107,9 @@ fn main() {
                 cam_state.cam_pos.1 = -2.5f32 - perlin2(&Seed::new(0),
                 &[(pseu_cam_pos.0 - fixed_val) / 10f32,
                 (pseu_cam_pos.1 - fixed_val) / 10f32]).abs() * 8f32;
+
+                // update the sphere location
+                render_items[2].instance_transforms[0].pos = (sphere_pos.0 - pseu_cam_pos.0, 3.0, sphere_pos.1 - pseu_cam_pos.1);
             }
 
             //quit
