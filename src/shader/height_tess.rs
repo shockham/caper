@@ -16,11 +16,12 @@ pub mod gl330 {
             float lum = max(dot(normalize(g_normal), normalize(LIGHT)), 0.0);
             float dist = (abs(distance(cam_pos, g_pos)) / 25);
 
+            
             float col_val = normalize(g_pos).y;
             vec3 base_color = vec3(col_val);
             base_color += dist; 
-
-            base_color.r *= step(0.07, col_val);
+            
+            base_color.gb /= step(0.1, col_val);
 
             vec3 color = base_color * ((0.2 * lum) + (0.8 * dist));
             frag_output = vec4(color, 1.0);
@@ -70,6 +71,10 @@ pub mod gl330 {
         float rand (vec2 s) {
             return fract(sin(dot(s, vec2(12.9898, 78.233))) * 43758.5453); 
         }
+        
+        float rand (vec3 s) {
+            return fract(sin(dot(s, vec3(12.9898, 78.233, 54.1232)))); 
+        }
 
         vec3 tess_calc (vec3 one, vec3 two, vec3 three) {
             return ((gl_TessCoord.x) * one) +
@@ -84,7 +89,8 @@ pub mod gl330 {
                 gl_in[1].gl_Position.xyz,
                 gl_in[2].gl_Position.xyz);
 
-            position += rand(position.xy + time);
+            //position += rand(position.xy + time);
+            position += rand(position.xyz + time);
 
             te_pos = position;
 
