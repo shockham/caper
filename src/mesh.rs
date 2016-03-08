@@ -121,13 +121,13 @@ pub fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
             [pos.0 , size_01, pos.1 + 1f32],
             [pos.0 + 1f32, size_11, pos.1 + 1f32]);
 
-        //let calc_normal = calc_normal(verts[0], verts[1], verts[2]);
+        let calc_normal = calc_normal(verts[0], verts[1], verts[2]);
 
         // create each Vertex from the verts vec
         for v in verts {
             vertices.push(Vertex {
                 position: v,
-                normal: DEF_NORMAL,
+                normal: calc_normal,
                 texture: DEF_UV
             });
         }

@@ -23,7 +23,7 @@ pub mod gl330 {
             
             base_color.gb /= step(0.1, col_val);
 
-            vec3 color = base_color * ((0.2 * lum) + (0.8 * dist));
+            vec3 color = base_color * ((0.1 * lum) + (0.9 * dist));
             frag_output = vec4(color, 1.0);
         }
     ";
@@ -73,7 +73,7 @@ pub mod gl330 {
         }
         
         float rand (vec3 s) {
-            return fract(sin(dot(s, vec3(12.9898, 78.233, 54.1232)))); 
+            return fract(sin(dot(s, vec3(12.9898, 78.233, 54.1232))) * 4.5453); 
         }
 
         vec3 tess_calc (vec3 one, vec3 two, vec3 three) {
@@ -90,7 +90,8 @@ pub mod gl330 {
                 gl_in[2].gl_Position.xyz);
 
             //position += rand(position.xy + time);
-            position += rand(position.xyz + time);
+            //position += rand(position.xyz + time);
+            position.y += rand(normalize(position.xyz) + cos(time)) / 2.0;
 
             te_pos = position;
 

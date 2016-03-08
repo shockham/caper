@@ -101,7 +101,12 @@ fn main() {
             if input.keys_down.contains(&Key::Escape) { break; }
 
             // set the fps counter
-            text_items[0].text = format!("fps:{}|t:{}", fps.tick(), (time::precise_time_s() - renderer.start_time) as f32);
+            text_items[0].text = format!(
+                "fps:{}|t:{}|pos:{:?}",
+                fps.tick(),
+                (time::precise_time_s() - renderer.start_time) as f32,
+                pseu_cam_pos
+            );
         }
     }
 }
