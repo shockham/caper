@@ -18,12 +18,14 @@ fn main() {
                 Transform {
                     pos: (0.0, (0.0 as f32).sin(), 0.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (0.5f32, 0.5f32, 0.5f32)
+                    scale: (0.5f32, 0.5f32, 0.5f32),
+                    update_fn: Vec::new(),
                 },
                 Transform {
                     pos: (0.0f32.sin(), 0.0, 0.0f32.cos()),
                     rot: (0f32, 0f32, 0f32, 0f32),
-                    scale: (1f32, 1f32, 1f32)
+                    scale: (1f32, 1f32, 1f32),
+                    update_fn: Vec::new(),
                 }
             ]
         },
@@ -34,12 +36,14 @@ fn main() {
                 Transform {
                     pos: (0.0, 0.0, 0.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (1f32, 1f32, 1f32)
+                    scale: (1f32, 1f32, 1f32),
+                    update_fn: Vec::new(),
                 },
                 Transform {
                     pos: (15.0, 0.0, 0.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (2.0f32, 2.0f32, 2.0f32)
+                    scale: (2.0f32, 2.0f32, 2.0f32),
+                    update_fn: Vec::new(),
                 }
             ]
         },
@@ -50,7 +54,8 @@ fn main() {
                 Transform {
                     pos: (0.0, 1.0, 0.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (1f32, 1f32, 1f32)
+                    scale: (1f32, 1f32, 1f32),
+                    update_fn: Vec::new(),
                 }
             ]
         },
@@ -61,7 +66,8 @@ fn main() {
                 Transform {
                     pos: (0.0, 3.0, 0.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (1f32, 1f32, 1f32)
+                    scale: (1f32, 1f32, 1f32),
+                    update_fn: Vec::new(),
                 }
             ]
         }

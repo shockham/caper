@@ -11,7 +11,7 @@ use renderer::{ RenderItem, Transform };
 macro_rules! game_loop {
     ( $input:ident, $renderer:ident, $shaders:ident, $cam_state:ident, $render_items:ident, $text_items:ident, $update:block ) => {
         {
-            use caper::renderer::{ Renderer, CamState, FIXED_TIME_STAMP };
+            use caper::renderer::{ Renderer, CamState, Entity, FIXED_TIME_STAMP };
             use caper::input::{ Input, Key };
             use caper::shader::Shaders;
 
@@ -40,6 +40,12 @@ macro_rules! game_loop {
 
                     // updating and handling the inputs
                     $input.update_inputs(&$renderer.display);
+
+                    for item in $render_items.iter() {
+                        for trans in item.instance_transforms.iter() {
+                            trans.update();
+                        }
+                    }
 
                     $update
                 }
@@ -104,7 +110,8 @@ pub fn create_skydome() -> RenderItem {
             Transform {
                 pos: (0.0, 0.0, 0.0),
                 rot: (0f32, 0f32, 0f32, 1f32),
-                scale: (100f32, 100f32, 100f32)
+                scale: (100f32, 100f32, 100f32),
+                update_fn: Vec::new(),
             }
         ]
     }

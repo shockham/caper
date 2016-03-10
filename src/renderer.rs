@@ -28,7 +28,8 @@ pub type Quaternion = (f32, f32, f32, f32);
 pub struct Transform {
     pub pos: Vector3,
     pub rot: Quaternion, 
-    pub scale: Vector3 
+    pub scale: Vector3,
+    pub update_fn: Vec<fn() -> ()>,
 }
 
 /// struct for abstracting items to be sent to render
@@ -43,12 +44,31 @@ pub struct TextItem {
     pub text: String,
     pub color: (f32, f32, f32, f32),
     pub pos: Vector3,
+    pub update_fn: Vec<fn() -> ()>,
 }
 
 /// trait for updateable entities
 pub trait Entity {
-    fn start(&self) -> ();
+    /// ran every frame
     fn update(&self) -> ();
+}
+
+/// implementation of Entity for Transform
+impl Entity for Transform {
+    fn update(&self) {
+        for upd_fn in self.update_fn.iter() {
+            upd_fn();
+        }
+    }
+}
+
+/// implementation of Entity for TextItem
+impl Entity for TextItem {
+    fn update(&self) {
+        for upd_fn in self.update_fn.iter() {
+            upd_fn();
+        }
+    }
 }
 
 /// struct for abstracting the camera state

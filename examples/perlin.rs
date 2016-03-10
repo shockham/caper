@@ -31,7 +31,8 @@ fn main() {
                 Transform {
                     pos: (fixed_val, 0.0, fixed_val),
                     rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (1f32, 1f32, 1f32)
+                    scale: (1f32, 1f32, 1f32),
+                    update_fn: Vec::new(),
                 }
             ]
         },
@@ -43,7 +44,8 @@ fn main() {
                 Transform {
                     pos: (sphere_pos.0, 3.0, sphere_pos.1),
                     rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (1f32, 1f32, 1f32)
+                    scale: (1f32, 1f32, 1f32),
+                    update_fn: Vec::new(),
                 }
             ]
         }
@@ -54,6 +56,7 @@ fn main() {
             text: "text".to_string(),
             pos: (-1.0f32, 0.95f32, 0f32),
             color: (0f32, 0f32, 0f32, 1f32),
+            update_fn: Vec::new(),
         }
     ];
 

@@ -19,7 +19,8 @@ fn main() {
             Transform {
                 pos: (pos.0 * 5f32, size, pos.1 * 5f32),
                 rot: (0f32, 0f32, 0f32, 1f32),
-                scale: (4.2f32, size, 4.2f32)
+                scale: (4.2f32, size, 4.2f32),
+                update_fn: Vec::new(),
             }
         })
     .collect::<Vec<_>>();

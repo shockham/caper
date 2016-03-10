@@ -13,7 +13,8 @@ fn main() {
             Transform {
                 pos: ((i as f32 % 10f32) * 2f32, 0.0f32, (i as f32 / 10f32) * 2f32),
                 rot: (0f32, 0f32, 0f32, 1f32),
-                scale: (1f32, 1f32, 1f32)
+                scale: (1f32, 1f32, 1f32),
+                update_fn: Vec::new(),
             }
         })
     .collect::<Vec<_>>();
@@ -55,7 +56,8 @@ fn main() {
                         rot: (0f32, 0f32, 0f32, 1f32),
                         scale: (update_time.sin() as f32,
                                update_time.sin() as f32,
-                               update_time.sin() as f32)
+                               update_time.sin() as f32),
+                        update_fn: Vec::new(),
                     }
                 }).collect::<Vec<_>>();
         }
