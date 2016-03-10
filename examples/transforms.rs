@@ -10,17 +10,17 @@ use caper::mesh::{ gen_quad, gen_sphere };
 fn main() {
 
     fn sin_y (t:&mut Transform) {
-        t.pos = (0.0, time::precise_time_s().sin() as f32, 0.0);
+        t.pos = (t.pos.0, time::precise_time_s().sin() as f32, t.pos.2);
     }
 
     fn circle (t:&mut Transform) {
         let update_time = time::precise_time_s();
-        t.pos = (update_time.sin() as f32 * 3.0, 0.0, update_time.cos() as f32 * 3.0);
+        t.pos = (update_time.sin() as f32 * 3.0, t.pos.1, update_time.cos() as f32 * 3.0);
     }
 
     fn spin (t:&mut Transform) {
         let update_time = time::precise_time_s();
-        t.rot = (update_time.cos() as f32, 0.0, 0.0, update_time.sin() as f32);
+        t.rot = (update_time.cos() as f32, t.rot.1, t.rot.2, update_time.sin() as f32);
     }
 
     // load the models in to vec<Vertex>
@@ -34,7 +34,7 @@ fn main() {
                     pos: (0.0, (0.0 as f32).sin(), 0.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (0.5f32, 0.5f32, 0.5f32),
-                    update_fn: vec![sin_y],
+                    update_fn: vec![sin_y, circle],
                 },
                 Transform {
                     pos: (0.0f32.sin(), 0.0, 0.0f32.cos()),
