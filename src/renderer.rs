@@ -29,7 +29,7 @@ pub struct Transform {
     pub pos: Vector3,
     pub rot: Quaternion, 
     pub scale: Vector3,
-    pub update_fn: Vec<fn() -> ()>,
+    pub update_fn: Vec<fn(t:&mut Transform) -> ()>,
 }
 
 /// struct for abstracting items to be sent to render
@@ -44,29 +44,29 @@ pub struct TextItem {
     pub text: String,
     pub color: (f32, f32, f32, f32),
     pub pos: Vector3,
-    pub update_fn: Vec<fn() -> ()>,
+    pub update_fn: Vec<fn(ti:&mut TextItem) -> ()>,
 }
 
 /// trait for updateable entities
 pub trait Entity {
     /// ran every frame
-    fn update(&self) -> ();
+    fn update(&mut self) -> ();
 }
 
 /// implementation of Entity for Transform
 impl Entity for Transform {
-    fn update(&self) {
-        for upd_fn in self.update_fn.iter() {
-            upd_fn();
+    fn update(&mut self) {
+        for i in 0..self.update_fn.len() {
+            self.update_fn[i](self);
         }
     }
 }
 
 /// implementation of Entity for TextItem
 impl Entity for TextItem {
-    fn update(&self) {
-        for upd_fn in self.update_fn.iter() {
-            upd_fn();
+    fn update(&mut self) {
+        for i in 0..self.update_fn.len() {
+            self.update_fn[i](self);
         }
     }
 }

@@ -9,7 +9,8 @@ use renderer::{ RenderItem, Transform };
 /// quick macro to use in the examples for easily defining all the modules and game loop
 #[macro_export]
 macro_rules! game_loop {
-    ( $input:ident, $renderer:ident, $shaders:ident, $cam_state:ident, $render_items:ident, $text_items:ident, $update:block ) => {
+    ( $input:ident, $renderer:ident, $shaders:ident,
+      $cam_state:ident, $render_items:ident, $text_items:ident, $update:block ) => {
         {
             use caper::renderer::{ Renderer, CamState, Entity, FIXED_TIME_STAMP };
             use caper::input::{ Input, Key };
@@ -41,9 +42,9 @@ macro_rules! game_loop {
                     // updating and handling the inputs
                     $input.update_inputs(&$renderer.display);
 
-                    for item in $render_items.iter() {
-                        for trans in item.instance_transforms.iter() {
-                            trans.update();
+                    for i in 0..$render_items.len() {
+                        for t in 0..$render_items[i].instance_transforms.len() {
+                            $render_items[i].instance_transforms[t].update();
                         }
                     }
 
