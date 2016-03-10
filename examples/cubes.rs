@@ -26,7 +26,7 @@ fn main() {
     .collect::<Vec<_>>();
 
     // create a vector of render items
-    let render_items = vec![
+    let mut render_items = vec![
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/cube.obj")),
             shader_index: 3,
