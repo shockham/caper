@@ -13,6 +13,16 @@ fn main() {
         t.pos = (0.0, time::precise_time_s().sin() as f32, 0.0);
     }
 
+    fn circle (t:&mut Transform) {
+        let update_time = time::precise_time_s();
+        t.pos = (update_time.sin() as f32 * 3.0, 0.0, update_time.cos() as f32 * 3.0);
+    }
+
+    fn spin (t:&mut Transform) {
+        let update_time = time::precise_time_s();
+        t.rot = (update_time.cos() as f32, 0.0, 0.0, update_time.sin() as f32);
+    }
+
     // load the models in to vec<Vertex>
     // for efficiency all the verts with the same shader should be one RenderItem
     let mut render_items = vec![
@@ -30,7 +40,7 @@ fn main() {
                     pos: (0.0f32.sin(), 0.0, 0.0f32.cos()),
                     rot: (0f32, 0f32, 0f32, 0f32),
                     scale: (1f32, 1f32, 1f32),
-                    update_fn: Vec::new(),
+                    update_fn: vec![circle],
                 }
             ]
         },
@@ -48,7 +58,7 @@ fn main() {
                     pos: (15.0, 0.0, 0.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (2.0f32, 2.0f32, 2.0f32),
-                    update_fn: Vec::new(),
+                    update_fn: vec![spin],
                 }
             ]
         },
@@ -91,17 +101,6 @@ fn main() {
         {
             // first person input
             input.handle_fp_inputs(&mut cam_state);
-
-            // update some items
-            let update_time = time::precise_time_s();
-
-            //render_items[0].instance_transforms[0].pos = 
-            //    (0.0, update_time.sin() as f32, 0.0);
-            render_items[0].instance_transforms[1].pos = 
-                (update_time.sin() as f32 * 3.0, 0.0, update_time.cos() as f32 * 3.0);
-
-            render_items[1].instance_transforms[1].rot =
-                (update_time.cos() as f32, 0.0, 0.0, update_time.sin() as f32);
         }
     }
 }
