@@ -23,8 +23,6 @@ fn main() {
         t.rot = (update_time.cos() as f32, t.rot.1, t.rot.2, update_time.sin() as f32);
     }
 
-    // load the models in to vec<Vertex>
-    // for efficiency all the verts with the same shader should be one RenderItem
     let mut render_items = vec![
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/sphere.obj")),

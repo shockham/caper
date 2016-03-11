@@ -29,7 +29,7 @@ pub struct Transform {
     pub pos: Vector3,
     pub rot: Quaternion, 
     pub scale: Vector3,
-    pub update_fn: Vec<fn(t:&mut Transform) -> ()>,
+    pub update_fn: Vec<fn(&mut Transform)>,
 }
 
 /// struct for abstracting items to be sent to render
@@ -44,7 +44,7 @@ pub struct TextItem {
     pub text: String,
     pub color: (f32, f32, f32, f32),
     pub pos: Vector3,
-    pub update_fn: Vec<fn(ti:&mut TextItem) -> ()>,
+    pub update_fn: Vec<fn(&mut TextItem)>,
 }
 
 /// trait for updateable entities
