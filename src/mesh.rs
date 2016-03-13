@@ -97,10 +97,14 @@ pub fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
     let point_total = (map_size * map_size) as i32;
     let seed = Seed::new(0);
 
+    let get_pos_perlin = |p:(f32, f32)| {
+        perlin2(&seed, &[p.0 / 10f32, p.1 / 10f32]).abs() * 8f32
+    };
+
     // get all heights for first chunk 
-    let mut size_00 = perlin2(&seed, &[0f32, 0f32]).abs() * 8f32;
+    let mut size_00 = get_pos_perlin((0f32, 0f32));
     let mut size_10;
-    let mut size_01 = perlin2(&seed, &[0f32, 0f32]).abs() * 8f32;
+    let mut size_01 = get_pos_perlin((0f32, 0f32));
     let mut size_11;
 
     for i in 0 .. point_total {
@@ -108,9 +112,8 @@ pub fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
         let p_pos = (pos.0 + pseu_pos.0, pos.1 + pseu_pos.1);
 
         // get the heights of the next two corners
-        size_10 = perlin2(&seed, &[(p_pos.0 + 1f32) / 10f32, p_pos.1 / 10f32]).abs() * 8f32;
-        size_11 = perlin2(&seed, 
-                          &[(p_pos.0 + 1f32) / 10f32, (p_pos.1 + 1f32) / 10f32]).abs() * 8f32;
+        size_10 = get_pos_perlin((p_pos.0 + 1f32, p_pos.1));
+        size_11 = get_pos_perlin((p_pos.0 + 1f32, p_pos.1 + 1f32));
 
         // create the two tris for this chunk
         let verts = vec!(
