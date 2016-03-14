@@ -49,7 +49,7 @@ macro_rules! game_loop {
                     }
 
                     for i in 0..$text_items.len() {
-                        $text_items[i].instance_transforms[i].update();
+                        $text_items[i].update();
                     }
 
                     $update
