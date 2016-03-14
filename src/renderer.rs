@@ -44,6 +44,7 @@ pub struct TextItem {
     pub text: String,
     pub color: (f32, f32, f32, f32),
     pub pos: Vector3,
+    pub scale: Vector3,
     pub update_fn: Vec<fn(&mut TextItem)>,
 }
 

@@ -86,7 +86,7 @@ fn main() {
         }
     ];
 
-    let text_items = Vec::new();
+    let mut text_items = Vec::new();
 
     game_loop! {
         input,
