@@ -197,7 +197,8 @@ impl Renderer {
             ];
 
             // create TextDisplay for item, TODO change this to not be done every frame
-            let text = TextDisplay::new(&self.text_system, &self.default_font, text_item.text.as_str());
+            let text = TextDisplay::new(&self.text_system, &self.default_font,
+                                        text_item.text.as_str());
 
             glium_text::draw(&text,
                              &self.text_system,
