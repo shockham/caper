@@ -56,6 +56,7 @@ fn main() {
             text: "text".to_string(),
             pos: (-1.0f32, 0.95f32, 0f32),
             color: (0f32, 0f32, 0f32, 1f32),
+            scale: (1f32, 1f32, 1f32),
             update_fn: Vec::new(),
         }
     ];
