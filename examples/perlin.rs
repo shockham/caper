@@ -39,7 +39,7 @@ fn main() {
         create_skydome(),
         RenderItem {
             vertices: gen_sphere(),
-            shader_index: 3,
+            shader_index: 4,
             instance_transforms: vec![
                 Transform {
                     pos: (sphere_pos.0, 3.0, sphere_pos.1),

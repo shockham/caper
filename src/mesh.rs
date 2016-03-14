@@ -106,7 +106,6 @@ pub fn gen_proc_mesh(pseu_pos: (f32, f32), map_size: f32,
 
     let point_total = (map_size * map_size) as i32;
 
-
     // get all heights for first chunk 
     let mut size_00 = gen_fn((0f32, 0f32), seed);
     let mut size_10;
