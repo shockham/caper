@@ -43,6 +43,11 @@ fn main() {
         cam_state,
         render_items,
         text_items,
+        // define a block for start
+        {
+            // yay start code
+            println!("{:?}", cam_state.cam_pos);
+        },
         // define a block for update
         { 
             // first person input

@@ -10,7 +10,8 @@ use renderer::{ RenderItem, Transform };
 #[macro_export]
 macro_rules! game_loop {
     ( $input:ident, $renderer:ident, $shaders:ident,
-      $cam_state:ident, $render_items:ident, $text_items:ident, $update:block ) => {
+      $cam_state:ident, $render_items:ident, $text_items:ident,
+      $start:block, $update:block ) => {
         {
             use caper::renderer::{ Renderer, CamState, Entity, FIXED_TIME_STAMP };
             use caper::input::{ Input, Key };
@@ -25,6 +26,8 @@ macro_rules! game_loop {
                 cam_pos: (0.0f32, 0.0, 0.0),
                 cam_rot: (0.0f32, 0.0, 0.0)
             };
+
+            $start
 
             // the main loop
             let mut accumulator = 0;
