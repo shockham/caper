@@ -17,10 +17,11 @@ fn main() {
     let map_size = 50f32;
     let fixed_val = -(map_size/2f32);
     let move_speed = 0.05f32;
-    let mouse_speed = 10f32;
+    let mouse_speed = 3f32;
 
     let mut pseu_cam_pos = (0f32, 0f32);
     let sphere_pos = (8f32, 10f32);
+    let mut movement_dirty = true;
 
     // create a vector of render items
     let mut render_items = vec![
@@ -60,8 +61,6 @@ fn main() {
             update_fn: Vec::new(),
         }
     ];
-
-    let mut movement_dirty = false;
 
     game_loop! {
         input,
