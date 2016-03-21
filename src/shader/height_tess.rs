@@ -28,6 +28,38 @@ pub mod gl330 {
         }
     ";
     
+    // geometry shader
+    pub const GEOM: &'static str =
+        "
+        #version 330
+
+        layout(triangles) in;
+        layout(triangle_strip, max_vertices=3) out;
+
+        in vec3 te_normal[];
+        in vec3 te_pos[];
+
+        out vec3 g_normal;
+        out vec3 g_pos;
+
+        vec3 calc_normal (vec3 p0, vec3 p1, vec3 p2) {
+            return cross(p0 - p1, p0 - p2);
+        }
+        
+        void main(void) {   
+            vec3 norm = calc_normal(te_pos[0], te_pos[1], te_pos[2]);
+
+            for(int i = 0; i < gl_in.length(); i++){
+                //g_normal = te_normal[i];
+                g_normal = norm;
+                g_pos = te_pos[i];
+                gl_Position = gl_in[i].gl_Position;
+                EmitVertex();
+            }
+            EndPrimitive();
+        }
+    ";
+    
     // tessellation control shader
     pub const TESS_CONTROL: &'static str =
         "
@@ -82,8 +114,15 @@ pub mod gl330 {
                             ((gl_TessCoord.z) * three); 
         }
 
+        vec3 calc_normal (vec3 p0, vec3 p1, vec3 p2) {
+            return cross(p0 - p1, p0 - p2);
+        }
+
         void main () {
-            te_normal = tess_calc(tc_normal[0], tc_normal[1], tc_normal[2]);
+            //te_normal = tess_calc(tc_normal[0], tc_normal[1], tc_normal[2]);
+            te_normal = calc_normal(gl_in[0].gl_Position.xyz,
+                gl_in[1].gl_Position.xyz,
+                gl_in[2].gl_Position.xyz);
 
             vec3 position = tess_calc(gl_in[0].gl_Position.xyz,
                 gl_in[1].gl_Position.xyz,
