@@ -96,12 +96,12 @@ fn main() {
         render_items,
         text_items,
         // define a block for start
-        {
+        start => {
             // yay start code
             println!("{:?}", cam_state.cam_pos);
         },
         // define block for update
-        {
+        update => {
             // first person input
             input.handle_fp_inputs(&mut cam_state);
         }

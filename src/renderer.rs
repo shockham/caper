@@ -214,7 +214,7 @@ impl Renderer {
         };
     }
 
-    /// Returns perspective matrix given fov, aspect ratio, z near and far
+    /// Returns perspective projection matrix given fov, aspect ratio, z near and far
     pub fn build_persp_proj_mat(fov:f32,aspect:f32,znear:f32,zfar:f32) -> [[f32; 4]; 4] {
         let ymax = znear * (fov * (PI/360.0)).tan();
         let ymin = -ymax;

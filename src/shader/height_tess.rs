@@ -16,18 +16,18 @@ pub mod gl330 {
             float lum = max(dot(normalize(g_normal), normalize(LIGHT)), 0.0);
             float dist = (abs(distance(cam_pos, g_pos)) / 25);
 
-            
+
             float col_val = normalize(g_pos).y;
             vec3 base_color = vec3(col_val);
-            base_color += dist; 
-            
+            base_color += dist;
+
             base_color.gb /= step(0.1, col_val);
 
             vec3 color = base_color * ((0.1 * lum) + (0.9 * dist));
             frag_output = vec4(color, 1.0);
         }
     ";
-    
+
     // geometry shader
     pub const GEOM: &'static str =
         "
@@ -45,8 +45,8 @@ pub mod gl330 {
         vec3 calc_normal (vec3 p0, vec3 p1, vec3 p2) {
             return cross(p0 - p1, p0 - p2);
         }
-        
-        void main(void) {   
+
+        void main(void) {
             vec3 norm = calc_normal(te_pos[0], te_pos[1], te_pos[2]);
 
             for(int i = 0; i < gl_in.length(); i++){
@@ -59,14 +59,14 @@ pub mod gl330 {
             EndPrimitive();
         }
     ";
-    
+
     // tessellation control shader
     pub const TESS_CONTROL: &'static str =
         "
         #version 400
 
         layout(vertices = 3) out;
-        
+
         in vec3 v_normal[];
 
         out vec3 tc_normal[];
@@ -83,35 +83,35 @@ pub mod gl330 {
             gl_TessLevelInner[0] = tess_level;
         }
     ";
-    
+
     // tessellation evaluation shader
     pub const TESS_EVAL: &'static str =
         "
         #version 400
-        
+
         uniform mat4 projection_matrix;
         uniform mat4 modelview_matrix;
         uniform float time;
 
         layout(triangles, equal_spacing, ccw) in;
-        
+
         in vec3 tc_normal[];
 
         out vec3 te_normal;
         out vec3 te_pos;
 
         float rand (vec2 s) {
-            return fract(sin(dot(s, vec2(12.9898, 78.233))) * 43758.5453); 
+            return fract(sin(dot(s, vec2(12.9898, 78.233))) * 43758.5453);
         }
-        
+
         float rand (vec3 s) {
-            return fract(sin(dot(s, vec3(12.9898, 78.233, 54.1232))) * 4.5453); 
+            return fract(sin(dot(s, vec3(12.9898, 78.233, 54.1232))) * 4.5453);
         }
 
         vec3 tess_calc (vec3 one, vec3 two, vec3 three) {
             return ((gl_TessCoord.x) * one) +
                             ((gl_TessCoord.y) * two) +
-                            ((gl_TessCoord.z) * three); 
+                            ((gl_TessCoord.z) * three);
         }
 
         vec3 calc_normal (vec3 p0, vec3 p1, vec3 p2) {
@@ -159,8 +159,8 @@ pub mod gl110 {
 
             float col_val = normalize(g_pos).y;
             vec3 base_color = vec3(col_val)
-            base_color += dist; 
-            
+            base_color += dist;
+
             //base_color.r *= step(0.05, col_val);
 
             vec3 color = base_color * ((0.2 * lum) + (0.8 * dist));

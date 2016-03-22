@@ -70,12 +70,12 @@ fn main() {
         render_items,
         text_items,
         // define a block for start
-        {
+        start => {
             // yay start code
             println!("{:?}", cam_state.cam_pos);
         },
         // define a block for update
-        {
+        update => {
             // block for handling the inputs
             {
                 let mv_matrix = Renderer::build_fp_view_matrix(cam_state);
