@@ -21,6 +21,9 @@ pub mod gl330 {
             vec3 base_color = vec3(col_val);
             base_color += dist;
 
+            // color mode, comment out for more monochrome
+            base_color /= (0.5 + (normalize(g_normal) * 0.1));
+
             base_color.gb /= step(0.1, col_val);
 
             vec3 color = base_color * ((0.1 * lum) + (0.9 * dist));
