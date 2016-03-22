@@ -10,7 +10,7 @@ use caper::renderer::{ RenderItem, Transform };
 use noise::{ perlin2, Seed };
 
 fn main() {
-    // generate the instance positions 
+    // generate the instance positions
     let map_size = 50f32;
     let transforms = (0 .. 2500)
         .map(|i| {
@@ -34,7 +34,7 @@ fn main() {
         }
     ];
 
-    let mut text_items = Vec::new(); 
+    let mut text_items = Vec::new();
 
     game_loop! {
         input,
@@ -49,7 +49,7 @@ fn main() {
             println!("{:?}", cam_state.cam_pos);
         },
         // define a block for update
-        update => { 
+        update => {
             // first person input
             input.handle_fp_inputs(&mut cam_state);
 

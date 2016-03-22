@@ -7,7 +7,7 @@ use caper::utils::load_wavefront;
 use caper::renderer::{ RenderItem, Transform };
 
 fn main() {
-    // generate the instance positions 
+    // generate the instance positions
     let transforms = (0 .. 200)
         .map(|i| {
             Transform {
@@ -43,7 +43,7 @@ fn main() {
             println!("{:?}", cam_state.cam_pos);
         },
         // define a block for update
-        update => { 
+        update => {
             // first person input
             input.handle_fp_inputs(&mut cam_state);
 
