@@ -37,13 +37,13 @@ impl Input {
             match event {
                 KeyboardInput(Pressed, _, vkey) => {
                     self.keys_down.push(vkey.unwrap());
-                }, 
+                },
                 KeyboardInput(Released, _, vkey) => {
                     self.keys_down.retain(|&k| k != vkey.unwrap());
                 },
-                MouseMoved(a) => { 
-                    let mouse_diff = ((width / 2) as i32 - (a.0 as f32 * hidpi_factor) as i32, 
-                                      (height / 2) as i32 - (a.1 as f32 * hidpi_factor) as i32);
+                MouseMoved(a) => {
+                    let mouse_diff = ((width / 2) as i32 - (a.0 as f32 / hidpi_factor) as i32,
+                                      (height / 2) as i32 - (a.1 as f32 / hidpi_factor) as i32);
                     self.mouse_delta.0 = (mouse_diff.0 as f32)/(width as f32);
                     self.mouse_delta.1 = (mouse_diff.1 as f32)/(height as f32);
                     self.mouse_pos = a;
@@ -65,31 +65,31 @@ impl Input {
         static MOVE_SPEED: f32 = 0.2f32;
         static MOUSE_SPEED: f32 = 10f32;
 
-        let mv_matrix = Renderer::build_fp_view_matrix(*cam_state); 
+        let mv_matrix = Renderer::build_fp_view_matrix(*cam_state);
 
         // this can probably be cleaned up a bit
         if self.keys_down.contains(&Key::W) {
-            cam_state.cam_pos.0 += mv_matrix[0][2] * MOVE_SPEED; 
-            cam_state.cam_pos.1 += mv_matrix[1][2] * MOVE_SPEED; 
-            cam_state.cam_pos.2 += mv_matrix[2][2] * MOVE_SPEED; 
+            cam_state.cam_pos.0 += mv_matrix[0][2] * MOVE_SPEED;
+            cam_state.cam_pos.1 += mv_matrix[1][2] * MOVE_SPEED;
+            cam_state.cam_pos.2 += mv_matrix[2][2] * MOVE_SPEED;
         }
 
         if self.keys_down.contains(&Key::S) {
-            cam_state.cam_pos.0 -= mv_matrix[0][2] * MOVE_SPEED; 
-            cam_state.cam_pos.1 -= mv_matrix[1][2] * MOVE_SPEED; 
-            cam_state.cam_pos.2 -= mv_matrix[2][2] * MOVE_SPEED; 
+            cam_state.cam_pos.0 -= mv_matrix[0][2] * MOVE_SPEED;
+            cam_state.cam_pos.1 -= mv_matrix[1][2] * MOVE_SPEED;
+            cam_state.cam_pos.2 -= mv_matrix[2][2] * MOVE_SPEED;
         }
 
         if self.keys_down.contains(&Key::A) {
-            cam_state.cam_pos.0 += mv_matrix[0][0] * MOVE_SPEED; 
-            cam_state.cam_pos.1 += mv_matrix[1][0] * MOVE_SPEED; 
-            cam_state.cam_pos.2 += mv_matrix[2][0] * MOVE_SPEED; 
+            cam_state.cam_pos.0 += mv_matrix[0][0] * MOVE_SPEED;
+            cam_state.cam_pos.1 += mv_matrix[1][0] * MOVE_SPEED;
+            cam_state.cam_pos.2 += mv_matrix[2][0] * MOVE_SPEED;
         }
 
         if self.keys_down.contains(&Key::D) {
-            cam_state.cam_pos.0 -= mv_matrix[0][0] * MOVE_SPEED; 
-            cam_state.cam_pos.1 -= mv_matrix[1][0] * MOVE_SPEED; 
-            cam_state.cam_pos.2 -= mv_matrix[2][0] * MOVE_SPEED; 
+            cam_state.cam_pos.0 -= mv_matrix[0][0] * MOVE_SPEED;
+            cam_state.cam_pos.1 -= mv_matrix[1][0] * MOVE_SPEED;
+            cam_state.cam_pos.2 -= mv_matrix[2][0] * MOVE_SPEED;
         }
 
         cam_state.cam_rot.0 += self.mouse_delta.1 * MOUSE_SPEED;
