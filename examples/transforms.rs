@@ -3,9 +3,13 @@ extern crate time;
 #[macro_use]
 extern crate caper;
 
+#[macro_use]
+extern crate imgui;
+
 use caper::utils::load_wavefront;
 use caper::renderer::{ RenderItem, Transform };
 use caper::mesh::{ gen_quad, gen_sphere };
+use imgui::*;
 
 fn main() {
 
@@ -104,6 +108,9 @@ fn main() {
         update => {
             // first person input
             input.handle_fp_inputs(&mut cam_state);
+        },
+        ui => {
+
         }
     }
 }

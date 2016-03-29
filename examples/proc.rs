@@ -3,8 +3,12 @@ extern crate time;
 #[macro_use]
 extern crate caper;
 
+#[macro_use]
+extern crate imgui;
+
 use caper::utils::load_wavefront;
 use caper::renderer::{ RenderItem, Transform };
+use imgui::*;
 
 fn main() {
     // generate the instance positions
@@ -65,6 +69,9 @@ fn main() {
                         update_fn: Vec::new(),
                     }
                 }).collect::<Vec<_>>();
+        },
+        ui => {
+
         }
     }
 }

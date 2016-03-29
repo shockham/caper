@@ -3,11 +3,15 @@ extern crate time;
 #[macro_use]
 extern crate caper;
 
+#[macro_use]
+extern crate imgui;
+
 extern crate noise;
 
 use caper::utils::load_wavefront;
 use caper::renderer::{ RenderItem, Transform };
 use noise::{ perlin2, Seed };
+use imgui::*;
 
 fn main() {
     // generate the instance positions
@@ -55,6 +59,9 @@ fn main() {
 
             // update some items
             //let update_time = time::precise_time_s();
+        },
+        ui => {
+            // ui code here
         }
     }
 }

@@ -11,6 +11,7 @@ time = "*"
 genmesh = "*"
 obj = { version = "*", features = ["usegenmesh"] }
 noise = "*"
+imgui = "*"
 
 [dev-dependencies]
 fps_counter = "*"

@@ -5,11 +5,15 @@ extern crate noise;
 #[macro_use]
 extern crate caper;
 
+#[macro_use]
+extern crate imgui;
+
 use caper::utils::create_skydome;
 use caper::renderer::{ RenderItem, TextItem, Transform };
 use caper::mesh::{ gen_perlin_mesh, gen_sphere };
 use noise::{ perlin2, Seed };
 use fps_counter::FPSCounter;
+use imgui::*;
 
 fn main() {
     let mut fps = FPSCounter::new();
@@ -129,7 +133,17 @@ fn main() {
                 fps.tick(),
                 (time::precise_time_s() - renderer.start_time) as f32,
                 pseu_cam_pos
-            );
+                );
+        },
+        ui => {
+            ui.window(im_str!("debug"))
+                .size((300.0, 100.0), ImGuiSetCond_FirstUseEver)
+                .build(|| {
+                    ui.text(im_str!("Test debug ui"));
+                    ui.separator();
+                    let mouse_pos = ui.imgui().mouse_pos();
+                    ui.text(im_str!("Mouse Position: ({:.1},{:.1})", mouse_pos.0, mouse_pos.1));
+                })
         }
     }
 }

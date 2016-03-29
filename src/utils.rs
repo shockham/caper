@@ -12,14 +12,15 @@ macro_rules! game_loop {
     ( $input:ident, $renderer:ident, $shaders:ident,
       $cam_state:ident, $render_items:ident, $text_items:ident,
       start => $start:block,
-      update => $update:block ) => {
+      update => $update:block,
+      $ui:ident => $ui_update:block) => {
         {
             use caper::renderer::{ Renderer, CamState, Entity, FIXED_TIME_STAMP };
             use caper::input::{ Input, Key };
             use caper::shader::Shaders;
 
             let mut $input = Input::new();
-            let $renderer = Renderer::new("Caper".to_string());
+            let mut $renderer = Renderer::new("Caper".to_string());
             let $shaders = Shaders::new(&$renderer.display);
 
             //cam state
@@ -28,13 +29,17 @@ macro_rules! game_loop {
                 cam_rot: (0.0f32, 0.0, 0.0)
             };
 
-            $start
+            $start;
+
+            fn render_imgui<'a>($ui: &Ui<'a>) {
+                $ui_update 
+            }
 
             // the main loop
             let mut accumulator = 0;
             let mut previous_clock = time::precise_time_ns();
             loop {
-                $renderer.draw($cam_state, &$render_items, &$text_items, &$shaders);
+                $renderer.draw($cam_state, &$render_items, &$text_items, &$shaders, render_imgui);
 
                 let now = time::precise_time_ns();
                 accumulator += now - previous_clock;

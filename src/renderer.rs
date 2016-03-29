@@ -16,6 +16,9 @@ use shader::Shaders;
 use std::default::Default;
 use std::f32::consts::PI;
 
+use imgui::{ ImGui, Ui };
+use imgui::glium_renderer::Renderer as ImGuiRenderer;
+
 pub const FIXED_TIME_STAMP: u64 = 16666667;
 
 /// type definition for a Vector3
@@ -27,7 +30,7 @@ pub type Quaternion = (f32, f32, f32, f32);
 /// struct for handling transform data
 pub struct Transform {
     pub pos: Vector3,
-    pub rot: Quaternion, 
+    pub rot: Quaternion,
     pub scale: Vector3,
     pub update_fn: Vec<fn(&mut Transform)>,
 }
@@ -92,12 +95,14 @@ pub struct Renderer {
     pub display: Display,
     pub text_system: TextSystem,
     default_font: FontTexture,
+    imgui: ImGui,
+    imgui_rend: ImGuiRenderer,
     pub start_time: f64,
 }
 
 impl Renderer {
     /// Creates new Renderer instance
-    pub fn new(title:String) -> Renderer {    
+    pub fn new(title:String) -> Renderer {
         // create a diplay instance
         let display = WindowBuilder::new()
             .with_depth_buffer(24)
@@ -112,10 +117,15 @@ impl Renderer {
         let text_system = TextSystem::new(&display);
         let font = FontTexture::new(&display, &include_bytes!("./resources/font.otf")[..], 100).unwrap();
 
+        let mut imgui = ImGui::init();
+        let imgui_rend = ImGuiRenderer::init(&mut imgui, &display).unwrap();
+
         let renderer = Renderer {
             display: display,
             text_system: text_system,
             default_font: font,
+            imgui: imgui,
+            imgui_rend: imgui_rend,
             start_time: time::precise_time_s(),
         };
 
@@ -130,12 +140,14 @@ impl Renderer {
         let window = self.display.get_window().unwrap();
         //window.set_cursor_state(Grab).ok();
         window.set_cursor_state(Hide).ok();
-    } 
+    }
 
     /// Draws a frame
-    pub fn draw(&self, cam_state: CamState, render_items: &Vec<RenderItem>, text_items: &Vec<TextItem>, shaders: &Shaders){
+    pub fn draw<'ui, 'a: 'ui, F: FnMut(&Ui<'ui>)>(&'a mut self, cam_state: CamState, 
+                                         render_items: &Vec<RenderItem>, 
+                                         text_items: &Vec<TextItem>, shaders: &Shaders, mut f: F){
         // possibly set this to an event
-        let (width, height) = self.display.get_framebuffer_dimensions(); 
+        let (width, height) = self.display.get_framebuffer_dimensions();
 
         // draw parameters
         let params = DrawParameters {
@@ -160,11 +172,11 @@ impl Renderer {
         target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
         // drawing the render items TODO batching
-        for item in render_items.iter() { 
+        for item in render_items.iter() {
             // building the vertex and index buffers
             let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices).unwrap();
 
-            // add positions for instances 
+            // add positions for instances
             let per_instance = {
                 implement_vertex!(Attr, world_position, world_rotation, world_scale);
 
@@ -180,11 +192,11 @@ impl Renderer {
             };
 
             target.draw((&vertex_buffer, per_instance.per_instance().unwrap()),
-                &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
-                //&NoIndices(TrianglesList),
-                &shaders.shaders[item.shader_index],
-                &uniforms, 
-                &params).unwrap();
+            &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
+            //&NoIndices(TrianglesList),
+            &shaders.shaders[item.shader_index],
+            &uniforms,
+            &params).unwrap();
         }
 
         // drawing the text items
@@ -194,7 +206,7 @@ impl Renderer {
                 [0.02 * text_item.scale.0, 0.0, 0.0, 0.0],
                 [0.0, 0.02 * text_item.scale.1 * (width as f32) / (height as f32), 0.0, 0.0],
                 [0.0, 0.0, 0.02 * text_item.scale.2, 0.0],
-                [text_item.pos.0, text_item.pos.1, text_item.pos.2, 1.0f32]
+                    [text_item.pos.0, text_item.pos.1, text_item.pos.2, 1.0f32]
             ];
 
             // create TextDisplay for item, TODO change this to not be done every frame
@@ -207,6 +219,11 @@ impl Renderer {
                              matrix,
                              text_item.color);
         }
+
+        // imgui elements
+        let ui = self.imgui.frame(width, height, 0.1);
+        f(&ui);
+        self.imgui_rend.render(&mut target, ui).unwrap();
 
         match target.finish() {
             Ok(_) => {},
@@ -235,7 +252,7 @@ impl Renderer {
             [w, 0.0f32, 0.0f32, 0.0f32],
             [0.0f32, h, 0.0f32, 0.0f32],
             [0.0f32, 0.0f32, q, -1.0f32],
-            [0.0f32, 0.0f32, qn, 0.0f32]
+                [0.0f32, 0.0f32, qn, 0.0f32]
         ]
     }
 
@@ -257,7 +274,7 @@ impl Renderer {
             [ xaxis[0], yaxis[0], zaxis[0], 0.0],
             [ xaxis[1], yaxis[1], zaxis[1], 0.0],
             [ xaxis[2], yaxis[2], zaxis[2], 0.0],
-            [ dotp(&xaxis, &cam_arr), dotp(&yaxis, &cam_arr), dotp(&zaxis, &cam_arr), 1.0f32]
+                [ dotp(&xaxis, &cam_arr), dotp(&yaxis, &cam_arr), dotp(&zaxis, &cam_arr), 1.0f32]
         ]
     }
 }
