@@ -22,10 +22,11 @@ fn main() {
     let fixed_val = -(map_size/2f32);
     let move_speed = 0.05f32;
     let mouse_speed = 3f32;
+    let sphere_pos = (8f32, 10f32);
 
     let mut pseu_cam_pos = (0f32, 0f32);
-    let sphere_pos = (8f32, 10f32);
     let mut movement_dirty = true;
+    let mut debug_mode = false;
 
     // create a vector of render items
     let mut render_items = vec![
@@ -126,6 +127,7 @@ fn main() {
 
             //quit
             if input.keys_down.contains(&Key::Escape) { break; }
+            if input.keys_down.contains(&Key::L) { debug_mode = !debug_mode; }
 
             // set the fps counter
             text_items[0].text = format!(
@@ -137,13 +139,14 @@ fn main() {
         },
         ui => {
             ui.window(im_str!("debug"))
-                .size((300.0, 100.0), ImGuiSetCond_FirstUseEver)
+                .size((200.0, 200.0), ImGuiSetCond_FirstUseEver)
+                .position((0.0, 40.0), ImGuiSetCond_FirstUseEver)
                 .build(|| {
-                    ui.text(im_str!("Test debug ui"));
-                    ui.separator();
-                    let mouse_pos = ui.imgui().mouse_pos();
-                    ui.text(im_str!("Mouse Position: ({:.1},{:.1})", mouse_pos.0, mouse_pos.1));
-                })
+                    ui.text(im_str!("map_size: {}", map_size));
+                    ui.text(im_str!("fixed_val: {}", fixed_val));
+                    ui.text(im_str!("move_speed: {}", move_speed));
+                    ui.text(im_str!("mouse_speed: {}", mouse_speed));
+                });
         }
     }
 }

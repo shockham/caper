@@ -31,15 +31,15 @@ macro_rules! game_loop {
 
             $start;
 
-            fn render_imgui<'a>($ui: &Ui<'a>) {
+            let render_imgui = |$ui: &Ui| {
                 $ui_update 
-            }
+            };
 
             // the main loop
             let mut accumulator = 0;
             let mut previous_clock = time::precise_time_ns();
             loop {
-                $renderer.draw($cam_state, &$render_items, &$text_items, &$shaders, render_imgui);
+                $renderer.draw($cam_state, &$render_items, &$text_items, &$shaders, &render_imgui);
 
                 let now = time::precise_time_ns();
                 accumulator += now - previous_clock;
