@@ -15,6 +15,8 @@ use noise::{ perlin2, Seed };
 use fps_counter::FPSCounter;
 use imgui::*;
 
+use std::sync::{Arc, Mutex};
+
 fn main() {
     let mut fps = FPSCounter::new();
 
@@ -27,6 +29,9 @@ fn main() {
     let mut pseu_cam_pos = (0f32, 0f32);
     let mut movement_dirty = true;
     let mut debug_mode = false;
+
+    let pos_imgui = Arc::new(Mutex::new((0f32, 0f32)));
+    let fps_imgui = Arc::new(Mutex::new(0f32));
 
     // create a vector of render items
     let mut render_items = vec![
@@ -59,8 +64,8 @@ fn main() {
 
     let mut text_items = vec![
         TextItem {
-            text: "text".to_string(),
-            pos: (-1.0f32, 0.95f32, 0f32),
+            text: "test text".to_string(),
+            pos: (-1.0f32, 0.5f32, 0f32),
             color: (0f32, 0f32, 0f32, 1f32),
             scale: (1f32, 1f32, 1f32),
             update_fn: Vec::new(),
@@ -129,23 +134,27 @@ fn main() {
             if input.keys_down.contains(&Key::Escape) { break; }
             if input.keys_down.contains(&Key::L) { debug_mode = !debug_mode; }
 
-            // set the fps counter
-            text_items[0].text = format!(
-                "fps:{}|t:{}|pos:{:?}",
-                fps.tick(),
-                (time::precise_time_s() - renderer.start_time) as f32,
-                pseu_cam_pos
-                );
+            let mut update_pos = pos_imgui.lock().unwrap();
+            *update_pos = pseu_cam_pos;
+
+            let mut update_fps = fps_imgui.lock().unwrap();
+            *update_fps = fps.tick() as f32;
         },
         ui => {
+            let local_pos = pos_imgui.lock().unwrap();
+            let local_fps = fps_imgui.lock().unwrap();
             ui.window(im_str!("debug"))
-                .size((200.0, 200.0), ImGuiSetCond_FirstUseEver)
-                .position((0.0, 40.0), ImGuiSetCond_FirstUseEver)
+                .size((300.0, 200.0), ImGuiSetCond_FirstUseEver)
+                .position((0.0, 0.0), ImGuiSetCond_FirstUseEver)
                 .build(|| {
                     ui.text(im_str!("map_size: {}", map_size));
                     ui.text(im_str!("fixed_val: {}", fixed_val));
+                    ui.separator();
                     ui.text(im_str!("move_speed: {}", move_speed));
                     ui.text(im_str!("mouse_speed: {}", mouse_speed));
+                    ui.separator();
+                    ui.text(im_str!("pseu_cam_pos: {:?}", *local_pos));
+                    ui.text(im_str!("fps: {}", *local_fps));
                 });
         }
     }

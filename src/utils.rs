@@ -31,9 +31,7 @@ macro_rules! game_loop {
 
             $start;
 
-            let render_imgui = |$ui: &Ui| {
-                $ui_update 
-            };
+            let render_imgui = |$ui: &Ui| $ui_update;
 
             // the main loop
             let mut accumulator = 0;
