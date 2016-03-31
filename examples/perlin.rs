@@ -30,8 +30,16 @@ fn main() {
     let mut movement_dirty = true;
     let mut debug_mode = false;
 
-    let pos_imgui = Arc::new(Mutex::new((0f32, 0f32)));
-    let fps_imgui = Arc::new(Mutex::new(0f32));
+    struct DebugState {
+        pos: (f32, f32),
+        fps: f32,
+        enabled: bool,
+    }
+    let debug_state = Arc::new(Mutex::new(DebugState {
+        pos: (0f32, 0f32),
+        fps: 0f32,
+        enabled: debug_mode,
+    }));
 
     // create a vector of render items
     let mut render_items = vec![
@@ -134,28 +142,34 @@ fn main() {
             if input.keys_down.contains(&Key::Escape) { break; }
             if input.keys_down.contains(&Key::L) { debug_mode = !debug_mode; }
 
-            let mut update_pos = pos_imgui.lock().unwrap();
-            *update_pos = pseu_cam_pos;
-
-            let mut update_fps = fps_imgui.lock().unwrap();
-            *update_fps = fps.tick() as f32;
+            // update the debug state
+            let mut update_debug = debug_state.lock().unwrap();
+            *update_debug = DebugState {
+                pos: pseu_cam_pos,
+                fps: fps.tick() as f32,
+                enabled: debug_mode,
+            };
         },
         ui => {
-            let local_pos = pos_imgui.lock().unwrap();
-            let local_fps = fps_imgui.lock().unwrap();
-            ui.window(im_str!("debug"))
-                .size((300.0, 200.0), ImGuiSetCond_FirstUseEver)
-                .position((0.0, 0.0), ImGuiSetCond_FirstUseEver)
-                .build(|| {
-                    ui.text(im_str!("map_size: {}", map_size));
-                    ui.text(im_str!("fixed_val: {}", fixed_val));
-                    ui.separator();
-                    ui.text(im_str!("move_speed: {}", move_speed));
-                    ui.text(im_str!("mouse_speed: {}", mouse_speed));
-                    ui.separator();
-                    ui.text(im_str!("pseu_cam_pos: {:?}", *local_pos));
-                    ui.text(im_str!("fps: {}", *local_fps));
-                });
+            let mut local_debug = debug_state.lock().unwrap();
+
+            if local_debug.enabled {
+                ui.window(im_str!("debug"))
+                    .size((300.0, 200.0), ImGuiSetCond_FirstUseEver)
+                    .position((0.0, 0.0), ImGuiSetCond_FirstUseEver)
+                    .build(|| {
+                        ui.text(im_str!("map_size: {}", map_size));
+                        ui.text(im_str!("fixed_val: {}", fixed_val));
+                        ui.separator();
+                        ui.text(im_str!("move_speed: {}", move_speed));
+                        ui.text(im_str!("mouse_speed: {}", mouse_speed));
+                        ui.separator();
+                        ui.text(im_str!("pseu_cam_pos: {:?}", local_debug.pos));
+                        ui.slider_f32(im_str!("fps"), &mut local_debug.fps, 0f32, 60f32)
+                            .display_format(im_str!("%.0f"))
+                            .build();
+                    });
+            }
         }
     }
 }
