@@ -131,8 +131,8 @@ fn main() {
             if movement_dirty {
                 render_items[0].vertices = gen_perlin_mesh(pseu_cam_pos, map_size);
                 cam_state.cam_pos.1 = -2.5f32 - perlin2(&Seed::new(0),
-                &[(pseu_cam_pos.0 - fixed_val) / 10f32,
-                (pseu_cam_pos.1 - fixed_val) / 10f32]).abs() * 8f32;
+                &[(pseu_cam_pos.0 - fixed_val) / 15f32,
+                (pseu_cam_pos.1 - fixed_val) / 15f32]).abs() * 6f32;
 
                 // update the sphere location
                 render_items[2].instance_transforms[0].pos = (sphere_pos.0 - pseu_cam_pos.0, 3.0, sphere_pos.1 - pseu_cam_pos.1);

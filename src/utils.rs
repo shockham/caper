@@ -52,8 +52,8 @@ macro_rules! game_loop {
 
                 $update
 
-                    //quit
-                    if $input.keys_down.contains(&Key::Escape) { break; }
+                //quit
+                if $input.keys_down.contains(&Key::Escape) { break; }
             }
         }
     };

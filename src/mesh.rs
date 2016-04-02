@@ -92,7 +92,7 @@ pub fn gen_sphere() -> Vec<Vertex> {
 /// Generates a perlin mesh from pseu_pos with each side of vert length map_size
 pub fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
     fn get_pos_perlin(p:(f32, f32), seed: &Seed) -> f32 {
-        perlin2(seed, &[p.0 / 10f32, p.1 / 10f32]).abs() * 8f32
+        perlin2(seed, &[p.0 / 15f32, p.1 / 15f32]).abs() * 6f32
     };
 
     gen_proc_mesh(pseu_pos, map_size, &Seed::new(0), get_pos_perlin)
