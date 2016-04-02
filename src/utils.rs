@@ -15,7 +15,7 @@ macro_rules! game_loop {
       update => $update:block,
       $ui:ident => $ui_update:block) => {
         {
-            use caper::renderer::{ Renderer, CamState, Entity, FIXED_TIME_STAMP };
+            use caper::renderer::{ Renderer, CamState, Entity };
             use caper::input::{ Input, Key };
             use caper::shader::Shaders;
 
@@ -34,36 +34,26 @@ macro_rules! game_loop {
             let render_imgui = |$ui: &Ui| $ui_update;
 
             // the main loop
-            let mut accumulator = 0;
-            let mut previous_clock = time::precise_time_ns();
             loop {
                 $renderer.draw($cam_state, &$render_items, &$text_items, &$shaders, &render_imgui);
 
-                let now = time::precise_time_ns();
-                accumulator += now - previous_clock;
-                previous_clock = now;
+                // updating and handling the inputs
+                $input.update_inputs(&$renderer.display);
 
-                while accumulator >= FIXED_TIME_STAMP {
-                    accumulator -= FIXED_TIME_STAMP;
-
-                    // updating and handling the inputs
-                    $input.update_inputs(&$renderer.display);
-
-                    for i in 0..$render_items.len() {
-                        for t in 0..$render_items[i].instance_transforms.len() {
-                            $render_items[i].instance_transforms[t].update();
-                        }
+                for i in 0..$render_items.len() {
+                    for t in 0..$render_items[i].instance_transforms.len() {
+                        $render_items[i].instance_transforms[t].update();
                     }
-
-                    for i in 0..$text_items.len() {
-                        $text_items[i].update();
-                    }
-
-                    $update
                 }
 
-                //quit
-                if $input.keys_down.contains(&Key::Escape) { break; }
+                for i in 0..$text_items.len() {
+                    $text_items[i].update();
+                }
+
+                $update
+
+                    //quit
+                    if $input.keys_down.contains(&Key::Escape) { break; }
             }
         }
     };
