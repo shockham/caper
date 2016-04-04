@@ -10,8 +10,8 @@ extern crate imgui;
 
 use caper::utils::create_skydome;
 use caper::renderer::{ RenderItem, TextItem, Transform };
-use caper::mesh::{ gen_perlin_mesh, gen_sphere };
-use noise::{ perlin2, Seed };
+use caper::mesh::{ gen_perlin_mesh, gen_sphere, get_pos_perlin, DEF_SEED_BASE };
+use noise::Seed;
 use fps_counter::FPSCounter;
 use imgui::*;
 
@@ -130,12 +130,13 @@ fn main() {
             // only regenerate the mesh if movement
             if movement_dirty {
                 render_items[0].vertices = gen_perlin_mesh(pseu_cam_pos, map_size);
-                cam_state.cam_pos.1 = -2.5f32 - perlin2(&Seed::new(0),
-                &[(pseu_cam_pos.0 - fixed_val) / 15f32,
-                (pseu_cam_pos.1 - fixed_val) / 15f32]).abs() * 6f32;
+                cam_state.cam_pos.1 = -2.5f32 - get_pos_perlin(((pseu_cam_pos.0 - fixed_val),
+                                                                (pseu_cam_pos.1 - fixed_val)),
+                                                                &Seed::new(DEF_SEED_BASE));
 
                 // update the sphere location
-                render_items[2].instance_transforms[0].pos = (sphere_pos.0 - pseu_cam_pos.0, 3.0, sphere_pos.1 - pseu_cam_pos.1);
+                render_items[2].instance_transforms[0].pos =
+                    (sphere_pos.0 - pseu_cam_pos.0, 3.0, sphere_pos.1 - pseu_cam_pos.1);
             }
 
             //quit

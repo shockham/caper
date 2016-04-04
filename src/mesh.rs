@@ -5,6 +5,7 @@ use std::f32::consts::PI;
 const DEF_NORMAL:[f32; 3] = [0f32, 0f32, 0f32];
 const DEF_UV:[f32; 2] = [0f32, 0f32];
 const PI2:f32 = PI * 2f32;
+pub const DEF_SEED_BASE:u32 = 0;
 
 /// Generates a quad mesh with each side length 1
 pub fn gen_quad() -> Vec<Vertex> {
@@ -89,13 +90,14 @@ pub fn gen_sphere() -> Vec<Vertex> {
     vertices
 }
 
+/// Get a height for a pos p using perlin noise
+pub fn get_pos_perlin(p:(f32, f32), seed: &Seed) -> f32 {
+    perlin2(seed, &[p.0 / 15f32, p.1 / 15f32]).abs() * 6f32
+}
+
 /// Generates a perlin mesh from pseu_pos with each side of vert length map_size
 pub fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
-    fn get_pos_perlin(p:(f32, f32), seed: &Seed) -> f32 {
-        perlin2(seed, &[p.0 / 15f32, p.1 / 15f32]).abs() * 6f32
-    };
-
-    gen_proc_mesh(pseu_pos, map_size, &Seed::new(0), get_pos_perlin)
+    gen_proc_mesh(pseu_pos, map_size, &Seed::new(DEF_SEED_BASE), get_pos_perlin)
 }
 
 /// Generate a procedural function used to calculate a vertex
