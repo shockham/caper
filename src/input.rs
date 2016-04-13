@@ -41,12 +41,12 @@ impl Input {
                 KeyboardInput(Released, _, vkey) => {
                     self.keys_down.retain(|&k| k != vkey.unwrap());
                 },
-                MouseMoved(a) => {
-                    let mouse_diff = ((width / 2) as i32 - (a.0 as f32 / hidpi_factor) as i32,
-                                      (height / 2) as i32 - (a.1 as f32 / hidpi_factor) as i32);
+                MouseMoved(x, y) => {
+                    let mouse_diff = ((width / 2) as i32 - (x as f32 / hidpi_factor) as i32,
+                                      (height / 2) as i32 - (y as f32 / hidpi_factor) as i32);
                     self.mouse_delta.0 = (mouse_diff.0 as f32)/(width as f32);
                     self.mouse_delta.1 = (mouse_diff.1 as f32)/(height as f32);
-                    self.mouse_pos = a;
+                    self.mouse_pos = (x, y);
                 },
                 _ => ()
             }
