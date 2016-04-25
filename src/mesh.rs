@@ -9,38 +9,217 @@ pub const DEF_SEED_BASE:u32 = 0;
 
 /// Generates a quad mesh with each side length 1
 pub fn gen_quad() -> Vec<Vertex> {
+    let p_00 = [0f32, 0f32, 0f32];
+    let p_01 = [0f32, 1f32, 0f32];
+    let p_10 = [1f32, 0f32, 0f32];
+    let p_11 = [1f32, 1f32, 0f32];
+
     vec!(
         Vertex {
-            position: [0f32, 0f32, 0f32],
+            position: p_00,
             normal: DEF_NORMAL,
             texture: [0f32, 0f32]
         },
         Vertex {
-            position: [0f32, 1f32, 0f32],
+            position: p_01,
             normal: DEF_NORMAL,
             texture: [0f32, 1f32]
         },
         Vertex {
-            position: [1f32, 1f32, 0f32],
+            position: p_11,
             normal: DEF_NORMAL,
             texture: [1f32, 1f32]
         },
         Vertex {
-            position: [0f32, 0f32, 0f32],
+            position: p_00,
             normal: DEF_NORMAL,
             texture: [0f32, 0f32]
         },
         Vertex {
-            position: [1f32, 1f32, 0f32],
+            position: p_11,
             normal: DEF_NORMAL,
             texture: [1f32, 1f32]
         },
         Vertex {
-            position: [1f32, 0f32, 0f32],
+            position: p_10,
             normal: DEF_NORMAL,
             texture: [1f32, 0f32]
         }
     )
+}
+
+///Generates a cube mesh
+pub fn gen_cube() -> Vec<Vertex> {
+    let p_000 = [0f32, 0f32, 0f32];
+    let p_010 = [0f32, 1f32, 0f32];
+    let p_100 = [1f32, 0f32, 0f32];
+    let p_110 = [1f32, 1f32, 0f32];
+    let p_001 = [0f32, 0f32, 1f32];
+    let p_011 = [0f32, 1f32, 1f32];
+    let p_101 = [1f32, 0f32, 1f32];
+    let p_111 = [1f32, 1f32, 1f32];
+
+    let mut cube_verts = gen_quad();
+
+    cube_verts.append(&mut vec!(
+        // back face
+         Vertex {
+            position: p_011,
+            normal: DEF_NORMAL,
+            texture: [0f32, 0f32]
+        },
+        Vertex {
+            position: p_001,
+            normal: DEF_NORMAL,
+            texture: [0f32, 1f32]
+        },
+        Vertex {
+            position: p_111,
+            normal: DEF_NORMAL,
+            texture: [1f32, 1f32]
+        },
+        Vertex {
+            position: p_111,
+            normal: DEF_NORMAL,
+            texture: [0f32, 0f32]
+        },
+        Vertex {
+            position: p_001,
+            normal: DEF_NORMAL,
+            texture: [1f32, 1f32]
+        },
+        Vertex {
+            position: p_101,
+            normal: DEF_NORMAL,
+            texture: [1f32, 0f32]
+        },
+        // bottom face
+        Vertex {
+            position: p_000,
+            normal: DEF_NORMAL,
+            texture: [0f32, 0f32]
+        },
+        Vertex {
+            position: p_100,
+            normal: DEF_NORMAL,
+            texture: [0f32, 1f32]
+        },
+        Vertex {
+            position: p_001,
+            normal: DEF_NORMAL,
+            texture: [1f32, 1f32]
+        },
+        Vertex {
+            position: p_100,
+            normal: DEF_NORMAL,
+            texture: [0f32, 0f32]
+        },
+        Vertex {
+            position: p_101,
+            normal: DEF_NORMAL,
+            texture: [1f32, 0f32]
+        },
+        Vertex {
+            position: p_001,
+            normal: DEF_NORMAL,
+            texture: [1f32, 1f32]
+        },
+        // top face
+        Vertex {
+            position: p_110,
+            normal: DEF_NORMAL,
+            texture: [0f32, 1f32]
+        },
+        Vertex {
+            position: p_010,
+            normal: DEF_NORMAL,
+            texture: [0f32, 0f32]
+        },
+        Vertex {
+            position: p_011,
+            normal: DEF_NORMAL,
+            texture: [1f32, 1f32]
+        },
+        Vertex {
+            position: p_111,
+            normal: DEF_NORMAL,
+            texture: [1f32, 0f32]
+        },
+        Vertex {
+            position: p_110,
+            normal: DEF_NORMAL,
+            texture: [0f32, 0f32]
+        },
+        Vertex {
+            position: p_011,
+            normal: DEF_NORMAL,
+            texture: [1f32, 1f32]
+        },
+        // left face
+        Vertex {
+            position: p_010,
+            normal: DEF_NORMAL,
+            texture: [0f32, 1f32]
+        },
+        Vertex {
+            position: p_000,
+            normal: DEF_NORMAL,
+            texture: [0f32, 0f32]
+        },
+        Vertex {
+            position: p_001,
+            normal: DEF_NORMAL,
+            texture: [1f32, 1f32]
+        },
+        Vertex {
+            position: p_011,
+            normal: DEF_NORMAL,
+            texture: [1f32, 0f32]
+        },
+        Vertex {
+            position: p_010,
+            normal: DEF_NORMAL,
+            texture: [0f32, 0f32]
+        },
+        Vertex {
+            position: p_001,
+            normal: DEF_NORMAL,
+            texture: [1f32, 1f32]
+        },
+        // right face
+        Vertex {
+            position: p_100,
+            normal: DEF_NORMAL,
+            texture: [0f32, 0f32]
+        },
+        Vertex {
+            position: p_110,
+            normal: DEF_NORMAL,
+            texture: [0f32, 1f32]
+        },
+        Vertex {
+            position: p_101,
+            normal: DEF_NORMAL,
+            texture: [1f32, 1f32]
+        },
+        Vertex {
+            position: p_110,
+            normal: DEF_NORMAL,
+            texture: [0f32, 0f32]
+        },
+        Vertex {
+            position: p_111,
+            normal: DEF_NORMAL,
+            texture: [1f32, 0f32]
+        },
+        Vertex {
+            position: p_101,
+            normal: DEF_NORMAL,
+            texture: [1f32, 1f32]
+        },
+    ));
+
+    cube_verts
 }
 
 /// Generates a sphere mesh
@@ -63,7 +242,7 @@ pub fn gen_sphere() -> Vec<Vertex> {
                 [(PI * m as f32/segs).sin() * (PI2 * n_plus as f32/segs).cos(),
                 (PI * m as f32/segs).sin() * (PI2 * n_plus as f32/segs).sin(),
                 (PI * m as f32/segs).cos()],
-                 
+
                 [(PI * m as f32/segs).sin() * (PI2 * n_plus as f32/segs).cos(),
                 (PI * m as f32/segs).sin() * (PI2 * n_plus as f32/segs).sin(),
                 (PI * m as f32/segs).cos()],
@@ -84,8 +263,8 @@ pub fn gen_sphere() -> Vec<Vertex> {
                     texture: DEF_UV
                 });
             }
-        } 
-    } 
+        }
+    }
 
     vertices
 }
@@ -101,14 +280,14 @@ pub fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
 }
 
 /// Generate a procedural function used to calculate a vertex
-pub fn gen_proc_mesh(pseu_pos: (f32, f32), map_size: f32, 
+pub fn gen_proc_mesh(pseu_pos: (f32, f32), map_size: f32,
                      seed: &Seed, gen_fn: fn((f32, f32), &Seed) -> f32) -> Vec<Vertex> {
-    // generate the instance positions 
+    // generate the instance positions
     let mut vertices = Vec::new();
 
     let point_total = (map_size * map_size) as i32;
 
-    // get all heights for first chunk 
+    // get all heights for first chunk
     let mut size_00 = gen_fn((0f32, 0f32), seed);
     let mut size_10;
     let mut size_01 = gen_fn((0f32, 0f32), seed);

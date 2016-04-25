@@ -8,7 +8,7 @@ extern crate imgui;
 
 use caper::utils::load_wavefront;
 use caper::renderer::{ RenderItem, Transform };
-use caper::mesh::{ gen_quad, gen_sphere };
+use caper::mesh::{ gen_quad, gen_sphere, gen_cube };
 use imgui::*;
 
 fn main() {
@@ -87,7 +87,19 @@ fn main() {
                     update_fn: Vec::new(),
                 }
             ]
-        }
+        },
+        RenderItem {
+            vertices: gen_cube(),
+            shader_index: 0,
+            instance_transforms: vec![
+                Transform {
+                    pos: (0.0, 8.0, 0.0),
+                    rot: (0f32, 0f32, 0f32, 1f32),
+                    scale: (1f32, 1f32, 1f32),
+                    update_fn: Vec::new(),
+                }
+            ]
+        },
     ];
 
     let mut text_items = Vec::new();
