@@ -6,12 +6,12 @@ license = "MIT"
 
 [dependencies]
 glium = "*"
-glium_text = { git = "https://github.com/tomaka/glium_text.git" } 
+glium_text = { git = "https://github.com/tomaka/glium_text.git" }
 time = "*"
 genmesh = "*"
 obj = { version = "*", features = ["usegenmesh"] }
 noise = "*"
-imgui = { git = "https://github.com/shockham/imgui-rs" }
+imgui = "*" 
 
 [dev-dependencies]
 fps_counter = "*"
