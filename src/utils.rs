@@ -107,7 +107,7 @@ pub fn load_wavefront( data: &[u8]) -> Vec<Vertex> {
 pub fn create_skydome() -> RenderItem {
     RenderItem {
         vertices: load_wavefront(include_bytes!("./resources/skydome.obj")),
-        shader_index: 2,
+        shader_name: "height",
         instance_transforms: vec![
             Transform {
                 pos: (0.0, 0.0, 0.0),

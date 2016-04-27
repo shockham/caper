@@ -33,7 +33,7 @@ fn main() {
     let mut render_items = vec![
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/cube.obj")),
-            shader_index: 3,
+            shader_name: "height_tess",
             instance_transforms: transforms
         }
     ];

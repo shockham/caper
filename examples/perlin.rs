@@ -45,7 +45,7 @@ fn main() {
     let mut render_items = vec![
         RenderItem {
             vertices: gen_perlin_mesh(pseu_cam_pos, map_size),
-            shader_index: 3,
+            shader_name: "height_tess",
             instance_transforms: vec![
                 Transform {
                     pos: (fixed_val, 0.0, fixed_val),
@@ -58,7 +58,7 @@ fn main() {
         create_skydome(),
         RenderItem {
             vertices: gen_sphere(),
-            shader_index: 4,
+            shader_name: "line",
             instance_transforms: vec![
                 Transform {
                     pos: (sphere_pos.0, 3.0, sphere_pos.1),

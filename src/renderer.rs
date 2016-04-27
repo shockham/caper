@@ -38,7 +38,7 @@ pub struct Transform {
 /// struct for abstracting items to be sent to render
 pub struct RenderItem {
     pub vertices: Vec<Vertex>,
-    pub shader_index: usize,
+    pub shader_name: &'static str,
     pub instance_transforms: Vec<Transform>,
 }
 
@@ -146,7 +146,7 @@ impl Renderer {
     pub fn draw<'ui, 'a: 'ui, F: FnMut(&Ui<'ui>)>(&'a mut self, cam_state: CamState, 
                                          render_items: &Vec<RenderItem>, 
                                          text_items: &Vec<TextItem>, shaders: &Shaders, mut f: F){
-        // possibly set this to an event
+        // get display dimensions
         let (width, height) = self.display.get_framebuffer_dimensions();
 
         // draw parameters
@@ -173,7 +173,7 @@ impl Renderer {
 
         // drawing the render items TODO batching
         for item in render_items.iter() {
-            // building the vertex and index buffers
+            // building the vertex and index buffers TODO possibly not create every frame
             let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices).unwrap();
 
             // add positions for instances
@@ -193,8 +193,7 @@ impl Renderer {
 
             target.draw((&vertex_buffer, per_instance.per_instance().unwrap()),
             &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
-            //&NoIndices(TrianglesList),
-            &shaders.shaders[item.shader_index],
+            &shaders.shaders.get(item.shader_name).unwrap(),
             &uniforms,
             &params).unwrap();
         }

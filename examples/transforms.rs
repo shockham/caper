@@ -30,7 +30,7 @@ fn main() {
     let mut render_items = vec![
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/sphere.obj")),
-            shader_index: 0,
+            shader_name: "dist",
             instance_transforms: vec![
                 Transform {
                     pos: (0.0, (0.0 as f32).sin(), 0.0),
@@ -48,7 +48,7 @@ fn main() {
         },
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/floor.obj")),
-            shader_index: 1,
+            shader_name: "pbr",
             instance_transforms: vec![
                 Transform {
                     pos: (0.0, 0.0, 0.0),
@@ -66,7 +66,7 @@ fn main() {
         },
         RenderItem {
             vertices: gen_quad(),
-            shader_index: 0,
+            shader_name: "dist",
             instance_transforms: vec![
                 Transform {
                     pos: (0.0, 1.0, 0.0),
@@ -78,7 +78,7 @@ fn main() {
         },
         RenderItem {
             vertices: gen_sphere(),
-            shader_index: 0,
+            shader_name: "dist",
             instance_transforms: vec![
                 Transform {
                     pos: (0.0, 3.0, 0.0),
@@ -90,7 +90,7 @@ fn main() {
         },
         RenderItem {
             vertices: gen_cube(),
-            shader_index: 0,
+            shader_name: "dist",
             instance_transforms: vec![
                 Transform {
                     pos: (0.0, 8.0, 0.0),

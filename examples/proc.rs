@@ -27,7 +27,7 @@ fn main() {
     let mut render_items = vec![
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/sphere.obj")),
-            shader_index: 1,
+            shader_name: "pbr",
             instance_transforms: transforms
         }
     ];

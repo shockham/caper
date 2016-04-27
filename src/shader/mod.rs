@@ -6,16 +6,20 @@ pub mod height_tess;
 pub mod line;
 
 use glium::{ Program, Display };
+use std::collections::HashMap;
 
 pub struct Shaders {
-    pub shaders: Vec<Program>,
+    pub shaders: HashMap<&'static str, Program>,
 }
 
 impl Shaders {
     /// Creates a new instance of Shaders
     pub fn new(display: &Display) -> Shaders {
+
+        let mut shader_map = HashMap::new();
+
         // the shader programs
-        let program_dist = program!(display,
+        shader_map.insert("dist", program!(display,
                                     330 => {
                                         vertex: default::gl330::VERT,
                                         fragment: dist::gl330::FRAG,
@@ -26,9 +30,9 @@ impl Shaders {
                                     110 => {
                                         vertex: default::gl110::VERT,
                                         fragment: dist::gl110::FRAG
-                                    }).unwrap();
+                                    }).unwrap());
 
-        let program_pbr = program!(display,
+        shader_map.insert("pbr", program!(display,
                                    330 => {
                                        vertex: default::gl330::VERT,
                                        fragment: pbr::gl330::FRAG,
@@ -39,9 +43,9 @@ impl Shaders {
                                    110 => {
                                        vertex: default::gl110::VERT,
                                        fragment: pbr::gl110::FRAG
-                                   }).unwrap();
+                                   }).unwrap());
 
-        let program_height = program!(display,
+        shader_map.insert("height", program!(display,
                                       330 => {
                                           vertex: default::gl330::VERT,
                                           fragment: height::gl330::FRAG,
@@ -52,9 +56,9 @@ impl Shaders {
                                       110 => {
                                           vertex: default::gl110::VERT,
                                           fragment: height::gl110::FRAG
-                                      }).unwrap();
+                                      }).unwrap());
 
-        let program_height_tess = program!(display,
+        shader_map.insert("height_tess", program!(display,
                                            330 => {
                                                vertex: default::gl330::VERT,
                                                fragment: height_tess::gl330::FRAG,
@@ -65,10 +69,9 @@ impl Shaders {
                                            110 => {
                                                vertex: default::gl110::VERT,
                                                fragment: height_tess::gl110::FRAG
-                                           }).unwrap();
+                                           }).unwrap());
 
-        // the shader programs
-        let program_line = program!(display,
+        shader_map.insert("line", program!(display,
                                     330 => {
                                         vertex: default::gl330::VERT,
                                         fragment: line::gl330::FRAG,
@@ -79,10 +82,10 @@ impl Shaders {
                                     110 => {
                                         vertex: default::gl110::VERT,
                                         fragment: line::gl110::FRAG
-                                    }).unwrap();
+                                    }).unwrap());
 
         Shaders {
-            shaders: vec![program_dist, program_pbr, program_height, program_height_tess, program_line]
+            shaders: shader_map
         }
     }
 }
