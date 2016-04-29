@@ -1,12 +1,16 @@
-use glium::{ Display, DrawParameters, DisplayBuild, Surface, Depth };
-use glium::index::NoIndices;
-use glium::index::PrimitiveType;
+use glium::{ Display, DrawParameters, DisplayBuild, Surface, Depth, self };
+use glium::index::{ NoIndices, PrimitiveType, IndexBuffer };
 use glium::DepthTest::IfLess;
 use glium::vertex::VertexBuffer;
 use glium::glutin::{ WindowBuilder, get_primary_monitor };
 use glium::glutin::CursorState::Hide;//{ Grab, Hide };
 use glium::draw_parameters::BackfaceCullingMode::CullClockwise;
+use glium::backend::{ Facade, Context };
+use glium::framebuffer::{ SimpleFrameBuffer, DepthRenderBuffer };
+use glium::texture::Texture2d;
 
+use std::cell::RefCell;
+use std::rc::Rc;
 use glium_text;
 use glium_text::{ TextSystem, FontTexture, TextDisplay };
 
@@ -89,6 +93,7 @@ struct Attr {
     world_rotation: Quaternion,
     world_scale: Vector3
 }
+implement_vertex!(Attr, world_position, world_rotation, world_scale);
 
 /// struct for abstracting the render state
 pub struct Renderer {
@@ -97,6 +102,7 @@ pub struct Renderer {
     default_font: FontTexture,
     imgui: ImGui,
     imgui_rend: ImGuiRenderer,
+    post_effect: PostEffect,
     pub start_time: f64,
 }
 
@@ -120,12 +126,15 @@ impl Renderer {
         let mut imgui = ImGui::init();
         let imgui_rend = ImGuiRenderer::init(&mut imgui, &display).unwrap();
 
+        let post_fx = PostEffect::new(&display);
+
         let renderer = Renderer {
             display: display,
             text_system: text_system,
             default_font: font,
             imgui: imgui,
             imgui_rend: imgui_rend,
+            post_effect: post_fx,
             start_time: time::precise_time_s(),
         };
 
@@ -143,9 +152,10 @@ impl Renderer {
     }
 
     /// Draws a frame
-    pub fn draw<'ui, 'a: 'ui, F: FnMut(&Ui<'ui>)>(&'a mut self, cam_state: CamState, 
-                                         render_items: &Vec<RenderItem>, 
-                                         text_items: &Vec<TextItem>, shaders: &Shaders, mut f: F){
+    pub fn draw<'ui, 'a: 'ui, F: FnMut(&Ui<'ui>)>(&'a mut self, cam_state: CamState,
+                                                  render_items: &Vec<RenderItem>,
+                                                  text_items: &Vec<TextItem>,
+                                                  shaders: &Shaders, mut f: F){
         // get display dimensions
         let (width, height) = self.display.get_framebuffer_dimensions();
 
@@ -161,42 +171,48 @@ impl Renderer {
         };
 
         let uniforms = uniform! {
-            projection_matrix: Renderer::build_persp_proj_mat(60f32, width as f32/height as f32, 0.01f32, 1000f32),
-            modelview_matrix: Renderer::build_fp_view_matrix(cam_state),
-            cam_pos: cam_state.cam_pos,
-            time: (time::precise_time_s() - self.start_time) as f32,
+            projection_matrix: Renderer::build_persp_proj_mat(60f32,
+                                                              width as f32/height as f32,
+                                                              0.01f32,
+                                                              1000f32),
+                                                              modelview_matrix: Renderer::build_fp_view_matrix(cam_state),
+                                                              cam_pos: cam_state.cam_pos,
+                                                              time: (time::precise_time_s() - self.start_time) as f32,
         };
 
         // drawing a frame
         let mut target = self.display.draw();
-        target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
-        // drawing the render items TODO batching
-        for item in render_items.iter() {
-            // building the vertex and index buffers TODO possibly not create every frame
-            let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices).unwrap();
+        render_post(&self.post_effect, &mut target, |target| {
 
-            // add positions for instances
-            let per_instance = {
-                implement_vertex!(Attr, world_position, world_rotation, world_scale);
+            target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
-                let data = item.instance_transforms.iter().map(|t| {
-                    Attr {
-                        world_position: t.pos,
-                        world_rotation: t.rot,
-                        world_scale: t.scale
-                    }
-                }).collect::<Vec<_>>();
+            // drawing the render items TODO batching
+            for item in render_items.iter() {
+                // building the vertex and index buffers TODO possibly not create every frame
+                let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices).unwrap();
 
-                VertexBuffer::dynamic(&self.display, &data).unwrap()
-            };
+                // add positions for instances TODO possibly not create every frame
+                let per_instance = {
+                    let data = item.instance_transforms.iter().map(|t| {
+                        Attr {
+                            world_position: t.pos,
+                            world_rotation: t.rot,
+                            world_scale: t.scale
+                        }
+                    }).collect::<Vec<_>>();
 
-            target.draw((&vertex_buffer, per_instance.per_instance().unwrap()),
-            &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
-            &shaders.shaders.get(item.shader_name).unwrap(),
-            &uniforms,
-            &params).unwrap();
-        }
+                    VertexBuffer::dynamic(&self.display, &data).unwrap()
+                };
+
+                target.draw(
+                    (&vertex_buffer, per_instance.per_instance().unwrap()),
+                    &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
+                    &shaders.shaders.get(item.shader_name).unwrap(),
+                    &uniforms,
+                    &params).unwrap();
+            }
+        });
 
         // drawing the text items
         for text_item in text_items.iter() {
@@ -223,6 +239,7 @@ impl Renderer {
         let ui = self.imgui.frame(width, height, 0.1);
         f(&ui);
         self.imgui_rend.render(&mut target, ui).unwrap();
+
 
         match target.finish() {
             Ok(_) => {},
@@ -277,3 +294,129 @@ impl Renderer {
         ]
     }
 }
+
+/// struct representing a post effect
+struct PostEffect {
+    context: Rc<Context>,
+    vertex_buffer: glium::VertexBuffer<Vertex>,
+    index_buffer: glium::IndexBuffer<u16>,
+    shader: glium::Program,
+    target_color: RefCell<Option<Texture2d>>,
+    target_depth: RefCell<Option<DepthRenderBuffer>>,
+}
+
+impl PostEffect {
+    /// creates a new instance of a post effect
+    pub fn new<F>(facade: &F) -> PostEffect where F: Facade + Clone {
+        let vert_arr = [
+            Vertex {
+                position: [-1.0, -1.0, 0.0],
+                normal: [0.0, 0.0, 0.0],
+                texture: [0.0, 0.0]
+            },
+            Vertex {
+                position: [-1.0,  1.0, 0.0],
+                normal: [0.0, 0.0, 0.0],
+                texture: [0.0, 1.0]
+            },
+            Vertex {
+                position: [ 1.0,  1.0, 0.0],
+                normal: [0.0, 0.0, 0.0],
+                texture: [1.0, 1.0]
+            },
+            Vertex {
+                position: [ 1.0, -1.0, 0.0],
+                normal: [0.0, 0.0, 0.0],
+                texture: [1.0, 0.0]
+            }
+        ];
+
+        let ind_arr = [1 as u16, 2, 0, 3];
+
+        PostEffect {
+            context: facade.get_context().clone(),
+            vertex_buffer: VertexBuffer::new(facade, &vert_arr).unwrap(),
+            index_buffer: IndexBuffer::new(facade, PrimitiveType::TriangleStrip, &ind_arr).unwrap(),
+            shader: program!(facade,
+                             100 => {
+                                 vertex: r"
+                            #version 100
+                            attribute vec3 position;
+                            attribute vec2 texture;
+                            varying vec2 v_tex_coords;
+                            void main() {
+                                gl_Position = vec4(position, 1.0);
+                                v_tex_coords = texture;
+                            }
+                        ",
+                        fragment: r"
+                            #version 100
+                            precision mediump float;
+                            uniform vec2 resolution;
+                            uniform sampler2D tex;
+                            uniform int enabled;
+                            varying vec2 v_tex_coords;
+
+                            void main() {
+                                vec4 color = texture2D(tex, v_tex_coords);
+                                color.r = texture2D(tex, vec2(v_tex_coords.x + 0.003, v_tex_coords.y)).r;
+                                color.b = texture2D(tex, vec2(v_tex_coords.x, v_tex_coords.y + 0.003)).b;
+                                gl_FragColor = color;
+                            }
+                        "
+                             }
+            ).unwrap(),
+            target_color: RefCell::new(None),
+            target_depth: RefCell::new(None),
+        }
+    }
+}
+
+fn render_post<T, F, R>(system: &PostEffect, target: &mut T, mut draw: F)
+    -> R where T: Surface, F: FnMut(&mut SimpleFrameBuffer) -> R {
+
+        let target_dimensions = target.get_dimensions();
+
+        let mut target_color = system.target_color.borrow_mut();
+        let mut target_depth = system.target_depth.borrow_mut();
+
+        // check whether the colour buffer needs clearing due to window size change
+        let clear = if let &Some(ref tex) = &*target_color {
+            tex.get_width() != target_dimensions.0 ||
+                tex.get_height().unwrap() != target_dimensions.1
+        } else {
+            false
+        };
+
+        if clear || target_color.is_none() {
+            let col_tex = Texture2d::empty(&system.context,
+                                           target_dimensions.0 as u32,
+                                           target_dimensions.1 as u32).unwrap();
+            *target_color = Some(col_tex);
+
+            let dep_tex = DepthRenderBuffer::new(&system.context,
+                                                 glium::texture::DepthFormat::I24,
+                                                 target_dimensions.0 as u32,
+                                                 target_dimensions.1 as u32).unwrap();
+            *target_depth = Some(dep_tex);
+        }
+
+        let target_color = target_color.as_ref().unwrap();
+        let target_depth = target_depth.as_ref().unwrap();
+
+        // first pass draw the scene into a buffer
+        let output = draw(&mut SimpleFrameBuffer::with_depth_buffer(&system.context,
+                                                                    target_color,
+                                                                    target_depth).unwrap());
+
+        let uniforms = uniform! {
+            tex: &*target_color,
+            resolution: (target_dimensions.0 as f32, target_dimensions.1 as f32)
+        };
+
+        // second pass draw the post effect
+        target.draw(&system.vertex_buffer, &system.index_buffer, &system.shader, &uniforms,
+                    &Default::default()).unwrap();
+
+        output
+    }

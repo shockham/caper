@@ -66,12 +66,10 @@ pub struct Vertex {
     pub normal: [f32; 3],
     pub texture: [f32; 2],
 }
+implement_vertex!(Vertex, position, normal, texture);
 
 /// Returns a Vec<Vertex> that should be converted to buffer and rendered as `TrianglesList`.
 pub fn load_wavefront( data: &[u8]) -> Vec<Vertex> {
-
-    implement_vertex!(Vertex, position, normal, texture);
-
     let mut data = ::std::io::BufReader::new(data);
     let data = obj::Obj::load(&mut data);
 
