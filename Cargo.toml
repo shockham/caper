@@ -6,7 +6,7 @@ license = "MIT"
 
 [dependencies]
 glium = "*"
-glium_text = { git = "https://github.com/tomaka/glium_text.git" }
+glium_text = "*"
 time = "*"
 genmesh = "*"
 obj = { version = "*", features = ["usegenmesh"] }
