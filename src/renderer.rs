@@ -361,7 +361,8 @@ impl PostEffect {
 
                             void main() {
                                 vec4 color = texture(tex, v_tex_coords);
-                                ivec2 tex_size = textureSize(tex, 0);
+                                //ivec2 tex_size = textureSize(tex, 0);
+                                vec2 tex_size = vec2(0.997);
 
                                 color.r = texture(tex, vec2(min(v_tex_coords.x + 0.003, tex_size.x), v_tex_coords.y)).r;
                                 color.b = texture(tex, vec2(v_tex_coords.x, min(v_tex_coords.y + 0.003, tex_size.y))).b;
