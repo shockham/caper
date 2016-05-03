@@ -335,12 +335,50 @@ impl PostEffect {
             vertex_buffer: VertexBuffer::new(facade, &vert_arr).unwrap(),
             index_buffer: IndexBuffer::new(facade, PrimitiveType::TriangleStrip, &ind_arr).unwrap(),
             shader: program!(facade,
+                             330 => {
+                                 vertex: r"
+                            #version 330
+
+                            layout(location = 0) in vec3 position;
+                            layout(location = 1) in vec2 texture;
+
+                            out vec2 v_tex_coords;
+
+                            void main() {
+                                gl_Position = vec4(position, 1.0);
+                                v_tex_coords = texture;
+                            }
+                        ",
+                        fragment: r"
+                            #version 330
+
+                            uniform vec2 resolution;
+                            uniform sampler2D tex;
+
+                            in vec2 v_tex_coords;
+
+                            out vec4 frag_output;
+
+                            void main() {
+                                vec4 color = texture(tex, v_tex_coords);
+                                ivec2 tex_size = textureSize(tex, 0);
+
+                                color.r = texture(tex, vec2(min(v_tex_coords.x + 0.003, tex_size.x), v_tex_coords.y)).r;
+                                color.b = texture(tex, vec2(v_tex_coords.x, min(v_tex_coords.y + 0.003, tex_size.y))).b;
+
+                                frag_output = color;
+                            }
+                        "
+                             },
                              100 => {
                                  vertex: r"
                             #version 100
+
                             attribute vec3 position;
                             attribute vec2 texture;
+
                             varying vec2 v_tex_coords;
+
                             void main() {
                                 gl_Position = vec4(position, 1.0);
                                 v_tex_coords = texture;
@@ -349,15 +387,19 @@ impl PostEffect {
                         fragment: r"
                             #version 100
                             precision mediump float;
+
                             uniform vec2 resolution;
                             uniform sampler2D tex;
-                            uniform int enabled;
+
                             varying vec2 v_tex_coords;
 
                             void main() {
                                 vec4 color = texture2D(tex, v_tex_coords);
-                                color.r = texture2D(tex, vec2(v_tex_coords.x + 0.003, v_tex_coords.y)).r;
-                                color.b = texture2D(tex, vec2(v_tex_coords.x, v_tex_coords.y + 0.003)).b;
+                                vec2 tex_size = vec2(1.0);
+
+                                color.r = texture2D(tex, vec2(min(v_tex_coords.x + 0.003, tex_size.x), v_tex_coords.y)).r;
+                                color.b = texture2D(tex, vec2(v_tex_coords.x, min(v_tex_coords.y + 0.003, tex_size.y))).b;
+
                                 gl_FragColor = color;
                             }
                         "
