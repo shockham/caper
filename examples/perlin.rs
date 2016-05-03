@@ -90,7 +90,9 @@ fn main() {
         // define a block for start
         start => {
             // yay start code
-            println!("{:?}", cam_state.cam_pos);
+            cam_state.cam_pos.1 = -2.5f32 - get_pos_perlin(((pseu_cam_pos.0 - fixed_val),
+                                                            (pseu_cam_pos.1 - fixed_val)),
+                                                            &Seed::new(DEF_SEED_BASE));
         },
         // define a block for update
         update => {

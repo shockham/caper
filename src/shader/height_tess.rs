@@ -14,7 +14,7 @@ pub mod gl330 {
 
         void main() {
             float lum = max(dot(normalize(g_normal), normalize(LIGHT)), 0.0);
-            float dist = (abs(distance(cam_pos, g_pos)) / 35);
+            float dist = (abs(distance(cam_pos, g_pos)) / 40);
 
 
             float col_val = normalize(g_pos).y;
@@ -53,7 +53,6 @@ pub mod gl330 {
             vec3 norm = calc_normal(te_pos[0], te_pos[1], te_pos[2]);
 
             for(int i = 0; i < gl_in.length(); i++){
-                //g_normal = te_normal[i];
                 g_normal = norm;
                 g_pos = te_pos[i];
                 gl_Position = gl_in[i].gl_Position;
@@ -156,7 +155,7 @@ pub mod gl110 {
 
         void main() {
             float lum = max(dot(normalize(g_normal), normalize(LIGHT)), 0.0);
-            float dist = (abs(distance(cam_pos, g_pos)) / 25);
+            float dist = (abs(distance(cam_pos, g_pos)) / 40);
 
             float col_val = normalize(g_pos).y;
             vec3 base_color = vec3(col_val)
