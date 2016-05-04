@@ -26,10 +26,6 @@ impl Shaders {
                                         geometry: default::gl330::GEOM,
                                         tessellation_control: default::gl330::TESS_CONTROL,
                                         tessellation_evaluation: default::gl330::TESS_EVAL
-                                    },
-                                    110 => {
-                                        vertex: default::gl110::VERT,
-                                        fragment: dist::gl110::FRAG
                                     }).unwrap());
 
         shader_map.insert("pbr", program!(display,
@@ -39,10 +35,6 @@ impl Shaders {
                                        geometry:default::gl330::GEOM,
                                        tessellation_control: default::gl330::TESS_CONTROL,
                                        tessellation_evaluation: default::gl330::TESS_EVAL
-                                   },
-                                   110 => {
-                                       vertex: default::gl110::VERT,
-                                       fragment: pbr::gl110::FRAG
                                    }).unwrap());
 
         shader_map.insert("height", program!(display,
@@ -52,10 +44,6 @@ impl Shaders {
                                           geometry: default::gl330::GEOM,
                                           tessellation_control: default::gl330::TESS_CONTROL,
                                           tessellation_evaluation: default::gl330::TESS_EVAL
-                                      },
-                                      110 => {
-                                          vertex: default::gl110::VERT,
-                                          fragment: height::gl110::FRAG
                                       }).unwrap());
 
         shader_map.insert("height_tess", program!(display,
@@ -65,10 +53,6 @@ impl Shaders {
                                                geometry: height_tess::gl330::GEOM,
                                                tessellation_control: height_tess::gl330::TESS_CONTROL,
                                                tessellation_evaluation: height_tess::gl330::TESS_EVAL
-                                           },
-                                           110 => {
-                                               vertex: default::gl110::VERT,
-                                               fragment: height_tess::gl110::FRAG
                                            }).unwrap());
 
         shader_map.insert("line", program!(display,
@@ -78,10 +62,6 @@ impl Shaders {
                                         geometry: line::gl330::GEOM,
                                         tessellation_control: default::gl330::TESS_CONTROL,
                                         tessellation_evaluation: default::gl330::TESS_EVAL
-                                    },
-                                    110 => {
-                                        vertex: default::gl110::VERT,
-                                        fragment: line::gl110::FRAG
                                     }).unwrap());
 
         Shaders {

@@ -21,7 +21,7 @@ pub mod gl330 {
             vec3 pos_final = pos_rotated + world_position;
 
             gl_Position = vec4(pos_final, 1.0);
-            
+
             v_normal = normal;
         }
     ";
@@ -40,7 +40,7 @@ pub mod gl330 {
         out vec3 g_normal;
         out vec3 g_pos;
 
-        void main(void) {   
+        void main(void) {
             for(int i = 0; i < gl_in.length(); i++){
                 g_normal = te_normal[i];
                 g_pos = te_pos[i];
@@ -50,14 +50,14 @@ pub mod gl330 {
             EndPrimitive();
         }
     ";
-    
+
     // tessellation control shader
     pub const TESS_CONTROL: &'static str =
         "
         #version 400
 
         layout(vertices = 3) out;
-        
+
         in vec3 v_normal[];
 
         out vec3 tc_normal[];
@@ -74,17 +74,17 @@ pub mod gl330 {
             gl_TessLevelInner[0] = tess_level;
         }
     ";
-    
+
     // tessellation evaluation shader
     pub const TESS_EVAL: &'static str =
         "
         #version 400
-        
+
         uniform mat4 projection_matrix;
         uniform mat4 modelview_matrix;
 
         layout(triangles, equal_spacing, ccw) in;
-        
+
         in vec3 tc_normal[];
 
         out vec3 te_normal;
@@ -93,7 +93,7 @@ pub mod gl330 {
         vec3 tess_calc (vec3 one, vec3 two, vec3 three) {
             return ((gl_TessCoord.x) * one) +
                             ((gl_TessCoord.y) * two) +
-                            ((gl_TessCoord.z) * three); 
+                            ((gl_TessCoord.z) * three);
         }
 
         void main () {
@@ -108,34 +108,6 @@ pub mod gl330 {
             gl_Position = projection_matrix *
                 modelview_matrix *
                 vec4(position, 1.0);
-        }
-    ";
-}
-
-pub mod gl110 {
-    // vertex shader
-    pub const VERT: &'static str =
-        "
-        #version 110
-
-        uniform mat4 projection_matrix;
-        uniform mat4 modelview_matrix;
-
-        attribute vec3 position;
-        attribute vec3 normal;
-        attribute vec3 world_position;
-        attribute vec4 world_rotation;
-        attribute vec3 world_scale;
-
-        varying vec3 v_normal;
-        varying vec3 v_pos;
-
-        void main() {
-            v_normal = normal;
-            v_pos = position;
-            gl_Position = projection_matrix *
-                modelview_matrix *
-                vec4((position * world_scale) + world_position, 1.0);
         }
     ";
 }

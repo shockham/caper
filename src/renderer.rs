@@ -370,40 +370,6 @@ impl PostEffect {
                                 frag_output = color;
                             }
                         "
-                             },
-                             100 => {
-                                 vertex: r"
-                            #version 100
-
-                            attribute vec3 position;
-                            attribute vec2 texture;
-
-                            varying vec2 v_tex_coords;
-
-                            void main() {
-                                gl_Position = vec4(position, 1.0);
-                                v_tex_coords = texture;
-                            }
-                        ",
-                        fragment: r"
-                            #version 100
-                            precision mediump float;
-
-                            uniform vec2 resolution;
-                            uniform sampler2D tex;
-
-                            varying vec2 v_tex_coords;
-
-                            void main() {
-                                vec4 color = texture2D(tex, v_tex_coords);
-                                vec2 tex_size = vec2(0.997);
-
-                                color.r = texture2D(tex, vec2(min(v_tex_coords.x + 0.003, tex_size.x), v_tex_coords.y)).r;
-                                color.b = texture2D(tex, vec2(v_tex_coords.x, min(v_tex_coords.y + 0.003, tex_size.y))).b;
-
-                                gl_FragColor = color;
-                            }
-                        "
                              }
             ).unwrap(),
             target_color: RefCell::new(None),
