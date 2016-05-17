@@ -3,15 +3,20 @@ name = "caper"
 version = "0.0.1"
 authors = ["shockham <samuel.hockham@gmail.com>"]
 license = "MIT"
+readme = "README.md"
+repository = "https://github.com/shockham/caper"
+homepage = "https://github.com/shockham/caper"
+documentation = "https://github.com/shockham/caper"
+description = "Small game framework"
 
 [dependencies]
-glium = "*"
-glium_text = "*"
-time = "*"
-genmesh = "*"
-obj = { version = "*", features = ["usegenmesh"] }
-noise = "*"
-imgui = "*"
+glium = "0.14"
+glium_text = "0.9"
+time = "0.1"
+genmesh = "0.4"
+obj = { version = "0.5", features = ["usegenmesh"] }
+noise = "0.2"
+imgui = "0.0.8"
 
 [dev-dependencies]
-fps_counter = "*"
+fps_counter = "0.2"
