@@ -17,11 +17,9 @@ macro_rules! game_loop {
         {
             use caper::renderer::{ Renderer, CamState, Entity };
             use caper::input::{ Input, Key };
-            use caper::shader::Shaders;
 
             let mut $input = Input::new();
             let mut $renderer = Renderer::new("Caper".to_string());
-            let $shaders = Shaders::new(&$renderer.display);
 
             //cam state
             let mut $cam_state = CamState {
@@ -35,7 +33,7 @@ macro_rules! game_loop {
 
             // the main loop
             loop {
-                $renderer.draw($cam_state, &$render_items, &$text_items, &$shaders, &render_imgui);
+                $renderer.draw($cam_state, &$render_items, &$text_items, &render_imgui);
 
                 // updating and handling the inputs
                 $input.update_inputs(&$renderer.display);

@@ -1,4 +1,4 @@
-use glium::{ Display, DrawParameters, DisplayBuild, Surface, Depth, self };
+use glium::{ Display, DrawParameters, DisplayBuild, Surface, Depth, self, Program };
 use glium::index::{ NoIndices, PrimitiveType, IndexBuffer };
 use glium::DepthTest::IfLess;
 use glium::vertex::VertexBuffer;
@@ -104,6 +104,7 @@ pub struct Renderer {
     imgui_rend: ImGuiRenderer,
     post_effect: PostEffect,
     pub start_time: f64,
+    pub shaders: Shaders,
 }
 
 impl Renderer {
@@ -126,6 +127,7 @@ impl Renderer {
         let mut imgui = ImGui::init();
         let imgui_rend = ImGuiRenderer::init(&mut imgui, &display).unwrap();
 
+        let shaders = Shaders::new(&display);
         let post_fx = PostEffect::new(&display);
 
         let renderer = Renderer {
@@ -136,6 +138,7 @@ impl Renderer {
             imgui_rend: imgui_rend,
             post_effect: post_fx,
             start_time: time::precise_time_s(),
+            shaders: shaders,
         };
 
         renderer.setup();
@@ -155,7 +158,7 @@ impl Renderer {
     pub fn draw<'ui, 'a: 'ui, F: FnMut(&Ui<'ui>)>(&'a mut self, cam_state: CamState,
                                                   render_items: &Vec<RenderItem>,
                                                   text_items: &Vec<TextItem>,
-                                                  shaders: &Shaders, mut f: F){
+                                                  mut f: F){
         // get display dimensions
         let (width, height) = self.display.get_framebuffer_dimensions();
 
@@ -180,7 +183,10 @@ impl Renderer {
         // drawing a frame
         let mut target = self.display.draw();
 
-        render_post(&self.post_effect, &mut target, |target| {
+        render_post(&self.post_effect,
+                    &self.shaders.post_shaders.get(self.post_effect.current_shader).unwrap(), 
+                    &mut target,
+                    |target| {
 
             target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
@@ -205,7 +211,7 @@ impl Renderer {
                 target.draw(
                     (&vertex_buffer, per_instance.per_instance().unwrap()),
                     &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
-                    &shaders.shaders.get(item.shader_name).unwrap(),
+                    &self.shaders.shaders.get(item.shader_name).unwrap(),
                     &uniforms,
                     &params).unwrap();
             }
@@ -297,9 +303,9 @@ struct PostEffect {
     context: Rc<Context>,
     vertex_buffer: glium::VertexBuffer<Vertex>,
     index_buffer: glium::IndexBuffer<u16>,
-    shader: glium::Program,
     target_color: RefCell<Option<Texture2d>>,
     target_depth: RefCell<Option<DepthRenderBuffer>>,
+    current_shader: &'static str,
 }
 
 impl PostEffect {
@@ -334,51 +340,14 @@ impl PostEffect {
             context: facade.get_context().clone(),
             vertex_buffer: VertexBuffer::new(facade, &vert_arr).unwrap(),
             index_buffer: IndexBuffer::new(facade, PrimitiveType::TriangleStrip, &ind_arr).unwrap(),
-            shader: program!(facade,
-                             330 => {
-                                 vertex: r"
-                            #version 330
-
-                            layout(location = 0) in vec3 position;
-                            layout(location = 1) in vec2 texture;
-
-                            out vec2 v_tex_coords;
-
-                            void main() {
-                                gl_Position = vec4(position, 1.0);
-                                v_tex_coords = texture;
-                            }
-                        ",
-                        fragment: r"
-                            #version 330
-
-                            uniform vec2 resolution;
-                            uniform sampler2D tex;
-
-                            in vec2 v_tex_coords;
-
-                            out vec4 frag_output;
-
-                            void main() {
-                                vec4 color = texture(tex, v_tex_coords);
-                                //ivec2 tex_size = textureSize(tex, 0);
-                                vec2 tex_size = vec2(0.997);
-
-                                color.r = texture(tex, vec2(min(v_tex_coords.x + 0.003, tex_size.x), v_tex_coords.y)).r;
-                                color.b = texture(tex, vec2(v_tex_coords.x, min(v_tex_coords.y + 0.003, tex_size.y))).b;
-
-                                frag_output = color;
-                            }
-                        "
-                             }
-            ).unwrap(),
             target_color: RefCell::new(None),
             target_depth: RefCell::new(None),
+            current_shader: "chrom",
         }
     }
 }
 
-fn render_post<T, F, R>(system: &PostEffect, target: &mut T, mut draw: F)
+fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut T, mut draw: F)
     -> R where T: Surface, F: FnMut(&mut SimpleFrameBuffer) -> R {
 
         let target_dimensions = target.get_dimensions();
@@ -421,7 +390,10 @@ fn render_post<T, F, R>(system: &PostEffect, target: &mut T, mut draw: F)
         };
 
         // second pass draw the post effect
-        target.draw(&system.vertex_buffer, &system.index_buffer, &system.shader, &uniforms,
+        target.draw(&system.vertex_buffer,
+                    &system.index_buffer,
+                    shader,
+                    &uniforms,
                     &Default::default()).unwrap();
 
         output

@@ -10,6 +10,7 @@ use std::collections::HashMap;
 
 pub struct Shaders {
     pub shaders: HashMap<&'static str, Program>,
+    pub post_shaders: HashMap<&'static str, Program>,
 }
 
 impl Shaders {
@@ -64,8 +65,50 @@ impl Shaders {
                                         tessellation_evaluation: default::gl330::TESS_EVAL
                                     }).unwrap());
 
+        let mut post_shader_map = HashMap::new();
+            
+        post_shader_map.insert("chrom", program!(display,
+                             330 => {
+                                 vertex: r"
+                            #version 330
+
+                            layout(location = 0) in vec3 position;
+                            layout(location = 1) in vec2 texture;
+
+                            out vec2 v_tex_coords;
+
+                            void main() {
+                                gl_Position = vec4(position, 1.0);
+                                v_tex_coords = texture;
+                            }
+                        ",
+                        fragment: r"
+                            #version 330
+
+                            uniform vec2 resolution;
+                            uniform sampler2D tex;
+
+                            in vec2 v_tex_coords;
+
+                            out vec4 frag_output;
+
+                            void main() {
+                                vec4 color = texture(tex, v_tex_coords);
+                                //ivec2 tex_size = textureSize(tex, 0);
+                                vec2 tex_size = vec2(0.997);
+
+                                color.r = texture(tex, vec2(min(v_tex_coords.x + 0.003, tex_size.x), v_tex_coords.y)).r;
+                                color.b = texture(tex, vec2(v_tex_coords.x, min(v_tex_coords.y + 0.003, tex_size.y))).b;
+
+                                frag_output = color;
+                            }
+                        "
+                             }
+            ).unwrap());
+
         Shaders {
-            shaders: shader_map
+            shaders: shader_map,
+            post_shaders: post_shader_map,
         }
     }
 }
