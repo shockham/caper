@@ -279,6 +279,11 @@ pub fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
     gen_proc_mesh(pseu_pos, map_size, &Seed::new(DEF_SEED_BASE), get_pos_perlin)
 }
 
+/// Generates a perlin mesh from pseu_pos with each side of vert length map_size using seed
+pub fn gen_seed_perlin_mesh(pseu_pos: (f32, f32), map_size: f32, seed: &Seed) -> Vec<Vertex> {
+    gen_proc_mesh(pseu_pos, map_size, seed, get_pos_perlin)
+}
+
 /// Generate a procedural function used to calculate a vertex
 pub fn gen_proc_mesh(pseu_pos: (f32, f32), map_size: f32,
                      seed: &Seed, gen_fn: fn((f32, f32), &Seed) -> f32) -> Vec<Vertex> {
