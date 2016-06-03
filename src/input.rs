@@ -65,7 +65,7 @@ impl Input {
         static MOVE_SPEED: f32 = 0.2f32;
         static MOUSE_SPEED: f32 = 10f32;
 
-        let mv_matrix = Renderer::build_fp_view_matrix(*cam_state);
+        let mv_matrix = Renderer::build_fp_view_matrix(cam_state);
 
         // this can probably be cleaned up a bit
         if self.keys_down.contains(&Key::W) {

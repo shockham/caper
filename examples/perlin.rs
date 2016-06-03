@@ -98,7 +98,7 @@ fn main() {
         update => {
             // block for handling the inputs
             {
-                let mv_matrix = Renderer::build_fp_view_matrix(cam_state);
+                let mv_matrix = Renderer::build_fp_view_matrix(&cam_state);
 
                 // this can probably be cleaned up a bit
                 if input.keys_down.contains(&Key::S) {

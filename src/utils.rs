@@ -36,7 +36,7 @@ macro_rules! game_loop {
                 //quit
                 if $input.keys_down.contains(&Key::Escape) { break; }
 
-                $renderer.draw($cam_state, &$render_items, &$text_items, &render_imgui);
+                $renderer.draw(&$cam_state, &$render_items, &$text_items, &render_imgui);
 
                 // updating and handling the inputs
                 $input.update_inputs(&$renderer.display);

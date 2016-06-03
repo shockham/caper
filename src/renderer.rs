@@ -155,7 +155,8 @@ impl Renderer {
     }
 
     /// Draws a frame
-    pub fn draw<'ui, 'a: 'ui, F: FnMut(&Ui<'ui>)>(&'a mut self, cam_state: CamState,
+    pub fn draw<'ui, 'a: 'ui, F: FnMut(&Ui<'ui>)>(&'a mut self,
+                                                  cam_state: &CamState,
                                                   render_items: &Vec<RenderItem>,
                                                   text_items: &Vec<TextItem>,
                                                   mut f: F){
@@ -184,7 +185,7 @@ impl Renderer {
         let mut target = self.display.draw();
 
         render_post(&self.post_effect,
-                    &self.shaders.post_shaders.get(self.post_effect.current_shader).unwrap(), 
+                    &self.shaders.post_shaders.get(self.post_effect.current_shader).unwrap(),
                     &mut target,
                     |target| {
 
@@ -276,7 +277,7 @@ impl Renderer {
     }
 
     /// Returns the model view matrix for a first person view given cam position and rotation
-    pub fn build_fp_view_matrix(cam_state: CamState) -> [[f32; 4]; 4] {
+    pub fn build_fp_view_matrix(cam_state: &CamState) -> [[f32; 4]; 4] {
 
         let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (
             cam_state.cam_rot.1.sin(),
