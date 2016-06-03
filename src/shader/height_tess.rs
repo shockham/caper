@@ -14,7 +14,7 @@ pub mod gl330 {
 
         void main() {
             float lum = max(dot(normalize(g_normal), normalize(LIGHT)), 0.0);
-            float dist = (abs(distance(cam_pos, g_pos)) / 40);
+            float dist = (abs(distance(cam_pos, g_pos)) / 50);
 
 
             float col_val = normalize(g_pos).y;
