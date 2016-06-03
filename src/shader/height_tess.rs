@@ -14,16 +14,17 @@ pub mod gl330 {
 
         void main() {
             float lum = max(dot(normalize(g_normal), normalize(LIGHT)), 0.0);
-            float dist = (abs(distance(cam_pos, g_pos)) / 50);
+            float dist = (abs(distance(cam_pos, g_pos)) / 40);
 
 
-            float col_val = normalize(g_pos).y;
+            float col_val = normalize(g_pos).y / 2.0;
             vec3 base_color = vec3(col_val);
             base_color += dist;
 
             // color mode, comment out for more monochrome
             base_color /= (0.5 + (normalize(g_normal) * 0.1));
 
+            // water
             base_color.gb /= step(0.1, col_val);
 
             vec3 color = base_color * ((0.1 * lum) + (0.9 * dist));
