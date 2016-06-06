@@ -5,7 +5,7 @@ extern crate glium_text;
 extern crate noise;
 extern crate time;
 #[macro_use]
-extern crate imgui;
+pub extern crate imgui;
 
 pub mod renderer;
 pub mod utils;

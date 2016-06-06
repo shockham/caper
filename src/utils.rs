@@ -18,6 +18,7 @@ macro_rules! game_loop {
             use caper::renderer::Renderer;
             use caper::types::{ CamState, Entity };
             use caper::input::{ Input, Key };
+            use caper::imgui::Ui;
 
             let mut $input = Input::new();
             let mut $renderer = Renderer::new("Caper".to_string());
