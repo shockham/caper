@@ -2,7 +2,7 @@ Caper
 ========
 Small game framework using [rust](https://www.rust-lang.org/) and [glium](https://github.com/tomaka/glium).
 
-Example of a basis for a game:
+[Example](https://github.com/shockham/caper/blob/master/examples/simple.rs) of a basis for a game:
 ```rust
 #[macro_use]
 extern crate caper;
@@ -58,3 +58,5 @@ Check out the [examples](https://github.com/shockham/caper/tree/master/examples)
 ```
 cargo run --example transforms
 ```
+
+[License](https://github.com/shockham/caper/blob/master/LICENSE.md)
