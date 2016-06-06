@@ -7,7 +7,7 @@ extern crate caper;
 extern crate imgui;
 
 use caper::utils::load_wavefront;
-use caper::renderer::{ RenderItem, Transform };
+use caper::types::{ RenderItem, Transform };
 use imgui::*;
 
 fn main() {

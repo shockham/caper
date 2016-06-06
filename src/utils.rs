@@ -4,7 +4,7 @@ extern crate obj;
 
 use std::ops::{Add, Mul};
 use std::num::Zero;
-use renderer::{ RenderItem, Transform };
+use types::{ RenderItem, Transform, Vertex };
 
 /// quick macro to use in the examples for easily defining all the modules and game loop
 #[macro_export]
@@ -15,7 +15,8 @@ macro_rules! game_loop {
       update => $update:block,
       $ui:ident => $ui_update:block) => {
         {
-            use caper::renderer::{ Renderer, CamState, Entity };
+            use caper::renderer::Renderer;
+            use caper::types::{ CamState, Entity };
             use caper::input::{ Input, Key };
 
             let mut $input = Input::new();
@@ -58,14 +59,6 @@ macro_rules! game_loop {
     };
 }
 
-/// struct for defining a Vector for creating meshes
-#[derive(Copy, Clone)]
-pub struct Vertex {
-    pub position: [f32; 3],
-    pub normal: [f32; 3],
-    pub texture: [f32; 2],
-}
-implement_vertex!(Vertex, position, normal, texture);
 
 /// Returns a Vec<Vertex> that should be converted to buffer and rendered as `TrianglesList`.
 pub fn load_wavefront( data: &[u8]) -> Vec<Vertex> {

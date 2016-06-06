@@ -1,4 +1,5 @@
-use utils::{ calc_normal, Vertex };
+use utils::calc_normal;
+use types::Vertex;
 use noise::{ perlin2, Seed };
 use std::f32::consts::PI;
 

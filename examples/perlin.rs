@@ -9,7 +9,7 @@ extern crate caper;
 extern crate imgui;
 
 use caper::utils::create_skydome;
-use caper::renderer::{ RenderItem, TextItem, Transform };
+use caper::types::{ RenderItem, TextItem, Transform };
 use caper::mesh::{ gen_perlin_mesh, gen_sphere, get_pos_perlin, DEF_SEED_BASE };
 use noise::Seed;
 use fps_counter::FPSCounter;

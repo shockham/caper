@@ -12,3 +12,5 @@ pub mod utils;
 pub mod input;
 pub mod shader;
 pub mod mesh;
+pub mod posteffect;
+pub mod types;

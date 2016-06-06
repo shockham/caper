@@ -2,7 +2,8 @@ use glium::Display;
 pub use glium::glutin::VirtualKeyCode as Key;
 use glium::glutin::Event::{ KeyboardInput, MouseMoved };
 use glium::glutin::ElementState::{ Pressed, Released };
-use renderer::{ Renderer, CamState };
+use renderer::{ Renderer };
+use types::CamState;
 
 
 /// struct for abstracting the state for all the inputs

@@ -9,7 +9,7 @@ extern crate imgui;
 extern crate noise;
 
 use caper::utils::load_wavefront;
-use caper::renderer::{ RenderItem, Transform };
+use caper::types::{ RenderItem, Transform };
 use noise::{ perlin2, Seed };
 use imgui::*;
 

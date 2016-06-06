@@ -7,7 +7,7 @@ extern crate caper;
 extern crate imgui;
 
 use caper::utils::load_wavefront;
-use caper::renderer::{ RenderItem, Transform };
+use caper::types::{ RenderItem, Transform };
 use caper::mesh::{ gen_quad, gen_sphere, gen_cube };
 use imgui::*;
 
