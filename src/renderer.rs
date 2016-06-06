@@ -159,7 +159,7 @@ impl Renderer {
                                                   cam_state: &CamState,
                                                   render_items: &Vec<RenderItem>,
                                                   text_items: &Vec<TextItem>,
-                                                  mut f: F){
+                                                  mut f: F) {
         // get display dimensions
         let (width, height) = self.display.get_framebuffer_dimensions();
 

@@ -62,8 +62,8 @@ impl Input {
     /// for a first person camera
     pub fn handle_fp_inputs(&self, cam_state: &mut CamState) {
         // some static vals to use the fp inputs
-        static MOVE_SPEED: f32 = 0.2f32;
-        static MOUSE_SPEED: f32 = 10f32;
+        const MOVE_SPEED: f32 = 0.2f32;
+        const MOUSE_SPEED: f32 = 10f32;
 
         let mv_matrix = Renderer::build_fp_view_matrix(cam_state);
 
