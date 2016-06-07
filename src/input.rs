@@ -1,6 +1,7 @@
 use glium::Display;
 pub use glium::glutin::VirtualKeyCode as Key;
-use glium::glutin::Event::{ KeyboardInput, MouseMoved };
+pub use glium::glutin::MouseButton as MouseButton;
+use glium::glutin::Event::{ KeyboardInput, MouseMoved, MouseInput };
 use glium::glutin::ElementState::{ Pressed, Released };
 use renderer::{ Renderer };
 use types::CamState;
@@ -10,7 +11,8 @@ use types::CamState;
 pub struct Input {
     mouse_pos: (i32, i32),
     pub mouse_delta: (f32, f32),
-    pub keys_down: Vec<Key>
+    pub keys_down: Vec<Key>,
+    pub mouse_btns_down: Vec<MouseButton>,
 }
 
 impl Input {
@@ -20,6 +22,7 @@ impl Input {
             mouse_pos : (0, 0),
             mouse_delta : (0f32, 0f32),
             keys_down : Vec::new(),
+            mouse_btns_down: Vec::new(),
         }
     }
 
@@ -48,6 +51,12 @@ impl Input {
                     self.mouse_delta.0 = (mouse_diff.0 as f32)/(width as f32);
                     self.mouse_delta.1 = (mouse_diff.1 as f32)/(height as f32);
                     self.mouse_pos = (x, y);
+                },
+                MouseInput(Pressed, btn) => {
+                    self.mouse_btns_down.push(btn);
+                },
+                MouseInput(Released, btn) => {
+                    self.mouse_btns_down.retain(|&mb| mb != btn);
                 },
                 _ => ()
             }
