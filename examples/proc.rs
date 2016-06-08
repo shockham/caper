@@ -3,12 +3,8 @@ extern crate time;
 #[macro_use]
 extern crate caper;
 
-#[macro_use]
-extern crate imgui;
-
 use caper::utils::load_wavefront;
 use caper::types::{ RenderItem, Transform };
-use imgui::*;
 
 fn main() {
     // generate the instance positions
