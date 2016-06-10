@@ -3,8 +3,8 @@ use types::Vertex;
 use noise::{ perlin2, Seed };
 use std::f32::consts::PI;
 
-const DEF_NORMAL:[f32; 3] = [0f32, 0f32, 0f32];
-const DEF_UV:[f32; 2] = [0f32, 0f32];
+pub const DEF_NORMAL:[f32; 3] = [0f32, 0f32, 0f32];
+pub const DEF_UV:[f32; 2] = [0f32, 0f32];
 const PI2:f32 = PI * 2f32;
 pub const DEF_SEED_BASE:u32 = 0;
 
