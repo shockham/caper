@@ -34,11 +34,13 @@ fn main() {
         pos: (f32, f32),
         fps: f32,
         enabled: bool,
+        test_check: bool,
     }
     let debug_state = Arc::new(Mutex::new(DebugState {
         pos: (0f32, 0f32),
         fps: 0f32,
         enabled: debug_mode,
+        test_check: false,
     }));
 
     // create a vector of render items
@@ -97,7 +99,7 @@ fn main() {
         // define a block for update
         update => {
             // block for handling the inputs
-            {
+            if input.hide_mouse {
                 let mv_matrix = Renderer::build_fp_view_matrix(&cam_state);
 
                 // this can probably be cleaned up a bit
@@ -143,7 +145,8 @@ fn main() {
 
             //quit
             if input.keys_down.contains(&Key::Escape) { break; }
-            if input.keys_down.contains(&Key::L) { debug_mode = !debug_mode; }
+            debug_mode = input.keys_down.contains(&Key::L);
+            input.hide_mouse = !debug_mode;
 
             // update the debug state
             let mut update_debug = debug_state.lock().unwrap();
@@ -151,6 +154,7 @@ fn main() {
                 pos: pseu_cam_pos,
                 fps: fps.tick() as f32,
                 enabled: debug_mode,
+                test_check: update_debug.test_check,
             };
         },
         ui => {
@@ -171,6 +175,7 @@ fn main() {
                         ui.slider_f32(im_str!("fps"), &mut local_debug.fps, 0f32, 60f32)
                             .display_format(im_str!("%.0f"))
                             .build();
+                        ui.checkbox(im_str!("test_check"), &mut local_debug.test_check);
                     });
             }
         }

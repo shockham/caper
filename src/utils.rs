@@ -17,7 +17,7 @@ macro_rules! game_loop {
         {
             use caper::renderer::Renderer;
             use caper::types::{ CamState, Entity };
-            use caper::input::{ Input, Key };
+            use caper::input::{ Input, Key, MouseButton };
             use caper::imgui::Ui;
 
             let mut $input = Input::new();
@@ -42,6 +42,8 @@ macro_rules! game_loop {
 
                 // updating and handling the inputs
                 $input.update_inputs(&$renderer.display);
+
+                $renderer.update_imgui_input($input.mouse_pos, ($input.mouse_btns_down.contains(&MouseButton::Left), false, false));
 
                 for i in 0..$render_items.len() {
                     for t in 0..$render_items[i].instance_transforms.len() {

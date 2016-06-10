@@ -130,7 +130,7 @@ pub mod gl330 {
                 gl_in[1].gl_Position.xyz,
                 gl_in[2].gl_Position.xyz);
 
-            position.y += rand(normalize(position.xyz) + cos(time)) * (0.9 + (0.1 * sin(time)))  + sin((time * 4.0) + position.x + position.z) * 0.2;
+            position.y += rand(normalize(position.xyz) + cos(time)) * (0.9 + (0.1 * sin(time))) + sin((time * 4.0) + position.x + position.z) * 0.2;
 
             te_pos = position;
 

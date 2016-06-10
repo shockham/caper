@@ -82,6 +82,12 @@ impl Renderer {
         window.set_cursor_state(Hide).ok();
     }
 
+    pub fn update_imgui_input(&mut self, pos: (i32, i32), btns: (bool, bool, bool)) {
+        self.imgui.set_mouse_pos(pos.0 as f32, pos.1 as f32);
+        self.imgui.set_mouse_down(&[btns.0, btns.1, btns.2, false, false]);
+        //self.imgui.set_mouse_wheel(self.mouse_wheel);
+    }
+
     /// Draws a frame
     pub fn draw<'ui, 'a: 'ui, F: FnMut(&Ui<'ui>)>(&'a mut self,
                                                   cam_state: &CamState,

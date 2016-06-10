@@ -3,16 +3,18 @@ pub use glium::glutin::VirtualKeyCode as Key;
 pub use glium::glutin::MouseButton as MouseButton;
 use glium::glutin::Event::{ KeyboardInput, MouseMoved, MouseInput };
 use glium::glutin::ElementState::{ Pressed, Released };
+use glium::glutin::CursorState::{ Normal, Hide };
 use renderer::{ Renderer };
 use types::CamState;
 
 
 /// struct for abstracting the state for all the inputs
 pub struct Input {
-    mouse_pos: (i32, i32),
+    pub mouse_pos: (i32, i32),
     pub mouse_delta: (f32, f32),
     pub keys_down: Vec<Key>,
     pub mouse_btns_down: Vec<MouseButton>,
+    pub hide_mouse: bool,
 }
 
 impl Input {
@@ -23,6 +25,7 @@ impl Input {
             mouse_delta : (0f32, 0f32),
             keys_down : Vec::new(),
             mouse_btns_down: Vec::new(),
+            hide_mouse: true,
         }
     }
 
@@ -62,10 +65,13 @@ impl Input {
             }
         }
 
-        // set the mouse to the centre of the screen
-        let _ = display.get_window()
-          .unwrap()
-          .set_cursor_position((width / 2) as i32, (height / 2) as i32);
+        if self.hide_mouse {
+            // set the mouse to the centre of the screen
+            window.set_cursor_state(Hide).ok();
+            let _ = window.set_cursor_position((width / 2) as i32, (height / 2) as i32);
+        } else {
+            window.set_cursor_state(Normal).ok();
+        }
     }
 
     /// This method is where data transforms take place due to inputs
