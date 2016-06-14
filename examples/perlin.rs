@@ -20,7 +20,7 @@ use std::sync::{Arc, Mutex};
 fn main() {
     let mut fps = FPSCounter::new();
 
-    let map_size = 50f32;
+    let map_size = 100f32;
     let fixed_val = -(map_size/2f32);
     let move_speed = 0.05f32;
     let mouse_speed = 3f32;
