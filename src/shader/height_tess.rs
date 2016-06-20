@@ -21,10 +21,10 @@ pub mod gl330 {
             base_color += dist;
 
             // color mode, comment out for more monochrome
-            base_color /= (0.5 + (normalize(g_normal) * 0.1));
+            base_color /= min(0.5 + (normalize(g_normal) * 0.1), 0.9);
 
             // water
-            base_color.gb /= step(0.1, col_val);
+            base_color.gb /= step(0.1, col_val) + 0.01;
 
             vec3 color = base_color * ((0.1 * lum) + (0.9 * dist));
             frag_output = vec4(color, 1.0);
