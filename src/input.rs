@@ -15,6 +15,7 @@ pub struct Input {
     pub keys_down: Vec<Key>,
     pub mouse_btns_down: Vec<MouseButton>,
     pub hide_mouse: bool,
+    cursor_grabbed: bool,
 }
 
 impl Input {
@@ -26,6 +27,7 @@ impl Input {
             keys_down : Vec::new(),
             mouse_btns_down: Vec::new(),
             hide_mouse: true,
+            cursor_grabbed: false,
         }
     }
 
@@ -67,10 +69,16 @@ impl Input {
 
         if self.hide_mouse {
             // set the mouse to the centre of the screen
-            window.set_cursor_state(Hide).ok();
+            if self.cursor_grabbed {
+                window.set_cursor_state(Hide).ok();
+                self.cursor_grabbed = false;
+            }
             let _ = window.set_cursor_position((width / 2) as i32, (height / 2) as i32);
         } else {
-            window.set_cursor_state(Normal).ok();
+            if !self.cursor_grabbed {
+                window.set_cursor_state(Normal).ok();
+                self.cursor_grabbed = true;
+            }
         }
     }
 

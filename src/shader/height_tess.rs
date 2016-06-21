@@ -18,13 +18,14 @@ pub mod gl330 {
 
             float col_val = normalize(g_pos).y;
             vec3 base_color = vec3(col_val);
-            base_color += dist;
+            //base_color += dist;
+            base_color = mix(base_color, vec3(1.0), dist);
 
             // color mode, comment out for more monochrome
-            base_color /= min(0.5 + (normalize(g_normal) * 0.1), 0.9);
+            base_color /= 0.5 + (normalize(g_normal) * 0.1);
 
             // water
-            base_color.gb /= step(0.1, col_val) + 0.01;
+            base_color.gb /= clamp(smoothstep(0.0, 0.1, col_val), 0.09, 1.0);
 
             vec3 color = base_color * ((0.1 * lum) + (0.9 * dist));
             frag_output = vec4(color, 1.0);
