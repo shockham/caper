@@ -15,17 +15,17 @@ pub mod gl330 {
         void main() {
             float lum = max(dot(normalize(g_normal), normalize(LIGHT)), 0.0);
             float dist = abs(distance(cam_pos, g_pos)) / 55;
+            float height = normalize(g_pos).y;
+            float col_val = clamp(height, 0.1, 1.0);
 
-            float col_val = normalize(g_pos).y;
             vec3 base_color = vec3(col_val);
-            //base_color += dist;
             base_color = mix(base_color, vec3(1.0), dist);
 
             // color mode, comment out for more monochrome
             base_color /= 0.5 + (normalize(g_normal) * 0.1);
 
             // water
-            base_color.gb /= clamp(smoothstep(0.0, 0.1, col_val), 0.09, 1.0);
+            base_color.gb /= smoothstep(0.0, 0.1, height);
 
             vec3 color = base_color * ((0.1 * lum) + (0.9 * dist));
             frag_output = vec4(color, 1.0);
