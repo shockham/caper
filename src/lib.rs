@@ -14,3 +14,4 @@ pub mod shader;
 pub mod mesh;
 pub mod posteffect;
 pub mod types;
+pub mod collision;
