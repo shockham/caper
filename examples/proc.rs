@@ -24,7 +24,8 @@ fn main() {
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/sphere.obj")),
             shader_name: "pbr",
-            instance_transforms: transforms
+            instance_transforms: transforms,
+            active: true,
         }
     ];
 

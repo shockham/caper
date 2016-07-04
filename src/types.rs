@@ -26,6 +26,7 @@ pub struct RenderItem {
     pub vertices: Vec<Vertex>,
     pub shader_name: &'static str,
     pub instance_transforms: Vec<Transform>,
+    pub active: bool,
 }
 
 /// struct for abstacting text items to be rendered
@@ -35,6 +36,7 @@ pub struct TextItem {
     pub pos: Vector3,
     pub scale: Vector3,
     pub update_fn: Vec<fn(&mut TextItem)>,
+    pub active: bool,
 }
 
 /// trait for updateable entities

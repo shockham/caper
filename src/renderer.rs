@@ -126,7 +126,7 @@ impl Renderer {
             target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
             // drawing the render items TODO batching
-            for item in render_items.iter() {
+            for item in render_items.iter().filter(|r| r.active) {
                 // building the vertex and index buffers TODO possibly not create every frame
                 let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices).unwrap();
 
@@ -153,7 +153,7 @@ impl Renderer {
         });
 
         // drawing the text items
-        for text_item in text_items.iter() {
+        for text_item in text_items.iter().filter(|r| r.active) {
             // create the matrix for the text
             let matrix = [
                 [0.02 * text_item.scale.0, 0.0, 0.0, 0.0],

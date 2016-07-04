@@ -108,7 +108,8 @@ pub fn create_skydome() -> RenderItem {
                 scale: (100f32, 100f32, 100f32),
                 update_fn: Vec::new(),
             }
-        ]
+        ],
+        active: true,
     }
 }
 

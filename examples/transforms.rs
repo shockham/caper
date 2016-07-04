@@ -44,7 +44,8 @@ fn main() {
                     scale: (1f32, 1f32, 1f32),
                     update_fn: vec![circle],
                 }
-            ]
+            ],
+            active: true,
         },
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/floor.obj")),
@@ -62,7 +63,8 @@ fn main() {
                     scale: (2.0f32, 2.0f32, 2.0f32),
                     update_fn: vec![spin],
                 }
-            ]
+            ],
+            active: true,
         },
         RenderItem {
             vertices: gen_quad(),
@@ -74,7 +76,8 @@ fn main() {
                     scale: (1f32, 1f32, 1f32),
                     update_fn: Vec::new(),
                 }
-            ]
+            ],
+            active: true,
         },
         RenderItem {
             vertices: gen_sphere(),
@@ -86,7 +89,8 @@ fn main() {
                     scale: (1f32, 1f32, 1f32),
                     update_fn: Vec::new(),
                 }
-            ]
+            ],
+            active: true,
         },
         RenderItem {
             vertices: gen_cube(),
@@ -98,7 +102,8 @@ fn main() {
                     scale: (1f32, 1f32, 1f32),
                     update_fn: Vec::new(),
                 }
-            ]
+            ],
+            active: true,
         },
     ];
 

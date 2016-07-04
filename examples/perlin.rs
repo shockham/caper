@@ -55,7 +55,8 @@ fn main() {
                     scale: (1f32, 1f32, 1f32),
                     update_fn: Vec::new(),
                 }
-            ]
+            ],
+            active: true,
         },
         create_skydome(),
         RenderItem {
@@ -68,7 +69,8 @@ fn main() {
                     scale: (1f32, 1f32, 1f32),
                     update_fn: Vec::new(),
                 }
-            ]
+            ],
+            active: true,
         }
     ];
 
@@ -79,6 +81,7 @@ fn main() {
             color: (0f32, 0f32, 0f32, 1f32),
             scale: (1f32, 1f32, 1f32),
             update_fn: Vec::new(),
+            active: true,
         }
     ];
 

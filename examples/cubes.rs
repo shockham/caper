@@ -34,7 +34,8 @@ fn main() {
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/cube.obj")),
             shader_name: "height_tess",
-            instance_transforms: transforms
+            instance_transforms: transforms,
+            active: true,
         }
     ];
 

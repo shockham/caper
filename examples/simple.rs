@@ -17,7 +17,8 @@ fn main() {
                     scale: (1f32, 1f32, 1f32),
                     update_fn: Vec::new(),
                 }
-            ]
+            ],
+            active: true,
         },
     ];
 
