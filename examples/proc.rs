@@ -11,6 +11,7 @@ fn main() {
     let transforms = (0 .. 200)
         .map(|i| {
             Transform {
+                active: true,
                 pos: ((i as f32 % 10f32) * 2f32, 0.0f32, (i as f32 / 10f32) * 2f32),
                 rot: (0f32, 0f32, 0f32, 1f32),
                 scale: (1f32, 1f32, 1f32),
@@ -54,6 +55,7 @@ fn main() {
             render_items[0].instance_transforms =
                 render_items[0].instance_transforms.iter().map(|t| {
                     Transform {
+                        active: true,
                         pos: (t.pos.0,
                               ((t.pos.0 / 5f32).sin() *
                                (t.pos.2 / 5f32).cos() *

@@ -19,6 +19,7 @@ pub struct Transform {
     pub rot: Quaternion,
     pub scale: Vector3,
     pub update_fn: Vec<fn(&mut Transform)>,
+    pub active: bool,
 }
 
 /// struct for abstracting items to be sent to render

@@ -33,12 +33,14 @@ fn main() {
             shader_name: "dist",
             instance_transforms: vec![
                 Transform {
+                    active: true,
                     pos: (0.0, (0.0 as f32).sin(), 0.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (0.5f32, 0.5f32, 0.5f32),
                     update_fn: vec![sin_y, circle],
                 },
                 Transform {
+                    active: true,
                     pos: (0.0f32.sin(), 0.0, 0.0f32.cos()),
                     rot: (0f32, 0f32, 0f32, 0f32),
                     scale: (1f32, 1f32, 1f32),
@@ -52,12 +54,14 @@ fn main() {
             shader_name: "pbr",
             instance_transforms: vec![
                 Transform {
+                    active: true,
                     pos: (0.0, 0.0, 0.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (1f32, 1f32, 1f32),
                     update_fn: Vec::new(),
                 },
                 Transform {
+                    active: true,
                     pos: (15.0, 0.0, 0.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (2.0f32, 2.0f32, 2.0f32),
@@ -71,6 +75,7 @@ fn main() {
             shader_name: "dist",
             instance_transforms: vec![
                 Transform {
+                    active: true,
                     pos: (0.0, 1.0, 0.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (1f32, 1f32, 1f32),
@@ -84,6 +89,7 @@ fn main() {
             shader_name: "dist",
             instance_transforms: vec![
                 Transform {
+                    active: true,
                     pos: (0.0, 3.0, 0.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (1f32, 1f32, 1f32),
@@ -97,6 +103,7 @@ fn main() {
             shader_name: "dist",
             instance_transforms: vec![
                 Transform {
+                    active: true,
                     pos: (0.0, 8.0, 0.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (1f32, 1f32, 1f32),

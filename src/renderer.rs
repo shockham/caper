@@ -132,7 +132,7 @@ impl Renderer {
 
                 // add positions for instances TODO possibly not create every frame
                 let per_instance = {
-                    let data = item.instance_transforms.iter().map(|t| {
+                    let data = item.instance_transforms.iter().filter(|t| t.active).map(|t| {
                         Attr {
                             world_position: t.pos,
                             world_rotation: t.rot,

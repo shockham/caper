@@ -12,6 +12,7 @@ fn main() {
             shader_name: "dist",
             instance_transforms: vec![
                 Transform {
+                    active: true,
                     pos: (-0.5, 0.0, -5.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (1f32, 1f32, 1f32),

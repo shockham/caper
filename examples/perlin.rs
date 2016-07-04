@@ -50,6 +50,7 @@ fn main() {
             shader_name: "height_tess",
             instance_transforms: vec![
                 Transform {
+                    active: true,
                     pos: (fixed_val, 0.0, fixed_val),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (1f32, 1f32, 1f32),
@@ -64,6 +65,7 @@ fn main() {
             shader_name: "line",
             instance_transforms: vec![
                 Transform {
+                    active: true,
                     pos: (sphere_pos.0, 3.0, sphere_pos.1),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (1f32, 1f32, 1f32),

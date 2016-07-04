@@ -21,6 +21,7 @@ fn main() {
             let pos = ((i as f32 % map_size) * 2f32, ((i / map_size as i32) * 2) as f32);
             let size = perlin2(&Seed::new(0), &[pos.0 / 10f32, pos.1 / 10f32]).abs() * 8f32;
             Transform {
+                active: true,
                 pos: (pos.0 * 5f32, size, pos.1 * 5f32),
                 rot: (0f32, 0f32, 0f32, 1f32),
                 scale: (4.2f32, size, 4.2f32),
