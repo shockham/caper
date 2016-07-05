@@ -55,7 +55,7 @@ impl PostEffect {
             index_buffer: IndexBuffer::new(facade, PrimitiveType::TriangleStrip, &ind_arr).unwrap(),
             target_color: RefCell::new(None),
             target_depth: RefCell::new(None),
-            current_shader: "chrom",
+            current_shader: "default",
         }
     }
 }

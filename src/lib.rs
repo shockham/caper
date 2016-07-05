@@ -1,6 +1,6 @@
 #![feature(zero_one)]
 #[macro_use]
-extern crate glium;
+pub extern crate glium;
 extern crate glium_text;
 extern crate noise;
 extern crate time;

@@ -1,8 +1,6 @@
 pub mod default;
 pub mod dist;
-pub mod pbr;
 pub mod height;
-pub mod height_tess;
 pub mod line;
 
 use glium::{ Program, Display };
@@ -29,15 +27,6 @@ impl Shaders {
                                         tessellation_evaluation: default::gl330::TESS_EVAL
                                     }).unwrap());
 
-        shader_map.insert("pbr", program!(display,
-                                   330 => {
-                                       vertex: default::gl330::VERT,
-                                       fragment: pbr::gl330::FRAG,
-                                       geometry:default::gl330::GEOM,
-                                       tessellation_control: default::gl330::TESS_CONTROL,
-                                       tessellation_evaluation: default::gl330::TESS_EVAL
-                                   }).unwrap());
-
         shader_map.insert("height", program!(display,
                                       330 => {
                                           vertex: default::gl330::VERT,
@@ -47,14 +36,7 @@ impl Shaders {
                                           tessellation_evaluation: default::gl330::TESS_EVAL
                                       }).unwrap());
 
-        shader_map.insert("height_tess", program!(display,
-                                           330 => {
-                                               vertex: default::gl330::VERT,
-                                               fragment: height_tess::gl330::FRAG,
-                                               geometry: height_tess::gl330::GEOM,
-                                               tessellation_control: height_tess::gl330::TESS_CONTROL,
-                                               tessellation_evaluation: height_tess::gl330::TESS_EVAL
-                                           }).unwrap());
+
 
         shader_map.insert("line", program!(display,
                                     330 => {
@@ -66,8 +48,8 @@ impl Shaders {
                                     }).unwrap());
 
         let mut post_shader_map = HashMap::new();
-            
-        post_shader_map.insert("chrom", program!(display,
+
+        post_shader_map.insert("default", program!(display,
                              330 => {
                                  vertex: r"
                             #version 330
@@ -94,12 +76,6 @@ impl Shaders {
 
                             void main() {
                                 vec4 color = texture(tex, v_tex_coords);
-                                //ivec2 tex_size = textureSize(tex, 0);
-                                vec2 tex_size = vec2(0.997);
-
-                                color.r = texture(tex, vec2(min(v_tex_coords.x + 0.003, tex_size.x), v_tex_coords.y)).r;
-                                color.b = texture(tex, vec2(v_tex_coords.x, min(v_tex_coords.y + 0.003, tex_size.y))).b;
-
                                 frag_output = color;
                             }
                         "
@@ -110,5 +86,41 @@ impl Shaders {
             shaders: shader_map,
             post_shaders: post_shader_map,
         }
+    }
+
+    pub fn add_shader(&mut self, display: &Display, name: &'static str, vert: &'static str, frag: &'static str, geom: &'static str, tess_cont: &'static str, tess_eval: &'static str) -> Result<&str, &str> {
+
+        let shader_prog = match program!(display,
+                                      330 => {
+                                          vertex: vert,
+                                          fragment: frag,
+                                          geometry: geom,
+                                          tessellation_control: tess_cont,
+                                          tessellation_evaluation: tess_eval,
+                                      }) {
+
+            Ok(s) => s,
+            Err(_) => { return Err("Could not create shader"); },
+        };
+
+        self.shaders.insert(name, shader_prog);
+
+        Ok("shader added")
+    }
+
+    pub fn add_post_shader(&mut self, display: &Display, name: &'static str, vert: &'static str, frag: &'static str) -> Result<&str, &str> {
+
+        let post_shader_prog = match program!(display,
+                             330 => {
+                                 vertex: vert,
+                                 fragment: frag
+                             }) {
+            Ok(s) => s,
+            Err(_) => { return Err("Could not create post shader"); },
+        };
+
+        self.post_shaders.insert(name, post_shader_prog);
+
+        Ok("post shader added")
     }
 }

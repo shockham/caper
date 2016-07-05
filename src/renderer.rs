@@ -30,7 +30,7 @@ pub struct Renderer {
     default_font: FontTexture,
     imgui: ImGui,
     imgui_rend: ImGuiRenderer,
-    post_effect: PostEffect,
+    pub post_effect: PostEffect,
     pub start_time: f64,
     pub shaders: Shaders,
 }

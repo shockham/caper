@@ -51,7 +51,7 @@ fn main() {
         },
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/floor.obj")),
-            shader_name: "pbr",
+            shader_name: "height",
             instance_transforms: vec![
                 Transform {
                     active: true,

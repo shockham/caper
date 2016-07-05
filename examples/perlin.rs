@@ -47,7 +47,7 @@ fn main() {
     let mut render_items = vec![
         RenderItem {
             vertices: gen_perlin_mesh(pseu_cam_pos, map_size),
-            shader_name: "height_tess",
+            shader_name: "height",
             instance_transforms: vec![
                 Transform {
                     active: true,
