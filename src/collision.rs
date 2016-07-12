@@ -8,11 +8,14 @@ pub enum CollisionInfo {
 }
 
 /// returns true if the given squares with width are overlapping
-pub fn overlapping(pos_a:&(f32, f32), pos_b:&(f32, f32), size: &(f32, f32), separate:bool) -> CollisionInfo {
+pub fn overlapping(pos_a:&(f32, f32), size_a: &(f32, f32),
+                   pos_b:&(f32, f32), size_b: &(f32, f32),
+                   separate:bool) -> CollisionInfo {
+
     let (left_a, left_b) = (pos_a.0, pos_b.0);
-    let (right_a, right_b) = (pos_a.0 + size.0, pos_b.0 + size.0);
+    let (right_a, right_b) = (pos_a.0 + size_a.0, pos_b.0 + size_b.0);
     let (top_a, top_b) = (pos_a.1, pos_b.1);
-    let (bottom_a, bottom_b) = (pos_a.1 + size.1, pos_b.1 + size.1);
+    let (bottom_a, bottom_b) = (pos_a.1 + size_a.1, pos_b.1 + size_b.1);
 
     if bottom_a <= top_b { return CollisionInfo::NoCollision; }
     if top_a >= bottom_b { return CollisionInfo::NoCollision; }
@@ -32,13 +35,17 @@ pub fn overlapping(pos_a:&(f32, f32), pos_b:&(f32, f32), size: &(f32, f32), sepa
 }
 
 /// returns true if the given cubes with size overlap
-pub fn overlapping_3d(pos_a:&(f32, f32, f32), pos_b:&(f32, f32, f32), size: &(f32, f32, f32), separate:bool) -> CollisionInfo {
-    let check_2d = overlapping(&(pos_a.0, pos_a.2), &(pos_b.0, pos_b.2), &(size.0, size.2), separate);
-    // check in 2d space first
+pub fn overlapping_3d(pos_a:&(f32, f32, f32), size_a: &(f32, f32, f32),
+                      pos_b:&(f32, f32, f32), size_b: &(f32, f32, f32),
+                      separate:bool) -> CollisionInfo {
+    // check collision in 2d
+    let check_2d = overlapping(&(pos_a.0, pos_a.2), &(size_a.0, size_a.2),
+                               &(pos_b.0, pos_b.2), &(size_b.0, size_b.2), separate);
+    // return if there is no collision in 2d
     if let CollisionInfo::NoCollision = check_2d { return check_2d; }
 
     let (up_a, up_b) = (pos_a.1, pos_b.1);
-    let (down_a, down_b) = (pos_a.1 + size.1, pos_b.1 + size.1);
+    let (down_a, down_b) = (pos_a.1 + size_a.1, pos_b.1 + size_b.1);
 
     if down_a <= up_b { return CollisionInfo::NoCollision; }
     if up_a >= down_b { return CollisionInfo::NoCollision; }
