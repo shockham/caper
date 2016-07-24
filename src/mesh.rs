@@ -63,7 +63,7 @@ pub fn gen_cube() -> Vec<Vertex> {
     let mut cube_verts = gen_quad();
 
     cube_verts.append(&mut vec!(
-        // back face
+        // back face TODO fix line rendering
          Vertex {
             position: p_011,
             normal: DEF_NORMAL,

@@ -11,6 +11,8 @@ use std::rc::Rc;
 
 use types::Vertex;
 
+use time;
+
 /// struct representing a post effect
 pub struct PostEffect {
     context: Rc<Context>,
@@ -19,6 +21,7 @@ pub struct PostEffect {
     target_color: RefCell<Option<Texture2d>>,
     target_depth: RefCell<Option<DepthRenderBuffer>>,
     pub current_shader: &'static str,
+    start_time: f32,
 }
 
 impl PostEffect {
@@ -56,6 +59,7 @@ impl PostEffect {
             target_color: RefCell::new(None),
             target_depth: RefCell::new(None),
             current_shader: "default",
+            start_time: time::precise_time_s() as f32,
         }
     }
 }
@@ -99,7 +103,8 @@ pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut 
 
         let uniforms = uniform! {
             tex: &*target_color,
-            resolution: (target_dimensions.0 as f32, target_dimensions.1 as f32)
+            resolution: (target_dimensions.0 as f32, target_dimensions.1 as f32),
+            time: time::precise_time_s() as f32 - system.start_time,
         };
 
         // second pass draw the post effect
