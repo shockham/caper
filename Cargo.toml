@@ -10,13 +10,13 @@ documentation = "https://github.com/shockham/caper"
 description = "Small game framework"
 
 [dependencies]
-glium = "0.14"
-glium_text = "0.9"
+glium = "0.15"
+glium_text = { git = "https://github.com/shockham/glium_text" }
 time = "0.1"
 genmesh = "0.4"
 obj = { version = "0.5", features = ["usegenmesh"] }
 noise = "0.2"
-imgui = "0.0.8"
+imgui = { git = "https://github.com/Gekkio/imgui-rs" }
 
 [dev-dependencies]
 fps_counter = "0.2"

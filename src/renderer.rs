@@ -174,7 +174,7 @@ impl Renderer {
         }
 
         // imgui elements
-        let ui = self.imgui.frame(width, height, 0.1);
+        let ui = self.imgui.frame((width, height), (width, height), 0.1);
         f(&ui);
         self.imgui_rend.render(&mut target, ui).unwrap();
 

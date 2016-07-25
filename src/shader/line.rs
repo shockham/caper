@@ -21,7 +21,7 @@ pub mod gl330 {
             frag_output = vec4(color, 1.0);
         }
     ";
-    
+
     // geometry shader
     pub const GEOM: &'static str =
         "
@@ -36,7 +36,7 @@ pub mod gl330 {
         out vec3 g_normal;
         out vec3 g_pos;
 
-        void main(void) {   
+        void main(void) {
             for(int i = 0; i < gl_in.length(); i++){
                 g_normal = te_normal[i];
                 g_pos = te_pos[i];
