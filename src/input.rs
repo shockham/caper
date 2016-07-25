@@ -41,8 +41,8 @@ impl Input {
         let hidpi_factor = window.hidpi_factor();
 
         // reset the delta incase the mouse does not move
-        self.mouse_delta.0 = 0f32;
-        self.mouse_delta.1 = 0f32;
+        self.mouse_delta = (0f32, 0f32);
+        self.mouse_wheel_delta = (0f32, 0f32);
 
         // polling and handling the events received by the display
         for event in display.poll_events() {
