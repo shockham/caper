@@ -3,7 +3,7 @@ extern crate time;
 extern crate obj;
 
 use std::ops::{Add, Mul};
-use std::num::Zero;
+use std::iter::Sum;
 use types::{ RenderItem, Transform, Vertex };
 
 /// quick macro to use in the examples for easily defining all the modules and game loop
@@ -115,13 +115,12 @@ pub fn create_skydome() -> RenderItem {
 }
 
 /// Returns the dot product of two vectors
-pub fn dotp<T>(this: &[T], other: &[T]) -> T where T:Add<T, Output=T> + Mul<T, Output=T> + Zero + Copy {
+pub fn dotp<T>(this: &[T], other: &[T]) -> T where T:Add<T, Output=T> + Mul<T, Output=T> + Sum + Copy {
     assert!(this.len() == other.len(), "The dimensions must be equal");
 
-    let zero : T = Zero::zero();
     this.iter().zip(other.iter())
         .map(|(&a, &b)| a * b)
-        .fold(zero, |sum, n| sum + n)
+        .sum()
 }
 
 /// returns the cross product of two vectors
