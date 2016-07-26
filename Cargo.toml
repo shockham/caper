@@ -11,7 +11,7 @@ description = "Small game framework"
 
 [dependencies]
 glium = "0.15"
-glium_text = { git = "https://github.com/shockham/glium_text" }
+glium_text = "0.10"
 time = "0.1"
 genmesh = "0.4"
 obj = { version = "0.5", features = ["usegenmesh"] }
