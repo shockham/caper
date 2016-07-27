@@ -6,7 +6,7 @@ license = "MIT"
 readme = "README.md"
 repository = "https://github.com/shockham/caper"
 homepage = "https://github.com/shockham/caper"
-documentation = "https://github.com/shockham/caper"
+documentation = "https://shockham.github.io/caper/caper/"
 description = "Small game framework"
 
 [dependencies]

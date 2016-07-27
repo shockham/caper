@@ -2,6 +2,8 @@ Caper
 ========
 Small game framework using [rust](https://www.rust-lang.org/) and [glium](https://github.com/tomaka/glium).
 
+[**Documentation**](https://shockham.github.io/caper/caper/)
+
 [Example](https://github.com/shockham/caper/blob/master/examples/simple.rs) of a basis for a game:
 ```rust
 #[macro_use]
