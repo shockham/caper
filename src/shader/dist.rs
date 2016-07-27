@@ -14,7 +14,7 @@ pub mod gl330 {
 
         void main() {
             float lum = max(dot(normalize(g_normal), normalize(LIGHT)), 0.0);
-            float dist = abs(distance(-cam_pos, g_pos)) / 80.0;
+            float dist = abs(distance(cam_pos, g_pos)) / 80.0;
 
             vec3 base_color = vec3(1.0, 1.0, 1.0);
 

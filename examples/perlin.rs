@@ -22,7 +22,7 @@ fn main() {
 
     let map_size = 100f32;
     let fixed_val = -(map_size/2f32);
-    let move_speed = 0.05f32;
+    let move_speed = 0.1f32;
     let mouse_speed = 3f32;
     let sphere_pos = (8f32, 10f32);
 
@@ -97,7 +97,7 @@ fn main() {
         // define a block for start
         start => {
             // yay start code
-            cam_state.cam_pos.1 = -2.5f32 - get_pos_perlin(((pseu_cam_pos.0 - fixed_val),
+            cam_state.cam_pos.1 = 2.5f32 + get_pos_perlin(((pseu_cam_pos.0 - fixed_val),
                                                             (pseu_cam_pos.1 - fixed_val)),
                                                             &Seed::new(DEF_SEED_BASE));
         },
@@ -107,7 +107,6 @@ fn main() {
             if input.hide_mouse {
                 let mv_matrix = Renderer::build_fp_view_matrix(&cam_state);
 
-                // this can probably be cleaned up a bit
                 if input.keys_down.contains(&Key::S) {
                     pseu_cam_pos.0 += mv_matrix[0][2] * move_speed;
                     pseu_cam_pos.1 += mv_matrix[2][2] * move_speed;
@@ -139,7 +138,7 @@ fn main() {
             // only regenerate the mesh if movement
             if movement_dirty {
                 render_items[0].vertices = gen_perlin_mesh(pseu_cam_pos, map_size);
-                cam_state.cam_pos.1 = -2.5f32 - get_pos_perlin(((pseu_cam_pos.0 - fixed_val),
+                cam_state.cam_pos.1 = 2.5f32 + get_pos_perlin(((pseu_cam_pos.0 - fixed_val),
                                                                 (pseu_cam_pos.1 - fixed_val)),
                                                                 &Seed::new(DEF_SEED_BASE));
 
@@ -177,7 +176,7 @@ fn main() {
                         ui.text(im_str!("mouse_speed: {}", mouse_speed));
                         ui.separator();
                         ui.text(im_str!("pseu_cam_pos: {:?}", local_debug.pos));
-                        ui.slider_f32(im_str!("fps"), &mut local_debug.fps, 0f32, 60f32)
+                        ui.slider_float(im_str!("fps"), &mut local_debug.fps, 0f32, 60f32)
                             .display_format(im_str!("%.0f"))
                             .build();
                         ui.checkbox(im_str!("test_check"), &mut local_debug.test_check);

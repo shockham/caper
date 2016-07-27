@@ -100,26 +100,25 @@ impl Input {
 
         let mv_matrix = Renderer::build_fp_view_matrix(cam_state);
 
-        // this can probably be cleaned up a bit
-        if self.keys_down.contains(&Key::W) {
+        if self.keys_down.contains(&Key::S) {
             cam_state.cam_pos.0 += mv_matrix[0][2] * MOVE_SPEED;
             cam_state.cam_pos.1 += mv_matrix[1][2] * MOVE_SPEED;
             cam_state.cam_pos.2 += mv_matrix[2][2] * MOVE_SPEED;
         }
 
-        if self.keys_down.contains(&Key::S) {
+        if self.keys_down.contains(&Key::W) {
             cam_state.cam_pos.0 -= mv_matrix[0][2] * MOVE_SPEED;
             cam_state.cam_pos.1 -= mv_matrix[1][2] * MOVE_SPEED;
             cam_state.cam_pos.2 -= mv_matrix[2][2] * MOVE_SPEED;
         }
 
-        if self.keys_down.contains(&Key::A) {
+        if self.keys_down.contains(&Key::D) {
             cam_state.cam_pos.0 += mv_matrix[0][0] * MOVE_SPEED;
             cam_state.cam_pos.1 += mv_matrix[1][0] * MOVE_SPEED;
             cam_state.cam_pos.2 += mv_matrix[2][0] * MOVE_SPEED;
         }
 
-        if self.keys_down.contains(&Key::D) {
+        if self.keys_down.contains(&Key::A) {
             cam_state.cam_pos.0 -= mv_matrix[0][0] * MOVE_SPEED;
             cam_state.cam_pos.1 -= mv_matrix[1][0] * MOVE_SPEED;
             cam_state.cam_pos.2 -= mv_matrix[2][0] * MOVE_SPEED;

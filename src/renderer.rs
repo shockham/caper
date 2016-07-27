@@ -123,44 +123,42 @@ impl Renderer {
                     &mut target,
                     |target| {
 
-            target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
+                        target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
-            // drawing the render items TODO batching
-            for item in render_items.iter().filter(|r| r.active) {
-                // building the vertex and index buffers TODO possibly not create every frame
-                let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices).unwrap();
+                        // drawing the render items TODO batching
+                        for item in render_items.iter().filter(|r| r.active) {
+                            // building the vertex and index buffers TODO possibly not create every frame
+                            let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices).unwrap();
 
-                // add positions for instances TODO possibly not create every frame
-                let per_instance = {
-                    let data = item.instance_transforms.iter().filter(|t| t.active).map(|t| {
-                        Attr {
-                            world_position: t.pos,
-                            world_rotation: t.rot,
-                            world_scale: t.scale
+                            // add positions for instances TODO possibly not create every frame
+                            let per_instance = {
+                                let data = item.instance_transforms.iter().filter(|t| t.active).map(|t| {
+                                    Attr {
+                                        world_position: t.pos,
+                                        world_rotation: t.rot,
+                                        world_scale: t.scale
+                                    }
+                                }).collect::<Vec<_>>();
+
+                                VertexBuffer::dynamic(&self.display, &data).unwrap()
+                            };
+
+                            target.draw(
+                                (&vertex_buffer, per_instance.per_instance().unwrap()),
+                                &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
+                                &self.shaders.shaders.get(item.shader_name).unwrap(),
+                                &uniforms,
+                                &params).unwrap();
                         }
-                    }).collect::<Vec<_>>();
-
-                    VertexBuffer::dynamic(&self.display, &data).unwrap()
-                };
-
-                target.draw(
-                    (&vertex_buffer, per_instance.per_instance().unwrap()),
-                    &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
-                    &self.shaders.shaders.get(item.shader_name).unwrap(),
-                    &uniforms,
-                    &params).unwrap();
-            }
-        });
+                    });
 
         // drawing the text items
         for text_item in text_items.iter().filter(|r| r.active) {
             // create the matrix for the text
-            let matrix = [
-                [0.02 * text_item.scale.0, 0.0, 0.0, 0.0],
-                [0.0, 0.02 * text_item.scale.1 * (width as f32) / (height as f32), 0.0, 0.0],
-                [0.0, 0.0, 0.02 * text_item.scale.2, 0.0],
-                    [text_item.pos.0, text_item.pos.1, text_item.pos.2, 1.0f32]
-            ];
+            let matrix = [[0.02 * text_item.scale.0, 0.0, 0.0, 0.0], 
+            [0.0, 0.02 * text_item.scale.1 * (width as f32) / (height as f32), 0.0, 0.0],
+            [0.0, 0.0, 0.02 * text_item.scale.2, 0.0],
+            [text_item.pos.0, text_item.pos.1, text_item.pos.2, 1.0f32]];
 
             // create TextDisplay for item, TODO change this to not be done every frame
             let text = TextDisplay::new(&self.text_system, &self.default_font,
@@ -202,12 +200,10 @@ impl Renderer {
         let w = 2.0 * znear / width;
         let h = 2.0 * znear / height;
 
-        [
-            [w, 0.0f32, 0.0f32, 0.0f32],
-            [0.0f32, h, 0.0f32, 0.0f32],
-            [0.0f32, 0.0f32, q, -1.0f32],
-                [0.0f32, 0.0f32, qn, 0.0f32]
-        ]
+        [[w, 0.0f32, 0.0f32, 0.0f32],
+        [0.0f32, h, 0.0f32, 0.0f32],
+        [0.0f32, 0.0f32, q, -1.0f32],
+        [0.0f32, 0.0f32, qn, 0.0f32]]
     }
 
     /// Returns the model view matrix for a first person view given cam position and rotation
@@ -224,11 +220,9 @@ impl Renderer {
 
         let cam_arr = [cam_state.cam_pos.0, cam_state.cam_pos.1, cam_state.cam_pos.2];
 
-        [
-            [ xaxis[0], yaxis[0], zaxis[0], 0.0],
-            [ xaxis[1], yaxis[1], zaxis[1], 0.0],
-            [ xaxis[2], yaxis[2], zaxis[2], 0.0],
-                [ dotp(&xaxis, &cam_arr), dotp(&yaxis, &cam_arr), dotp(&zaxis, &cam_arr), 1.0f32]
-        ]
+        [[ xaxis[0], yaxis[0], zaxis[0], 0.0],
+        [ xaxis[1], yaxis[1], zaxis[1], 0.0],
+        [ xaxis[2], yaxis[2], zaxis[2], 0.0],
+        [ -dotp(&xaxis, &cam_arr), -dotp(&yaxis, &cam_arr), -dotp(&zaxis, &cam_arr), 1.0f32]]
     }
 }
