@@ -31,32 +31,38 @@ macro_rules! game_loop {
 
             $start;
 
+            // define the closure for ui updating
             let render_imgui = |$ui: &Ui| $ui_update;
 
             // the main loop
             loop {
-                //quit
+                // quit
                 if $input.keys_down.contains(&Key::Escape) { break; }
 
+                // render the frame
                 $renderer.draw(&$cam_state, &$render_items, &$text_items, &render_imgui);
 
                 // updating and handling the inputs
                 $input.update_inputs(&$renderer.display);
 
-                $renderer.update_imgui_input($input.mouse_pos, ($input.mouse_btns_down.contains(&MouseButton::Left), false, false));
+                // update the inputs for imgui
+                $renderer.update_imgui_input($input.mouse_pos,
+                                             ($input.mouse_btns_down.contains(&MouseButton::Left), false, false));
 
+                // call the update functions for RenderItems
                 for i in 0..$render_items.len() {
                     for t in 0..$render_items[i].instance_transforms.len() {
                         $render_items[i].instance_transforms[t].update();
                     }
                 }
 
+                // call the update functions for the TextItems
                 for i in 0..$text_items.len() {
                     $text_items[i].update();
                 }
 
+                // the update block for other updates
                 $update
-
             }
         }
     };
