@@ -28,12 +28,11 @@ fn main() {
 
     game_loop! {
         // following are identities for access to the frameworks systems
-        input,
-        renderer,
-        shaders,
-        cam_state,
-        render_items,
-        text_items,
+        Input => input,
+        Renderer => renderer,
+        CamState => cam_state,
+        RenderItems => render_items,
+        TextItems => text_items,
         // define a block for start
         start => {
             println!("{:?}", cam_state.cam_pos);

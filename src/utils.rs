@@ -9,8 +9,11 @@ use types::{ RenderItem, Transform, Vertex };
 /// quick macro to use in the examples for easily defining all the modules and game loop
 #[macro_export]
 macro_rules! game_loop {
-    ( $input:ident, $renderer:ident, $shaders:ident,
-      $cam_state:ident, $render_items:ident, $text_items:ident,
+    ( Input => $input:ident,
+      Renderer => $renderer:ident,
+      CamState => $cam_state:ident,
+      RenderItems => $render_items:ident,
+      TextItems => $text_items:ident,
       start => $start:block,
       update => $update:block,
       $ui:ident => $ui_update:block) => {

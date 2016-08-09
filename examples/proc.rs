@@ -33,12 +33,11 @@ fn main() {
     let mut text_items = Vec::new();
 
     game_loop! {
-        input,
-        renderer,
-        shaders,
-        cam_state,
-        render_items,
-        text_items,
+        Input => input,
+        Renderer => renderer,
+        CamState => cam_state,
+        RenderItems => render_items,
+        TextItems => text_items,
         // define a block for start
         start => {
             // yay start code
