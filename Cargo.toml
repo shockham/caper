@@ -16,7 +16,7 @@ time = "0.1"
 genmesh = "0.4"
 obj = { version = "0.5", features = ["usegenmesh"] }
 noise = "0.2"
-imgui = { git = "https://github.com/Gekkio/imgui-rs" }
+imgui = "0.0.10" 
 
 [dev-dependencies]
 fps_counter = "0.2"
