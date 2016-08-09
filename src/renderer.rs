@@ -89,11 +89,11 @@ impl Renderer {
     }
 
     /// Draws a frame
-    pub fn draw<'ui, 'a: 'ui, F: FnMut(&Ui<'ui>)>(&'a mut self,
-                                                  cam_state: &CamState,
-                                                  render_items: &Vec<RenderItem>,
-                                                  text_items: &Vec<TextItem>,
-                                                  mut f: F) {
+    pub fn draw<F: FnMut(&Ui)>(&mut self,
+                               cam_state: &CamState,
+                               render_items: &Vec<RenderItem>,
+                               text_items: &Vec<TextItem>,
+                               mut f: F) {
         // get display dimensions
         let (width, height) = self.display.get_framebuffer_dimensions();
 

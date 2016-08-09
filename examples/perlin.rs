@@ -15,8 +15,6 @@ use noise::Seed;
 use fps_counter::FPSCounter;
 use imgui::*;
 
-use std::sync::{Arc, Mutex};
-
 fn main() {
     let mut fps = FPSCounter::new();
 
@@ -29,19 +27,7 @@ fn main() {
     let mut pseu_cam_pos = (0f32, 0f32);
     let mut movement_dirty = true;
     let mut debug_mode = false;
-
-    struct DebugState {
-        pos: (f32, f32),
-        fps: f32,
-        enabled: bool,
-        test_check: bool,
-    }
-    let debug_state = Arc::new(Mutex::new(DebugState {
-        pos: (0f32, 0f32),
-        fps: 0f32,
-        enabled: debug_mode,
-        test_check: false,
-    }));
+    let mut test_check = false;
 
     // create a vector of render items
     let mut render_items = vec![
@@ -146,24 +132,13 @@ fn main() {
                     (sphere_pos.0 - pseu_cam_pos.0, 3.0, sphere_pos.1 - pseu_cam_pos.1);
             }
 
-            //quit
-            if input.keys_down.contains(&Key::Escape) { break; }
-            debug_mode = input.keys_down.contains(&Key::L);
+            //debug_mode = input.keys_down.contains(&Key::L);
+            if input.keys_down.contains(&Key::L) { debug_mode = true; }
+            if input.keys_down.contains(&Key::K) { debug_mode = false; }
             input.hide_mouse = !debug_mode;
-
-            // update the debug state
-            let mut update_debug = debug_state.lock().unwrap();
-            *update_debug = DebugState {
-                pos: pseu_cam_pos,
-                fps: fps.tick() as f32,
-                enabled: debug_mode,
-                test_check: update_debug.test_check,
-            };
         },
         ui => {
-            let mut local_debug = debug_state.lock().unwrap();
-
-            if local_debug.enabled {
+            if debug_mode {
                 ui.window(im_str!("debug"))
                     .size((300.0, 200.0), ImGuiSetCond_FirstUseEver)
                     .position((0.0, 0.0), ImGuiSetCond_FirstUseEver)
@@ -174,11 +149,9 @@ fn main() {
                         ui.text(im_str!("move_speed: {}", move_speed));
                         ui.text(im_str!("mouse_speed: {}", mouse_speed));
                         ui.separator();
-                        ui.text(im_str!("pseu_cam_pos: {:?}", local_debug.pos));
-                        ui.slider_float(im_str!("fps"), &mut local_debug.fps, 0f32, 60f32)
-                            .display_format(im_str!("%.0f"))
-                            .build();
-                        ui.checkbox(im_str!("test_check"), &mut local_debug.test_check);
+                        ui.text(im_str!("pseu_cam_pos: {:?}", pseu_cam_pos));
+                        ui.text(im_str!("fps: {:?}", fps.tick()));
+                        ui.checkbox(im_str!("test_check"), &mut test_check);
                     });
             }
         }
