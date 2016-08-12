@@ -4,7 +4,7 @@ extern crate obj;
 
 use std::ops::{Add, Mul};
 use std::iter::Sum;
-use types::{ RenderItem, Transform, Vertex };
+use types::{ RenderItem, Transform, Vertex, Quaternion, Vector3 };
 
 /// quick macro to use in the examples for easily defining all the modules and game loop
 #[macro_export]
@@ -155,4 +155,19 @@ pub fn calc_normal(p0: [f32; 3], p1: [f32; 3], p2: [f32; 3]) -> [f32; 3] {
     let b = sub_vec3(p2, p0);
 
     crossp(a, b)
+}
+
+/// returns a euler angle as a quaternion
+pub fn to_quaternion(angle: Vector3) -> Quaternion {
+    let (c3, c1, c2) = ((angle.0 / 2f32).cos(), (angle.1 / 2f32).cos(), (angle.2 / 2f32).cos());
+    let (s3, s1, s2) = ((angle.0 / 2f32).sin(), (angle.1 / 2f32).sin(), (angle.2 / 2f32).sin());
+
+    let c1c2 = c1 * c2;
+    let s1s2 = s1 * s2;
+    let w = c1c2 * c3 - s1s2 * s3;
+    let x = c1c2 * s3 + s1s2 * c3;
+    let y = s1 * c2 * c3 + c1 * s2 * s3;
+    let z = c1 * s2 * c3 - s1 * c2 * s3;
+
+    (x, y, z, w)
 }

@@ -10,10 +10,10 @@ pub const DEF_SEED_BASE:u32 = 0;
 
 /// Generates a quad mesh with each side length 1
 pub fn gen_quad() -> Vec<Vertex> {
-    let p_00 = [0f32, 0f32, 0f32];
-    let p_01 = [0f32, 1f32, 0f32];
-    let p_10 = [1f32, 0f32, 0f32];
-    let p_11 = [1f32, 1f32, 0f32];
+    let p_00 = [-0.5f32, -0.5f32, -0.5f32];
+    let p_01 = [-0.5f32, 0.5f32, -0.5f32];
+    let p_10 = [0.5f32, -0.5f32, -0.5f32];
+    let p_11 = [0.5f32, 0.5f32, -0.5f32];
 
     vec!(
         Vertex {
@@ -51,14 +51,14 @@ pub fn gen_quad() -> Vec<Vertex> {
 
 ///Generates a cube mesh
 pub fn gen_cube() -> Vec<Vertex> {
-    let p_000 = [0f32, 0f32, 0f32];
-    let p_010 = [0f32, 1f32, 0f32];
-    let p_100 = [1f32, 0f32, 0f32];
-    let p_110 = [1f32, 1f32, 0f32];
-    let p_001 = [0f32, 0f32, 1f32];
-    let p_011 = [0f32, 1f32, 1f32];
-    let p_101 = [1f32, 0f32, 1f32];
-    let p_111 = [1f32, 1f32, 1f32];
+    let p_000 = [-0.5f32, -0.5f32, -0.5f32];
+    let p_010 = [-0.5f32, 0.5f32, -0.5f32];
+    let p_100 = [0.5f32, -0.5f32, -0.5f32];
+    let p_110 = [0.5f32, 0.5f32, -0.5f32];
+    let p_001 = [-0.5f32, -0.5f32, 0.5f32];
+    let p_011 = [-0.5f32, 0.5f32, 0.5f32];
+    let p_101 = [0.5f32, -0.5f32, 0.5f32];
+    let p_111 = [0.5f32, 0.5f32, 0.5f32];
 
     let mut cube_verts = gen_quad();
 
