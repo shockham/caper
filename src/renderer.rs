@@ -1,4 +1,4 @@
-use glium::{ Display, DrawParameters, DisplayBuild, Surface, Depth };
+use glium::{ Display, DrawParameters, DisplayBuild, Surface, Depth, Blend };
 use glium::index::{ NoIndices, PrimitiveType };
 use glium::DepthTest::IfLess;
 use glium::vertex::VertexBuffer;
@@ -104,6 +104,7 @@ impl Renderer {
                 write: true,
                 .. Default::default()
             },
+            blend: Blend::alpha_blending(),
             backface_culling: CullClockwise,
             .. Default::default()
         };
