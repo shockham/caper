@@ -32,9 +32,11 @@ pub mod gl330 {
 
         in vec3 te_normal[];
         in vec3 te_pos[];
+        in vec2 te_texture[];
 
         out vec3 g_normal;
         out vec3 g_pos;
+        out vec2 g_texture;
 
         void main(void) {
             for(int i = 0; i < gl_in.length(); i++){
