@@ -106,7 +106,7 @@ pub mod gl330 {
                             ((gl_TessCoord.y) * two) +
                             ((gl_TessCoord.z) * three);
         }
-        
+
         vec2 tex_calc (vec2 one, vec2 two, vec2 three) {
             return ((gl_TessCoord.x) * one) +
                             ((gl_TessCoord.y) * two) +

@@ -123,7 +123,7 @@ impl Renderer {
                     &self.shaders.post_shaders.get(self.post_effect.current_shader).unwrap(),
                     &mut target,
                     |target| {
-
+                        // clear the colour and depth buffers
                         target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
                         // drawing the render items TODO batching
@@ -165,6 +165,7 @@ impl Renderer {
             let text = TextDisplay::new(&self.text_system, &self.default_font,
                                         text_item.text.as_str());
 
+            // draw the text
             glium_text::draw(&text,
                              &self.text_system,
                              &mut target,

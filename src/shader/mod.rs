@@ -5,6 +5,7 @@ pub mod line;
 
 use glium::{ Program, Display };
 use std::collections::HashMap;
+use std::error::Error;
 
 pub struct Shaders {
     pub shaders: HashMap<&'static str, Program>,
@@ -88,7 +89,10 @@ impl Shaders {
         }
     }
 
-    pub fn add_shader(&mut self, display: &Display, name: &'static str, vert: &'static str, frag: &'static str, geom: &'static str, tess_cont: &'static str, tess_eval: &'static str) -> Result<&str, &str> {
+    pub fn add_shader(&mut self, display: &Display,
+                      name: &'static str, vert: &'static str,
+                      frag: &'static str, geom: &'static str,
+                      tess_cont: &'static str, tess_eval: &'static str) -> Result<&str, &str> {
 
         let shader_prog = match program!(display,
                                       330 => {
@@ -100,7 +104,10 @@ impl Shaders {
                                       }) {
 
             Ok(s) => s,
-            Err(_) => { return Err("Could not create shader"); },
+            Err(e) => {
+                println!("{}", e.cause().unwrap());
+                return Err("Could not create shader");
+            },
         };
 
         self.shaders.insert(name, shader_prog);
@@ -108,7 +115,9 @@ impl Shaders {
         Ok("shader added")
     }
 
-    pub fn add_post_shader(&mut self, display: &Display, name: &'static str, vert: &'static str, frag: &'static str) -> Result<&str, &str> {
+    pub fn add_post_shader(&mut self, display: &Display,
+                           name: &'static str, vert: &'static str,
+                           frag: &'static str) -> Result<&str, &str> {
 
         let post_shader_prog = match program!(display,
                              330 => {
@@ -116,7 +125,10 @@ impl Shaders {
                                  fragment: frag
                              }) {
             Ok(s) => s,
-            Err(_) => { return Err("Could not create post shader"); },
+            Err(e) => {
+                println!("{}", e.cause().unwrap());
+                return Err("Could not create post shader");
+            },
         };
 
         self.post_shaders.insert(name, post_shader_prog);

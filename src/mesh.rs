@@ -261,7 +261,7 @@ pub fn gen_sphere() -> Vec<Vertex> {
                 vertices.push(Vertex {
                     position: v,
                     normal: normal,
-                    texture: DEF_UV
+                    texture: [v[0], v[1]],
                 });
             }
         }
