@@ -45,7 +45,7 @@ fn main() {
             ],
             active: true,
         },
-        create_skydome(),
+        create_skydome("height"),
         RenderItem {
             vertices: gen_sphere(),
             shader_name: "line",

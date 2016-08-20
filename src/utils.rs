@@ -34,7 +34,6 @@ macro_rules! game_loop {
 
             $start;
 
-
             // the main loop
             loop {
                 // quit
@@ -113,10 +112,10 @@ pub fn load_wavefront( data: &[u8]) -> Vec<Vertex> {
 
 
 /// Returns a RenderItem for the skydome
-pub fn create_skydome() -> RenderItem {
+pub fn create_skydome(shader_name: &'static str) -> RenderItem {
     RenderItem {
         vertices: load_wavefront(include_bytes!("./resources/skydome.obj")),
-        shader_name: "height",
+        shader_name: shader_name,
         instance_transforms: vec![
             Transform {
                 active: true,
