@@ -1,5 +1,3 @@
-#![feature(iter_arith_traits)]
-
 #[macro_use]
 pub extern crate glium;
 extern crate glium_text;
