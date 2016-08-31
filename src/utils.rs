@@ -4,7 +4,9 @@ extern crate obj;
 
 use std::ops::{Add, Mul};
 use std::iter::Sum;
-use types::{ RenderItem, Transform, Vertex, Quaternion, Vector3 };
+use std::f32::consts::PI;
+
+use types::{ RenderItem, Transform, Vertex, Quaternion, Vector3, CamState };
 
 /// quick macro to use in the examples for easily defining all the modules and game loop
 #[macro_export]
@@ -169,4 +171,47 @@ pub fn to_quaternion(angle: Vector3) -> Quaternion {
     let z = c1 * s2 * c3 - s1 * c2 * s3;
 
     (x, y, z, w)
+}
+
+/// Returns perspective projection matrix given fov, aspect ratio, z near and far
+pub fn build_persp_proj_mat(fov:f32,aspect:f32,znear:f32,zfar:f32) -> [[f32; 4]; 4] {
+    let ymax = znear * (fov * (PI/360.0)).tan();
+    let ymin = -ymax;
+    let xmax = ymax * aspect;
+    let xmin = ymin * aspect;
+
+    let width = xmax - xmin;
+    let height = ymax - ymin;
+
+    let depth = zfar - znear;
+    let q = -(zfar + znear) / depth;
+    let qn = -2.0 * (zfar * znear) / depth;
+
+    let w = 2.0 * znear / width;
+    let h = 2.0 * znear / height;
+
+    [[w, 0.0f32, 0.0f32, 0.0f32],
+    [0.0f32, h, 0.0f32, 0.0f32],
+    [0.0f32, 0.0f32, q, -1.0f32],
+    [0.0f32, 0.0f32, qn, 0.0f32]]
+}
+
+/// Returns the model view matrix for a first person view given cam position and rotation
+pub fn build_fp_view_matrix(cam_state: &CamState) -> [[f32; 4]; 4] {
+
+    let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (
+        cam_state.cam_rot.1.sin(),
+        cam_state.cam_rot.1.cos(),
+        cam_state.cam_rot.0.sin(),
+        cam_state.cam_rot.0.cos());
+    let xaxis = [cos_yaw, 0.0, -sin_yaw];
+    let yaxis = [sin_yaw * sin_pitch, cos_pitch, cos_yaw * sin_pitch];
+    let zaxis = [sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw];
+
+    let cam_arr = [cam_state.cam_pos.0, cam_state.cam_pos.1, cam_state.cam_pos.2];
+
+    [[ xaxis[0], yaxis[0], zaxis[0], 0.0],
+    [ xaxis[1], yaxis[1], zaxis[1], 0.0],
+    [ xaxis[2], yaxis[2], zaxis[2], 0.0],
+    [ -dotp(&xaxis, &cam_arr), -dotp(&yaxis, &cam_arr), -dotp(&zaxis, &cam_arr), 1.0f32]]
 }

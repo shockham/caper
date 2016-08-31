@@ -12,7 +12,6 @@ use glium_text::{ TextSystem, FontTexture, TextDisplay };
 use time;
 use shader::Shaders;
 use std::default::Default;
-use std::f32::consts::PI;
 
 use imgui::{ ImGui, Ui };
 use imgui::glium_renderer::Renderer as ImGuiRenderer;
@@ -41,7 +40,6 @@ impl Renderer {
         // create a diplay instance
         let display = WindowBuilder::new()
             .with_depth_buffer(24)
-            //.with_multisampling(16) // multisampling doesn't work on chromebook
             .with_title(title)
             .with_vsync()
             .with_fullscreen(get_primary_monitor())
@@ -78,7 +76,6 @@ impl Renderer {
     pub fn setup(&self) {
         // get the window for various values
         let window = self.display.get_window().unwrap();
-        //window.set_cursor_state(Grab).ok();
         window.set_cursor_state(Hide).ok();
     }
 
@@ -110,8 +107,8 @@ impl Renderer {
         };
 
         let uniforms = uniform! {
-            projection_matrix: Renderer::build_persp_proj_mat(60f32, width as f32/height as f32, 0.01f32, 1000f32),
-            modelview_matrix: Renderer::build_fp_view_matrix(cam_state),
+            projection_matrix: build_persp_proj_mat(60f32, width as f32/height as f32, 0.01f32, 1000f32),
+            modelview_matrix: build_fp_view_matrix(cam_state),
             cam_pos: cam_state.cam_pos,
             time: (time::precise_time_s() - self.start_time) as f32,
         };
@@ -178,53 +175,9 @@ impl Renderer {
         f(&ui);
         self.imgui_rend.render(&mut target, ui).unwrap();
 
-
         match target.finish() {
             Ok(_) => {},
             Err(e) => println!("{:?}", e),
         };
-    }
-
-    /// Returns perspective projection matrix given fov, aspect ratio, z near and far
-    pub fn build_persp_proj_mat(fov:f32,aspect:f32,znear:f32,zfar:f32) -> [[f32; 4]; 4] {
-        let ymax = znear * (fov * (PI/360.0)).tan();
-        let ymin = -ymax;
-        let xmax = ymax * aspect;
-        let xmin = ymin * aspect;
-
-        let width = xmax - xmin;
-        let height = ymax - ymin;
-
-        let depth = zfar - znear;
-        let q = -(zfar + znear) / depth;
-        let qn = -2.0 * (zfar * znear) / depth;
-
-        let w = 2.0 * znear / width;
-        let h = 2.0 * znear / height;
-
-        [[w, 0.0f32, 0.0f32, 0.0f32],
-        [0.0f32, h, 0.0f32, 0.0f32],
-        [0.0f32, 0.0f32, q, -1.0f32],
-        [0.0f32, 0.0f32, qn, 0.0f32]]
-    }
-
-    /// Returns the model view matrix for a first person view given cam position and rotation
-    pub fn build_fp_view_matrix(cam_state: &CamState) -> [[f32; 4]; 4] {
-
-        let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (
-            cam_state.cam_rot.1.sin(),
-            cam_state.cam_rot.1.cos(),
-            cam_state.cam_rot.0.sin(),
-            cam_state.cam_rot.0.cos());
-        let xaxis = [cos_yaw, 0.0, -sin_yaw];
-        let yaxis = [sin_yaw * sin_pitch, cos_pitch, cos_yaw * sin_pitch];
-        let zaxis = [sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw];
-
-        let cam_arr = [cam_state.cam_pos.0, cam_state.cam_pos.1, cam_state.cam_pos.2];
-
-        [[ xaxis[0], yaxis[0], zaxis[0], 0.0],
-        [ xaxis[1], yaxis[1], zaxis[1], 0.0],
-        [ xaxis[2], yaxis[2], zaxis[2], 0.0],
-        [ -dotp(&xaxis, &cam_arr), -dotp(&yaxis, &cam_arr), -dotp(&zaxis, &cam_arr), 1.0f32]]
     }
 }

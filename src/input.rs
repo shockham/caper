@@ -5,8 +5,9 @@ use glium::glutin::MouseScrollDelta;
 use glium::glutin::Event::{ KeyboardInput, MouseMoved, MouseInput, MouseWheel };
 use glium::glutin::ElementState::{ Pressed, Released };
 use glium::glutin::CursorState::{ Normal, Hide };
-use renderer::{ Renderer };
+
 use types::CamState;
+use utils::build_fp_view_matrix;
 
 
 /// struct for abstracting the state for all the inputs
@@ -98,7 +99,7 @@ impl Input {
         const MOVE_SPEED: f32 = 0.2f32;
         const MOUSE_SPEED: f32 = 10f32;
 
-        let mv_matrix = Renderer::build_fp_view_matrix(cam_state);
+        let mv_matrix = build_fp_view_matrix(cam_state);
 
         if self.keys_down.contains(&Key::S) {
             cam_state.cam_pos.0 += mv_matrix[0][2] * MOVE_SPEED;
