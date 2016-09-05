@@ -5,6 +5,7 @@ extern crate noise;
 extern crate time;
 #[macro_use]
 pub extern crate imgui;
+extern crate fps_counter;
 
 pub mod renderer;
 pub mod utils;

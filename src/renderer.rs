@@ -10,12 +10,13 @@ use glium_text;
 use glium_text::{ TextSystem, FontTexture, TextDisplay };
 
 use time;
-use shader::Shaders;
 use std::default::Default;
+use fps_counter::FPSCounter;
 
 use imgui::{ ImGui, Ui };
 use imgui::glium_renderer::Renderer as ImGuiRenderer;
 
+use shader::Shaders;
 use utils::*;
 use posteffect::*;
 use types::*;
@@ -32,6 +33,8 @@ pub struct Renderer {
     pub post_effect: PostEffect,
     pub start_time: f64,
     pub shaders: Shaders,
+    fps_counter: FPSCounter,
+    pub fps: f32,
 }
 
 impl Renderer {
@@ -56,6 +59,8 @@ impl Renderer {
         let shaders = Shaders::new(&display);
         let post_fx = PostEffect::new(&display);
 
+        let fps_counter = FPSCounter::new(); 
+
         let renderer = Renderer {
             display: display,
             text_system: text_system,
@@ -65,6 +70,8 @@ impl Renderer {
             post_effect: post_fx,
             start_time: time::precise_time_s(),
             shaders: shaders,
+            fps_counter: fps_counter,
+            fps: 0f32,
         };
 
         renderer.setup();
@@ -176,7 +183,7 @@ impl Renderer {
         self.imgui_rend.render(&mut target, ui).unwrap();
 
         match target.finish() {
-            Ok(_) => {},
+            Ok(_) => { self.fps = self.fps_counter.tick() as f32; },
             Err(e) => println!("{:?}", e),
         };
     }

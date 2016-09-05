@@ -17,6 +17,7 @@ genmesh = "0.4"
 obj = { version = "0.5", features = ["usegenmesh"] }
 noise = "0.2"
 imgui = "0.0.10" 
+fps_counter = "0.2.0"
 
 [dev-dependencies]
 fps_counter = "0.2"
