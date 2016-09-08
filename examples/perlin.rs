@@ -90,7 +90,7 @@ fn main() {
         update => {
             // block for handling the inputs
             if input.hide_mouse {
-                let mv_matrix = Renderer::build_fp_view_matrix(&cam_state);
+                let mv_matrix = caper::utils::build_fp_view_matrix(&cam_state);
 
                 if input.keys_down.contains(&Key::S) {
                     pseu_cam_pos.0 += mv_matrix[0][2] * move_speed;

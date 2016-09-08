@@ -6,6 +6,8 @@ extern crate time;
 #[macro_use]
 pub extern crate imgui;
 extern crate fps_counter;
+extern crate bincode;
+extern crate rustc_serialize;
 
 pub mod renderer;
 pub mod utils;
@@ -15,3 +17,4 @@ pub mod mesh;
 pub mod posteffect;
 pub mod types;
 pub mod collision;
+pub mod persist;

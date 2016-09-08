@@ -5,7 +5,7 @@ pub type Vector3 = (f32, f32, f32);
 pub type Quaternion = (f32, f32, f32, f32);
 
 /// struct for defining a Vector for creating meshes
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, RustcEncodable, RustcDecodable, PartialEq)]
 pub struct Vertex {
     pub position: [f32; 3],
     pub normal: [f32; 3],

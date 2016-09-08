@@ -1,6 +1,6 @@
 [package]
 name = "caper"
-version = "0.0.2"
+version = "0.0.3"
 authors = ["shockham <samuel.hockham@gmail.com>"]
 license = "MIT"
 readme = "README.md"
@@ -18,6 +18,5 @@ obj = { version = "0.5", features = ["usegenmesh"] }
 noise = "0.2"
 imgui = "0.0.10" 
 fps_counter = "0.2.0"
-
-[dev-dependencies]
-fps_counter = "0.2"
+bincode = "0.6"
+rustc-serialize = "0.3"

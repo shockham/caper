@@ -3,5 +3,6 @@ TODO
 **/.DS_Store
 **/*.swp
 target
+persist
 Cargo.lock
 imgui.ini
