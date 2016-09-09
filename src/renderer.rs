@@ -151,7 +151,7 @@ impl Renderer {
                             target.draw(
                                 (&vertex_buffer, per_instance.per_instance().unwrap()),
                                 &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
-                                &self.shaders.shaders.get(item.shader_name).unwrap(),
+                                &self.shaders.shaders.get(item.shader_name.as_str()).unwrap(),
                                 &uniforms,
                                 &params).unwrap();
                         }

@@ -33,14 +33,13 @@ fn main() {
     let mut render_items = vec![
         RenderItem {
             vertices: gen_perlin_mesh(pseu_cam_pos, map_size),
-            shader_name: "height",
+            shader_name: "height".to_string(),
             instance_transforms: vec![
                 Transform {
                     active: true,
                     pos: (fixed_val, 0.0, fixed_val),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (1f32, 1f32, 1f32),
-                    update_fn: Vec::new(),
                 }
             ],
             active: true,
@@ -48,27 +47,25 @@ fn main() {
         create_skydome("height"),
         RenderItem {
             vertices: gen_sphere(),
-            shader_name: "line",
+            shader_name: "line".to_string(),
             instance_transforms: vec![
                 Transform {
                     active: true,
                     pos: (sphere_pos.0, 3.0, sphere_pos.1),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (1f32, 1f32, 1f32),
-                    update_fn: Vec::new(),
                 }
             ],
             active: true,
         }
     ];
 
-    let mut text_items = vec![
+    let text_items = vec![
         TextItem {
             text: "test text".to_string(),
             pos: (-1.0f32, 0.5f32, 0f32),
             color: (0f32, 0f32, 0f32, 1f32),
             scale: (1f32, 1f32, 1f32),
-            update_fn: Vec::new(),
             active: true,
         }
     ];

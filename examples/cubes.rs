@@ -25,22 +25,21 @@ fn main() {
                 pos: (pos.0 * 5f32, size, pos.1 * 5f32),
                 rot: (0f32, 0f32, 0f32, 1f32),
                 scale: (4.2f32, size, 4.2f32),
-                update_fn: Vec::new(),
             }
         })
     .collect::<Vec<_>>();
 
     // create a vector of render items
-    let mut render_items = vec![
+    let render_items = vec![
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/cube.obj")),
-            shader_name: "dist",
+            shader_name: "dist".to_string(),
             instance_transforms: transforms,
             active: true,
         }
     ];
 
-    let mut text_items = Vec::new();
+    let text_items = Vec::new();
 
     game_loop! {
         Input => input,

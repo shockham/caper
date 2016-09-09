@@ -14,65 +14,42 @@ pub struct Vertex {
 implement_vertex!(Vertex, position, normal, texture);
 
 /// struct for handling transform data
+#[derive(Copy, Clone, RustcEncodable, RustcDecodable, PartialEq)]
 pub struct Transform {
     pub pos: Vector3,
     pub rot: Quaternion,
     pub scale: Vector3,
-    pub update_fn: Vec<fn(&mut Transform)>,
     pub active: bool,
 }
 
 /// struct for abstracting items to be sent to render
+#[derive(Clone, RustcEncodable, RustcDecodable, PartialEq)]
 pub struct RenderItem {
     pub vertices: Vec<Vertex>,
-    pub shader_name: &'static str,
+    pub shader_name: String,
     pub instance_transforms: Vec<Transform>,
     pub active: bool,
 }
 
 /// struct for abstacting text items to be rendered
+#[derive(Clone, RustcEncodable, RustcDecodable, PartialEq)]
 pub struct TextItem {
     pub text: String,
     pub color: (f32, f32, f32, f32),
     pub pos: Vector3,
     pub scale: Vector3,
-    pub update_fn: Vec<fn(&mut TextItem)>,
     pub active: bool,
 }
 
-/// trait for updateable entities
-pub trait Entity {
-    /// ran every frame
-    fn update(&mut self) -> ();
-}
-
-/// implementation of Entity for Transform
-impl Entity for Transform {
-    fn update(&mut self) {
-        for i in 0..self.update_fn.len() {
-            self.update_fn[i](self);
-        }
-    }
-}
-
-/// implementation of Entity for TextItem
-impl Entity for TextItem {
-    fn update(&mut self) {
-        for i in 0..self.update_fn.len() {
-            self.update_fn[i](self);
-        }
-    }
-}
-
 /// struct for abstracting the camera state
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, RustcEncodable, RustcDecodable, PartialEq)]
 pub struct CamState {
     pub cam_pos:Vector3,
     pub cam_rot:Vector3
 }
 
 /// struct for shader attributes
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, RustcEncodable, RustcDecodable, PartialEq)]
 pub struct Attr {
     pub world_position: Vector3,
     pub world_rotation: Quaternion,

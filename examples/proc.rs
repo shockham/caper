@@ -15,7 +15,6 @@ fn main() {
                 pos: ((i as f32 % 10f32) * 2f32, 0.0f32, (i as f32 / 10f32) * 2f32),
                 rot: (0f32, 0f32, 0f32, 1f32),
                 scale: (1f32, 1f32, 1f32),
-                update_fn: Vec::new(),
             }
         })
     .collect::<Vec<_>>();
@@ -24,13 +23,13 @@ fn main() {
     let mut render_items = vec![
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/sphere.obj")),
-            shader_name: "height",
+            shader_name: "height".to_string(),
             instance_transforms: transforms,
             active: true,
         }
     ];
 
-    let mut text_items = Vec::new();
+    let text_items = Vec::new();
 
     game_loop! {
         Input => input,
@@ -51,25 +50,19 @@ fn main() {
             // update some items
             let update_time = time::precise_time_s();
 
-            render_items[0].instance_transforms =
-                render_items[0].instance_transforms.iter().map(|t| {
-                    Transform {
-                        active: true,
-                        pos: (t.pos.0,
-                              ((t.pos.0 / 5f32).sin() *
-                               (t.pos.2 / 5f32).cos() *
-                               update_time.sin() as f32) * 2f32,
-                               t.pos.2),
-                        rot: (0f32, 0f32, 0f32, 1f32),
-                        scale: (update_time.sin() as f32,
-                               update_time.sin() as f32,
-                               update_time.sin() as f32),
-                        update_fn: Vec::new(),
-                    }
-                }).collect::<Vec<_>>();
-        },
-        ui => {
+            for t in render_items[0].instance_transforms.iter_mut() {
+                t.pos = (t.pos.0,
+                         ((t.pos.0 / 5f32).sin() *
+                          (t.pos.2 / 5f32).cos() *
+                          update_time.sin() as f32) * 2f32,
+                          t.pos.2);
+                t.scale = (update_time.sin() as f32,
+                          update_time.sin() as f32,
+                          update_time.sin() as f32);
+            }
+    },
+    ui => {
 
-        }
     }
+}
 }

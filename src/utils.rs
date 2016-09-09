@@ -21,7 +21,7 @@ macro_rules! game_loop {
       $ui:ident => $ui_update:block) => {
         {
             use caper::renderer::Renderer;
-            use caper::types::{ CamState, Entity };
+            use caper::types::{ CamState };
             use caper::input::{ Input, Key, MouseButton };
             use caper::imgui::Ui;
 
@@ -53,21 +53,6 @@ macro_rules! game_loop {
                     // update the inputs for imgui
                     $renderer.update_imgui_input($input.mouse_pos,
                                                  ($input.mouse_btns_down.contains(&MouseButton::Left), false, false));
-                }
-
-                // auto call update functions
-                {
-                    // call the update functions for RenderItems
-                    for i in 0..$render_items.len() {
-                        for t in 0..$render_items[i].instance_transforms.len() {
-                            $render_items[i].instance_transforms[t].update();
-                        }
-                    }
-
-                    // call the update functions for the TextItems
-                    for i in 0..$text_items.len() {
-                        $text_items[i].update();
-                    }
                 }
 
                 // the update block for other updates
@@ -117,14 +102,13 @@ pub fn load_wavefront( data: &[u8]) -> Vec<Vertex> {
 pub fn create_skydome(shader_name: &'static str) -> RenderItem {
     RenderItem {
         vertices: load_wavefront(include_bytes!("./resources/skydome.obj")),
-        shader_name: shader_name,
+        shader_name: String::from(shader_name),
         instance_transforms: vec![
             Transform {
                 active: true,
                 pos: (0.0, 0.0, 0.0),
                 rot: (0f32, 0f32, 0f32, 1f32),
                 scale: (100f32, 100f32, 100f32),
-                update_fn: Vec::new(),
             }
         ],
         active: true,
