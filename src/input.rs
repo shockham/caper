@@ -16,7 +16,11 @@ pub struct Input {
     pub mouse_delta: (f32, f32),
     pub mouse_wheel_delta: (f32, f32),
     pub keys_down: Vec<Key>,
+    pub keys_pressed: Vec<Key>,
+    pub keys_released: Vec<Key>,
     pub mouse_btns_down: Vec<MouseButton>,
+    pub mouse_btns_pressed: Vec<MouseButton>,
+    pub mouse_btns_released: Vec<MouseButton>,
     pub hide_mouse: bool,
     cursor_grabbed: bool,
 }
@@ -29,7 +33,11 @@ impl Input {
             mouse_delta : (0f32, 0f32),
             mouse_wheel_delta: (0f32, 0f32),
             keys_down : Vec::new(),
+            keys_pressed: Vec::new(),
+            keys_released: Vec::new(),
             mouse_btns_down: Vec::new(),
+            mouse_btns_pressed: Vec::new(),
+            mouse_btns_released: Vec::new(),
             hide_mouse: true,
             cursor_grabbed: false,
         }
@@ -45,14 +53,22 @@ impl Input {
         self.mouse_delta = (0f32, 0f32);
         self.mouse_wheel_delta = (0f32, 0f32);
 
+        // keys pressed is only for a single frame so clear
+        self.keys_pressed.clear();
+        self.keys_released.clear();
+        self.mouse_btns_pressed.clear();
+        self.mouse_btns_released.clear();
+
         // polling and handling the events received by the display
         for event in display.poll_events() {
             match event {
                 KeyboardInput(Pressed, _, vkey) => {
                     self.keys_down.push(vkey.unwrap());
+                    self.keys_pressed.push(vkey.unwrap());
                 },
                 KeyboardInput(Released, _, vkey) => {
                     self.keys_down.retain(|&k| k != vkey.unwrap());
+                    self.keys_released.push(vkey.unwrap());
                 },
                 MouseMoved(x, y) => {
                     let mouse_diff = ((width / 2) as i32 - (x as f32 / hidpi_factor) as i32,
@@ -63,9 +79,11 @@ impl Input {
                 },
                 MouseInput(Pressed, btn) => {
                     self.mouse_btns_down.push(btn);
+                    self.mouse_btns_pressed.push(btn);
                 },
                 MouseInput(Released, btn) => {
                     self.mouse_btns_down.retain(|&mb| mb != btn);
+                    self.mouse_btns_released.push(btn);
                 },
                 MouseWheel(delta, _) => {
                     self.mouse_wheel_delta = match delta {
