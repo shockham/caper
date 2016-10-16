@@ -130,12 +130,12 @@ impl Renderer {
                         // clear the colour and depth buffers
                         target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
-                        // drawing the render items TODO batching
+                        // drawing the render items
                         for item in render_items.iter().filter(|r| r.active) {
-                            // building the vertex and index buffers TODO possibly not create every frame
+                            // building the vertex and index buffers
                             let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices).unwrap();
 
-                            // add positions for instances TODO possibly not create every frame
+                            // add positions for instances
                             let per_instance = {
                                 let data = item.instance_transforms.iter().filter(|t| t.active).map(|t| {
                                     Attr {
