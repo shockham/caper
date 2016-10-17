@@ -6,8 +6,12 @@ use glium::glutin::Event::{ KeyboardInput, MouseMoved, MouseInput, MouseWheel };
 use glium::glutin::ElementState::{ Pressed, Released };
 use glium::glutin::CursorState::{ Normal, Hide };
 
+use std::f32::consts::PI;
+
 use types::CamState;
 use utils::build_fp_view_matrix;
+
+const TWO_PI:f32 = PI * 2f32;
 
 
 /// struct for abstracting the state for all the inputs
@@ -145,5 +149,17 @@ impl Input {
 
         cam_state.cam_rot.0 += self.mouse_delta.1 * MOUSE_SPEED;
         cam_state.cam_rot.1 += self.mouse_delta.0 * MOUSE_SPEED;
+
+        cam_state.cam_rot.0 = fix_rot(cam_state.cam_rot.0);
+        cam_state.cam_rot.1 = fix_rot(cam_state.cam_rot.1);
+
+        // make sure cam_rot always between 0 and 2PI
+        fn fix_rot (num:f32) -> f32 {
+            if num < 0f32 {
+                return TWO_PI - num; 
+            }
+            
+            num % TWO_PI
+        }
     }
 }
