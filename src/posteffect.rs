@@ -22,6 +22,7 @@ pub struct PostEffect {
     target_depth: RefCell<Option<DepthRenderBuffer>>,
     pub current_shader: &'static str,
     start_time: f32,
+    pub downscale_factor: f32,
 }
 
 impl PostEffect {
@@ -60,6 +61,7 @@ impl PostEffect {
             target_depth: RefCell::new(None),
             current_shader: "default",
             start_time: time::precise_time_s() as f32,
+            downscale_factor: 1.0f32,
         }
     }
 }
@@ -80,18 +82,16 @@ pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut 
             false
         };
 
-        const DOWNSCALE_FACTOR:f32 = 0.8f32;
-
         if clear || target_color.is_none() {
             let col_tex = Texture2d::empty(&system.context,
-                                           (target_dimensions.0 as f32 * DOWNSCALE_FACTOR) as u32,
-                                           (target_dimensions.1 as f32 * DOWNSCALE_FACTOR) as u32).unwrap();
+                                           (target_dimensions.0 as f32 * system.downscale_factor) as u32,
+                                           (target_dimensions.1 as f32 * system.downscale_factor) as u32).unwrap();
             *target_color = Some(col_tex);
 
             let dep_tex = DepthRenderBuffer::new(&system.context,
                                                  I24,
-                                                 (target_dimensions.0 as f32 * DOWNSCALE_FACTOR) as u32,
-                                                 (target_dimensions.1 as f32 * DOWNSCALE_FACTOR) as u32).unwrap();
+                                                 (target_dimensions.0 as f32 * system.downscale_factor) as u32,
+                                                 (target_dimensions.1 as f32 * system.downscale_factor) as u32).unwrap();
             *target_depth = Some(dep_tex);
         }
 

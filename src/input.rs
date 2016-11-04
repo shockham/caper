@@ -156,9 +156,9 @@ impl Input {
         // make sure cam_rot always between 0 and 2PI
         fn fix_rot (num:f32) -> f32 {
             if num < 0f32 {
-                return TWO_PI - num; 
+                return TWO_PI - num;
             }
-            
+
             num % TWO_PI
         }
     }
