@@ -22,6 +22,13 @@ pub struct Transform {
     pub active: bool,
 }
 
+#[derive(Clone, RustcEncodable, RustcDecodable, PartialEq)]
+pub enum PhysicsType {
+    Static,
+    Dynamic,
+    None,
+}
+
 /// struct for abstracting items to be sent to render
 #[derive(Clone, RustcEncodable, RustcDecodable, PartialEq)]
 pub struct RenderItem {
@@ -29,6 +36,7 @@ pub struct RenderItem {
     pub shader_name: String,
     pub instance_transforms: Vec<Transform>,
     pub active: bool,
+    pub physics_type: PhysicsType,
 }
 
 /// struct for abstacting text items to be rendered
@@ -44,8 +52,8 @@ pub struct TextItem {
 /// struct for abstracting the camera state
 #[derive(Copy, Clone, RustcEncodable, RustcDecodable, PartialEq)]
 pub struct CamState {
-    pub cam_pos:Vector3,
-    pub cam_rot:Vector3
+    pub cam_pos: Vector3,
+    pub cam_rot: Vector3,
 }
 
 /// struct for shader attributes
@@ -53,6 +61,6 @@ pub struct CamState {
 pub struct Attr {
     pub world_position: Vector3,
     pub world_rotation: Quaternion,
-    pub world_scale: Vector3
+    pub world_scale: Vector3,
 }
 implement_vertex!(Attr, world_position, world_rotation, world_scale);

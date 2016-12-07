@@ -1,12 +1,12 @@
 extern crate genmesh;
-extern crate time;
+//extern crate time;
 extern crate obj;
 
 use std::ops::{Add, Mul};
 use std::iter::Sum;
 use std::f32::consts::PI;
 
-use types::{ RenderItem, Transform, Vertex, Quaternion, Vector3, CamState };
+use types::{ RenderItem, Transform, Vertex, Quaternion, Vector3, CamState, PhysicsType };
 
 /// quick macro to use in the examples for easily defining all the modules and game loop
 #[macro_export]
@@ -21,12 +21,53 @@ macro_rules! game_loop {
       $ui:ident => $ui_update:block) => {
         {
             use caper::renderer::Renderer;
-            use caper::types::{ CamState };
+            use caper::types::{ CamState, PhysicsType };
             use caper::input::{ Input, Key, MouseButton };
             use caper::imgui::Ui;
+            use caper::nalgebra::Vector3 as nVector3;
+            use caper::nphysics3d::world::World;
+            use caper::nphysics3d::object::{ RigidBody, WorldObject };
+            use caper::ncollide::shape::Cuboid;
 
+
+            // init caper systems
             let mut $input = Input::new();
-            let mut $renderer = Renderer::new("Caper".to_string());
+            let mut $renderer = Renderer::new("caper window".to_string());
+
+            // init physics
+            let mut world = World::new();
+            world.set_gravity(nVector3::new(0.0, -9.81, 0.0));
+
+            // add physics items
+            for i in 0 .. $render_items.len() {
+                match $render_items[i].physics_type {
+                    PhysicsType::Static => {
+                        for j in 0 .. $render_items[i].instance_transforms.len() {
+                            let ri_trans = $render_items[i].instance_transforms[j];
+
+                            let geom = Cuboid::new(nVector3::new(ri_trans.scale.0, ri_trans.scale.1, ri_trans.scale.2));
+                            let mut rb = RigidBody::new_static(geom, 0.3, 0.6);
+
+                            rb.append_translation(&nVector3::new(ri_trans.pos.0, ri_trans.pos.1, ri_trans.pos.2));
+
+                            world.add_rigid_body(rb);
+                        }
+                    },
+                    PhysicsType::Dynamic => {
+                        for j in 0 .. $render_items[i].instance_transforms.len() {
+                            let ri_trans = $render_items[i].instance_transforms[j];
+
+                            let geom = Cuboid::new(nVector3::new(ri_trans.scale.0, ri_trans.scale.1, ri_trans.scale.2));
+                            let mut rb = RigidBody::new_dynamic(geom, 1.0, 0.3, 0.5);
+
+                            rb.append_translation(&nVector3::new(ri_trans.pos.0, ri_trans.pos.1, ri_trans.pos.2));
+
+                            world.add_rigid_body(rb);
+                        }
+                    },
+                    PhysicsType::None => {},
+                }
+            }
 
             //cam state
             let mut $cam_state = CamState {
@@ -40,6 +81,30 @@ macro_rules! game_loop {
             loop {
                 // quit
                 if $input.keys_down.contains(&Key::Escape) { break; }
+
+                {
+                    world.step(0.016);
+
+                    let mut ri_i = 0;
+                    let mut ri_it_i = 0;
+                    for rb in world.rigid_bodies() {
+                        // actually get access to the rb :|
+                        let wo = WorldObject::RigidBody(rb.clone());
+                        let rb = wo.borrow_rigid_body();
+
+                        // update the RenderItem transform pos
+                        let trans = rb.position().translation;
+                        const PHYSICS_DIVISOR:f32 = 2.1f32;
+                        $render_items[ri_i].instance_transforms[ri_it_i].pos = (trans.x / PHYSICS_DIVISOR, trans.y / PHYSICS_DIVISOR, trans.z / PHYSICS_DIVISOR);
+
+                        if ri_it_i < $render_items[ri_i].instance_transforms.len() - 1 {
+                            ri_it_i += 1;
+                        } else {
+                            ri_i += 1;
+                            ri_it_i = 0;
+                        }
+                    }
+                }
 
                 {
                     // define the closure for ui updating
@@ -108,10 +173,11 @@ pub fn create_skydome(shader_name: &'static str) -> RenderItem {
                 active: true,
                 pos: (0.0, 0.0, 0.0),
                 rot: (0f32, 0f32, 0f32, 1f32),
-                scale: (100f32, 100f32, 100f32),
+                scale: (300f32, 300f32, 300f32),
             }
         ],
         active: true,
+        physics_type: PhysicsType::None,
     }
 }
 

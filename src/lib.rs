@@ -1,10 +1,14 @@
 #[macro_use]
 pub extern crate glium;
+#[macro_use]
+pub extern crate imgui;
+pub extern crate ncollide;
+pub extern crate nphysics3d;
+pub extern crate nalgebra;
+
 extern crate glium_text;
 extern crate noise;
 extern crate time;
-#[macro_use]
-pub extern crate imgui;
 extern crate fps_counter;
 extern crate bincode;
 extern crate rustc_serialize;
