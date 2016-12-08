@@ -97,11 +97,27 @@ fn main() {
         TextItems => text_items,
         // define a block for start
         start => {
-            println!("{:?}", cam_state.cam_pos);
+
         },
         // define block for update
         update => {
             input.handle_fp_inputs(&mut cam_state);
+
+            if input.keys_down.contains(&Key::I) {
+                render_items[1].instance_transforms[0].pos.2 -= 0.1f32;
+            }
+            if input.keys_down.contains(&Key::K) {
+                render_items[1].instance_transforms[0].pos.2 += 0.1f32;
+            }
+            if input.keys_down.contains(&Key::L) {
+                render_items[1].instance_transforms[0].pos.0 += 0.1f32;
+            }
+            if input.keys_down.contains(&Key::J) {
+                render_items[1].instance_transforms[0].pos.0 -= 0.1f32;
+            }
+            if input.keys_down.contains(&Key::Space) {
+                render_items[1].instance_transforms[0].pos.1 += 0.1f32;
+            }
         },
         // block for ui rendering
         ui => {

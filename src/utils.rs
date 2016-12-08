@@ -29,6 +29,9 @@ macro_rules! game_loop {
             use caper::nphysics3d::object::{ RigidBody, WorldObject };
             use caper::ncollide::shape::Cuboid;
 
+            use std::boxed::Box;
+
+            const PHYSICS_DIVISOR:f32 = 2.1f32;
 
             // init caper systems
             let mut $input = Input::new();
@@ -50,6 +53,9 @@ macro_rules! game_loop {
 
                             rb.append_translation(&nVector3::new(ri_trans.pos.0, ri_trans.pos.1, ri_trans.pos.2));
 
+                            // track which render item instance this refers to
+                            rb.set_user_data(Some(Box::new((i, j))));
+
                             world.add_rigid_body(rb);
                         }
                     },
@@ -61,6 +67,9 @@ macro_rules! game_loop {
                             let mut rb = RigidBody::new_dynamic(geom, 1.0, 0.3, 0.5);
 
                             rb.append_translation(&nVector3::new(ri_trans.pos.0, ri_trans.pos.1, ri_trans.pos.2));
+
+                            // track which render item instance this refers to
+                            rb.set_user_data(Some(Box::new((i, j))));
 
                             world.add_rigid_body(rb);
                         }
@@ -82,27 +91,22 @@ macro_rules! game_loop {
                 // quit
                 if $input.keys_down.contains(&Key::Escape) { break; }
 
+                // block for updating physics
                 {
                     world.step(0.016);
 
-                    let mut ri_i = 0;
-                    let mut ri_it_i = 0;
-                    for rb in world.rigid_bodies() {
+                    for rbi in world.rigid_bodies() {
                         // actually get access to the rb :|
-                        let wo = WorldObject::RigidBody(rb.clone());
+                        let wo = WorldObject::RigidBody(rbi.clone());
                         let rb = wo.borrow_rigid_body();
 
                         // update the RenderItem transform pos
                         let trans = rb.position().translation;
-                        const PHYSICS_DIVISOR:f32 = 2.1f32;
-                        $render_items[ri_i].instance_transforms[ri_it_i].pos = (trans.x / PHYSICS_DIVISOR, trans.y / PHYSICS_DIVISOR, trans.z / PHYSICS_DIVISOR);
+                        let user_data = rb.user_data().unwrap();
+                        let &(ri_i, ri_it_i) = user_data.downcast_ref::<(usize, usize)>().unwrap();
 
-                        if ri_it_i < $render_items[ri_i].instance_transforms.len() - 1 {
-                            ri_it_i += 1;
-                        } else {
-                            ri_i += 1;
-                            ri_it_i = 0;
-                        }
+                        $render_items[ri_i].instance_transforms[ri_it_i].pos =
+                            (trans.x / PHYSICS_DIVISOR, trans.y / PHYSICS_DIVISOR, trans.z / PHYSICS_DIVISOR);
                     }
                 }
 
@@ -123,6 +127,29 @@ macro_rules! game_loop {
                 // the update block for other updates
                 {
                     $update
+                }
+
+                // update the new positions back to rb
+                {
+                    for rbi in world.rigid_bodies() {
+                        // actually get access to the rb :|
+                        let mut wo = WorldObject::RigidBody(rbi.clone());
+
+                        let (ri_i, ri_it_i) = {
+                            let rb = wo.borrow_rigid_body();
+
+                            let user_data = rb.user_data().unwrap();
+                            let tup_ref = user_data.downcast_ref::<(usize, usize)>().unwrap();
+
+                            *tup_ref
+                        };
+
+                        let mut rb = wo.borrow_mut_rigid_body();
+
+                        // update the rb transform pos
+                        let ri_pos = $render_items[ri_i].instance_transforms[ri_it_i].pos;
+                        rb.set_translation(nVector3::new(ri_pos.0 * PHYSICS_DIVISOR, ri_pos.1 * PHYSICS_DIVISOR, ri_pos.2 * PHYSICS_DIVISOR));
+                    }
                 }
             }
         }
