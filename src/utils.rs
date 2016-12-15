@@ -1,5 +1,4 @@
 extern crate genmesh;
-//extern crate time;
 extern crate obj;
 
 use std::ops::{Add, Mul};
@@ -23,15 +22,18 @@ macro_rules! game_loop {
             use caper::renderer::Renderer;
             use caper::types::{ CamState, PhysicsType };
             use caper::input::{ Input, Key, MouseButton };
+            use caper::utils::to_quaternion;
             use caper::imgui::Ui;
             use caper::nalgebra::Vector3 as nVector3;
+            use caper::nalgebra::Rotation;
             use caper::nphysics3d::world::World;
             use caper::nphysics3d::object::{ RigidBody, WorldObject };
             use caper::ncollide::shape::Cuboid;
 
             use std::boxed::Box;
 
-            const PHYSICS_DIVISOR:f32 = 2.1f32;
+            const PHYSICS_DIVISOR:f32 = 2f32;
+            const GLOBAL_REST:f32 = 0.05f32;
 
             // init caper systems
             let mut $input = Input::new();
@@ -48,13 +50,17 @@ macro_rules! game_loop {
                         for j in 0 .. $render_items[i].instance_transforms.len() {
                             let ri_trans = $render_items[i].instance_transforms[j];
 
-                            let geom = Cuboid::new(nVector3::new(ri_trans.scale.0, ri_trans.scale.1, ri_trans.scale.2));
-                            let mut rb = RigidBody::new_static(geom, 0.3, 0.6);
+                            let geom = Cuboid::new(
+                                nVector3::new(ri_trans.scale.0, ri_trans.scale.1, ri_trans.scale.2));
+                            let mut rb = RigidBody::new_static(geom, GLOBAL_REST, 0.6);
 
-                            rb.append_translation(&nVector3::new(ri_trans.pos.0, ri_trans.pos.1, ri_trans.pos.2));
+                            rb.append_translation(
+                                &nVector3::new(ri_trans.pos.0, ri_trans.pos.1, ri_trans.pos.2));
 
                             // track which render item instance this refers to
                             rb.set_user_data(Some(Box::new((i, j))));
+
+                            rb.set_margin(0f32);
 
                             world.add_rigid_body(rb);
                         }
@@ -63,13 +69,21 @@ macro_rules! game_loop {
                         for j in 0 .. $render_items[i].instance_transforms.len() {
                             let ri_trans = $render_items[i].instance_transforms[j];
 
-                            let geom = Cuboid::new(nVector3::new(ri_trans.scale.0, ri_trans.scale.1, ri_trans.scale.2));
-                            let mut rb = RigidBody::new_dynamic(geom, 1.0, 0.3, 0.5);
+                            let geom = Cuboid::new(
+                                nVector3::new(ri_trans.scale.0, ri_trans.scale.1, ri_trans.scale.2));
+                            let mut rb = RigidBody::new_dynamic(geom, 5.0, GLOBAL_REST, 0.8);
 
-                            rb.append_translation(&nVector3::new(ri_trans.pos.0, ri_trans.pos.1, ri_trans.pos.2));
+                            rb.append_translation(
+                                &nVector3::new(ri_trans.pos.0, ri_trans.pos.1, ri_trans.pos.2));
 
                             // track which render item instance this refers to
                             rb.set_user_data(Some(Box::new((i, j))));
+
+                            rb.set_margin(0f32);
+
+                            if i == 1 && j == 0 {
+                                rb.set_deactivation_threshold(None);
+                            }
 
                             world.add_rigid_body(rb);
                         }
@@ -93,7 +107,7 @@ macro_rules! game_loop {
 
                 // block for updating physics
                 {
-                    world.step(0.016);
+                    world.step(0.016666667);
 
                     for rbi in world.rigid_bodies() {
                         // actually get access to the rb :|
@@ -102,11 +116,17 @@ macro_rules! game_loop {
 
                         // update the RenderItem transform pos
                         let trans = rb.position().translation;
+                        let rot = rb.position().rotation();
+                        let quat = to_quaternion((rot.x, rot.y, rot.z));
+
                         let user_data = rb.user_data().unwrap();
                         let &(ri_i, ri_it_i) = user_data.downcast_ref::<(usize, usize)>().unwrap();
 
                         $render_items[ri_i].instance_transforms[ri_it_i].pos =
-                            (trans.x / PHYSICS_DIVISOR, trans.y / PHYSICS_DIVISOR, trans.z / PHYSICS_DIVISOR);
+                            (trans.x / PHYSICS_DIVISOR,
+                             trans.y / PHYSICS_DIVISOR,
+                             trans.z / PHYSICS_DIVISOR);
+                        $render_items[ri_i].instance_transforms[ri_it_i].rot = quat;
                     }
                 }
 
@@ -121,7 +141,8 @@ macro_rules! game_loop {
 
                     // update the inputs for imgui
                     $renderer.update_imgui_input($input.mouse_pos,
-                                                 ($input.mouse_btns_down.contains(&MouseButton::Left), false, false));
+                                                 ($input.mouse_btns_down.contains(
+                                                         &MouseButton::Left), false, false));
                 }
 
                 // the update block for other updates
@@ -148,7 +169,15 @@ macro_rules! game_loop {
 
                         // update the rb transform pos
                         let ri_pos = $render_items[ri_i].instance_transforms[ri_it_i].pos;
-                        rb.set_translation(nVector3::new(ri_pos.0 * PHYSICS_DIVISOR, ri_pos.1 * PHYSICS_DIVISOR, ri_pos.2 * PHYSICS_DIVISOR));
+                        rb.set_translation(
+                            nVector3::new(ri_pos.0 * PHYSICS_DIVISOR,
+                                          ri_pos.1 * PHYSICS_DIVISOR,
+                                          ri_pos.2 * PHYSICS_DIVISOR));
+
+                        /* re updating the rb causes problems
+                        let ri_rot = to_euler($render_items[ri_i].instance_transforms[ri_it_i].rot);
+                        rb.set_rotation(nVector3::new(ri_rot.0, ri_rot.1, ri_rot.2));
+                        */
                     }
                 }
             }
@@ -248,6 +277,25 @@ pub fn to_quaternion(angle: Vector3) -> Quaternion {
     let z = c1 * s2 * c3 - s1 * c2 * s3;
 
     (x, y, z, w)
+}
+
+/// returns a quaternion from a euler angle
+pub fn to_euler(angle: Quaternion) -> Vector3 {
+    let ysqr = angle.1 * angle.1;
+    let t0 = -2.0f32 * (ysqr + angle.2 * angle.2) + 1.0f32;
+    let t1 = 2.0f32 * (angle.0 * angle.1 - angle.3 * angle.2);
+    let mut t2 = -2.0f32 * (angle.0 * angle.2 + angle.3 * angle.1);
+    let t3 = 2.0f32 * (angle.1 * angle.2 - angle.3 * angle.0);
+    let t4 = -2.0f32 * (angle.0 * angle.0 + ysqr) + 1.0f32;
+
+    t2 = if t2 > 1.0f32 { 1.0f32 } else { t2 };
+    t2 = if t2 < -1.0f32 { -1.0f32 } else { t2 };
+
+    let pitch = t2.asin();
+    let roll = t3.atan2(t4);
+    let yaw = t1.atan2(t0);
+
+    (pitch, roll, yaw)
 }
 
 /// Returns perspective projection matrix given fov, aspect ratio, z near and far

@@ -6,3 +6,4 @@ target
 persist
 Cargo.lock
 imgui.ini
+Makefile
