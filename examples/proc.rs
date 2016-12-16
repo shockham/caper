@@ -4,7 +4,7 @@ extern crate time;
 extern crate caper;
 
 use caper::utils::load_wavefront;
-use caper::types::{ RenderItem, Transform };
+use caper::types::{ RenderItem, Transform, PhysicsType };
 
 fn main() {
     // generate the instance positions
@@ -26,6 +26,7 @@ fn main() {
             shader_name: "height".to_string(),
             instance_transforms: transforms,
             active: true,
+            physics_type: PhysicsType::None,
         }
     ];
 

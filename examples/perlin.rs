@@ -9,7 +9,7 @@ extern crate caper;
 extern crate imgui;
 
 use caper::utils::create_skydome;
-use caper::types::{ RenderItem, TextItem, Transform };
+use caper::types::{ RenderItem, TextItem, Transform, PhysicsType };
 use caper::mesh::{ gen_perlin_mesh, gen_sphere, get_pos_perlin, DEF_SEED_BASE };
 use noise::Seed;
 use fps_counter::FPSCounter;
@@ -43,6 +43,7 @@ fn main() {
                 }
             ],
             active: true,
+            physics_type: PhysicsType::None,
         },
         create_skydome("height"),
         RenderItem {
@@ -57,6 +58,7 @@ fn main() {
                 }
             ],
             active: true,
+            physics_type: PhysicsType::None,
         }
     ];
 

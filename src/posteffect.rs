@@ -83,15 +83,17 @@ pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut 
         };
 
         if clear || target_color.is_none() {
-            let col_tex = Texture2d::empty(&system.context,
-                                           (target_dimensions.0 as f32 * system.downscale_factor) as u32,
-                                           (target_dimensions.1 as f32 * system.downscale_factor) as u32).unwrap();
+            let col_tex = Texture2d::empty(
+                &system.context,
+                (target_dimensions.0 as f32 * system.downscale_factor) as u32,
+                (target_dimensions.1 as f32 * system.downscale_factor) as u32).unwrap();
             *target_color = Some(col_tex);
 
-            let dep_tex = DepthRenderBuffer::new(&system.context,
-                                                 I24,
-                                                 (target_dimensions.0 as f32 * system.downscale_factor) as u32,
-                                                 (target_dimensions.1 as f32 * system.downscale_factor) as u32).unwrap();
+            let dep_tex = DepthRenderBuffer::new(
+                &system.context,
+                I24,
+                (target_dimensions.0 as f32 * system.downscale_factor) as u32,
+                (target_dimensions.1 as f32 * system.downscale_factor) as u32).unwrap();
             *target_depth = Some(dep_tex);
         }
 
@@ -107,6 +109,7 @@ pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut 
             tex: &*target_color,
             resolution: (target_dimensions.0 as f32, target_dimensions.1 as f32),
             time: time::precise_time_s() as f32 - system.start_time,
+            downscale_factor: system.downscale_factor,
         };
 
         // second pass draw the post effect

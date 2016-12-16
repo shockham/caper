@@ -1,12 +1,12 @@
 #[macro_use]
 extern crate caper;
 
-use caper::types::{ RenderItem, Transform };
+use caper::types::{ RenderItem, Transform, PhysicsType };
 use caper::mesh::gen_cube;
 
 fn main() {
     // define some items to be rendered
-    let render_items = vec![
+    let mut render_items = vec![
         RenderItem {
             vertices: gen_cube(),
             shader_name: "dist".to_string(),
@@ -19,6 +19,7 @@ fn main() {
                 }
             ],
             active: true,
+            physics_type: PhysicsType::None,
         },
     ];
 

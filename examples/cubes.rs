@@ -9,7 +9,7 @@ extern crate imgui;
 extern crate noise;
 
 use caper::utils::load_wavefront;
-use caper::types::{ RenderItem, Transform };
+use caper::types::{ RenderItem, Transform, PhysicsType };
 use noise::{ perlin2, Seed };
 use imgui::*;
 
@@ -30,12 +30,13 @@ fn main() {
     .collect::<Vec<_>>();
 
     // create a vector of render items
-    let render_items = vec![
+    let mut render_items = vec![
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/cube.obj")),
             shader_name: "dist".to_string(),
             instance_transforms: transforms,
             active: true,
+            physics_type: PhysicsType::None,
         }
     ];
 

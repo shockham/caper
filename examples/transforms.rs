@@ -7,7 +7,7 @@ extern crate caper;
 extern crate imgui;
 
 use caper::utils::load_wavefront;
-use caper::types::{ RenderItem, Transform };
+use caper::types::{ RenderItem, Transform, PhysicsType };
 use caper::mesh::{ gen_quad, gen_sphere, gen_cube };
 use imgui::*;
 
@@ -46,6 +46,7 @@ fn main() {
                 }
             ],
             active: true,
+            physics_type: PhysicsType::None,
         },
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/floor.obj")),
@@ -65,6 +66,7 @@ fn main() {
                 }
             ],
             active: true,
+            physics_type: PhysicsType::None,
         },
         RenderItem {
             vertices: gen_quad(),
@@ -78,6 +80,7 @@ fn main() {
                 }
             ],
             active: true,
+            physics_type: PhysicsType::None,
         },
         RenderItem {
             vertices: gen_sphere(),
@@ -91,6 +94,7 @@ fn main() {
                 }
             ],
             active: true,
+            physics_type: PhysicsType::None,
         },
         RenderItem {
             vertices: gen_cube(),
@@ -104,6 +108,7 @@ fn main() {
                 }
             ],
             active: true,
+            physics_type: PhysicsType::None,
         },
     ];
 
