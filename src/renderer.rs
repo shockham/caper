@@ -113,6 +113,7 @@ impl Renderer {
             .. Default::default()
         };
 
+        // uniforms passed to the shaders
         let uniforms = uniform! {
             projection_matrix: build_persp_proj_mat(60f32, width as f32/height as f32, 0.01f32, 1000f32),
             modelview_matrix: build_fp_view_matrix(cam_state),

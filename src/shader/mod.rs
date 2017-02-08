@@ -37,8 +37,6 @@ impl Shaders {
                                           tessellation_evaluation: default::gl330::TESS_EVAL
                                       }).unwrap());
 
-
-
         shader_map.insert("line", program!(display,
                                     330 => {
                                         vertex: default::gl330::VERT,
