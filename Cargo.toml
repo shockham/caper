@@ -1,12 +1,12 @@
 [package]
 name = "caper"
-version = "0.0.3"
+version = "0.1.0"
 authors = ["shockham <samuel.hockham@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/shockham/caper"
 homepage = "https://github.com/shockham/caper"
-documentation = "https://shockham.github.io/caper/caper/"
+documentation = "https://docs.rs/caper/*/caper/"
 description = "Small game framework"
 
 [dependencies]
