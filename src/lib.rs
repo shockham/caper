@@ -1,6 +1,5 @@
 #[macro_use]
 pub extern crate glium;
-#[macro_use]
 pub extern crate imgui;
 pub extern crate ncollide;
 pub extern crate nphysics3d;
