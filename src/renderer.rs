@@ -5,6 +5,7 @@ use glium::vertex::VertexBuffer;
 use glium::glutin::{ WindowBuilder, get_primary_monitor };
 use glium::glutin::CursorState::Hide;//{ Grab, Hide };
 use glium::draw_parameters::BackfaceCullingMode::CullClockwise;
+use glium::texture::RawImage2d;
 
 use glium_text;
 use glium_text::{ TextSystem, FontTexture, TextDisplay };
@@ -15,6 +16,10 @@ use fps_counter::FPSCounter;
 
 use imgui::{ ImGui, Ui };
 use imgui::glium_renderer::Renderer as ImGuiRenderer;
+
+use image;
+use std::path::Path;
+use std::fs::File;
 
 use shader::Shaders;
 use utils::*;
@@ -187,5 +192,15 @@ impl Renderer {
             Ok(_) => { self.fps = self.fps_counter.tick() as f32; },
             Err(e) => println!("{:?}", e),
         };
+    }
+
+    pub fn save_screenshot(&self) {
+        // reading the front buffer into an image
+        let image: RawImage2d<u8> = self.display.read_front_buffer();
+        let image = image::ImageBuffer::from_raw(image.width, image.height, image.data.into_owned()).unwrap();
+        let image = image::DynamicImage::ImageRgba8(image).flipv();
+        let mut output = File::create(&Path::new(format!("./screenshot_{}.png", 
+                                                                  time::precise_time_s()).as_str())).unwrap();
+        image.save(&mut output, image::ImageFormat::PNG).unwrap();
     }
 }

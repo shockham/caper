@@ -11,6 +11,7 @@ extern crate time;
 extern crate fps_counter;
 extern crate bincode;
 extern crate rustc_serialize;
+extern crate image;
 
 pub mod renderer;
 pub mod utils;
