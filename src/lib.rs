@@ -12,6 +12,7 @@ extern crate fps_counter;
 extern crate bincode;
 extern crate rustc_serialize;
 extern crate image;
+extern crate gif;
 
 pub mod renderer;
 pub mod utils;

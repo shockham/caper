@@ -18,8 +18,12 @@ use imgui::{ ImGui, Ui };
 use imgui::glium_renderer::Renderer as ImGuiRenderer;
 
 use image;
+use gif;
+use gif::SetParameter;
 use std::path::Path;
 use std::fs::File;
+use std::fs::OpenOptions;
+
 
 use shader::Shaders;
 use utils::*;
@@ -194,6 +198,7 @@ impl Renderer {
         };
     }
 
+    /// Saves out a screenshot from in-game
     pub fn save_screenshot(&self) {
         // reading the front buffer into an image
         let image: RawImage2d<u8> = self.display.read_front_buffer();
@@ -202,5 +207,20 @@ impl Renderer {
         let mut output = File::create(&Path::new(format!("./screenshot_{}.png", 
                                                                   time::precise_time_s()).as_str())).unwrap();
         image.save(&mut output, image::ImageFormat::PNG).unwrap();
+    }
+
+    /// When called with the same path adds a frame to a gif at the path
+    pub fn save_add_to_gif(&self, path:&'static str) {
+        // reading the front buffer into an image
+        let mut image: RawImage2d<u8> = self.display.read_front_buffer();
+        let (w, h) = (image.width, image.height);
+        
+        let mut output = OpenOptions::new().write(true).create(true).open(path).unwrap(); 
+        let mut encoder = gif::Encoder::new(&mut output, w as u16, h as u16, &[]).unwrap();
+        encoder.set(gif::Repeat::Infinite).unwrap();
+
+        let frame = gif::Frame::from_rgba(w as u16, h as u16, image.data.to_mut());
+        // Write frame to file
+        encoder.write_frame(&frame).unwrap();
     }
 }
