@@ -212,14 +212,18 @@ impl Renderer {
     /// When called with the same path adds a frame to a gif at the path
     pub fn save_add_to_gif(&self, path:&'static str) {
         // reading the front buffer into an image
-        let mut image: RawImage2d<u8> = self.display.read_front_buffer();
+        let image: RawImage2d<u8> = self.display.read_front_buffer();
         let (w, h) = (image.width, image.height);
+        let image = image::ImageBuffer::from_raw(image.width, image.height, image.data.into_owned()).unwrap();
+        let mut image = image::DynamicImage::ImageRgba8(image).flipv();
+        let image = image.as_mut_rgba8().unwrap();
+        let mut image = image.clone().into_raw();
         
         let mut output = OpenOptions::new().write(true).create(true).open(path).unwrap(); 
         let mut encoder = gif::Encoder::new(&mut output, w as u16, h as u16, &[]).unwrap();
         encoder.set(gif::Repeat::Infinite).unwrap();
 
-        let frame = gif::Frame::from_rgba(w as u16, h as u16, image.data.to_mut());
+        let frame = gif::Frame::from_rgba(w as u16, h as u16, image.as_mut_slice());
         // Write frame to file
         encoder.write_frame(&frame).unwrap();
     }
