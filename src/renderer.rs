@@ -222,14 +222,20 @@ impl Renderer {
         // reading the front buffer into a gif frame
         let image: RawImage2d<u8> = self.display.read_front_buffer();
         let (w, h) = (image.width, image.height);
-        let image = image::ImageBuffer::from_raw(image.width, image.height, image.data.into_owned()).unwrap();
+        let image = image::ImageBuffer::from_raw(w, h, image.data.into_owned()).unwrap();
         let mut image = image::DynamicImage::ImageRgba8(image).flipv();
         let image = image.as_mut_rgba8().unwrap();
         let mut image = image.clone().into_raw();
         let frame = gif::Frame::from_rgba(w as u16, h as u16, image.as_mut_slice());
         
         // if there is no encoder present create one
-        if self.gif_info.is_none() {
+        let new_file = {
+            match self.gif_info.as_ref() {
+                Some(gi_ref) => gi_ref.path != path,
+                None => false,
+            }
+        };
+        if self.gif_info.is_none() || new_file {
             let output = OpenOptions::new().write(true).create(true).open(path).unwrap(); 
             let mut encoder = gif::Encoder::new(output, w as u16, h as u16, &[]).unwrap();
             encoder.set(gif::Repeat::Infinite).unwrap();
