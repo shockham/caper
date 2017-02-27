@@ -44,6 +44,12 @@ pub struct Renderer {
     pub shaders: Shaders,
     fps_counter: FPSCounter,
     pub fps: f32,
+    gif_info: Option<GifInfo>,
+}
+
+struct GifInfo {
+    encoder: gif::Encoder<File>,
+    path: &'static str,
 }
 
 impl Renderer {
@@ -81,6 +87,7 @@ impl Renderer {
             shaders: shaders,
             fps_counter: fps_counter,
             fps: 0f32,
+            gif_info: None,
         };
 
         renderer.setup();
@@ -210,21 +217,33 @@ impl Renderer {
     }
 
     /// When called with the same path adds a frame to a gif at the path
-    pub fn save_add_to_gif(&self, path:&'static str) {
-        // reading the front buffer into an image
+    pub fn save_add_to_gif(&mut self, path:&'static str) {
+
+        // reading the front buffer into a gif frame
         let image: RawImage2d<u8> = self.display.read_front_buffer();
         let (w, h) = (image.width, image.height);
         let image = image::ImageBuffer::from_raw(image.width, image.height, image.data.into_owned()).unwrap();
         let mut image = image::DynamicImage::ImageRgba8(image).flipv();
         let image = image.as_mut_rgba8().unwrap();
         let mut image = image.clone().into_raw();
-        
-        let mut output = OpenOptions::new().write(true).create(true).open(path).unwrap(); 
-        let mut encoder = gif::Encoder::new(&mut output, w as u16, h as u16, &[]).unwrap();
-        encoder.set(gif::Repeat::Infinite).unwrap();
-
         let frame = gif::Frame::from_rgba(w as u16, h as u16, image.as_mut_slice());
+        
+        // if there is no encoder present create one
+        if self.gif_info.is_none() {
+            let output = OpenOptions::new().write(true).create(true).open(path).unwrap(); 
+            let mut encoder = gif::Encoder::new(output, w as u16, h as u16, &[]).unwrap();
+            encoder.set(gif::Repeat::Infinite).unwrap();
+
+            let info = GifInfo {
+                encoder: encoder,
+                path: path,
+            };
+
+            self.gif_info = Some(info);
+        }
         // Write frame to file
-        encoder.write_frame(&frame).unwrap();
+        if let Some(ref mut info) = self.gif_info {
+            info.encoder.write_frame(&frame).unwrap();
+        }
     }
 }
