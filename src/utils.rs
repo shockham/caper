@@ -22,10 +22,10 @@ macro_rules! game_loop {
             use caper::renderer::Renderer;
             use caper::types::{ CamState, PhysicsType };
             use caper::input::{ Input, Key, MouseButton };
-            use caper::utils::to_quaternion;
             use caper::imgui::Ui;
             use caper::nalgebra::Vector3 as nVector3;
-            use caper::nalgebra::Rotation;
+            use caper::nalgebra::Translation3;
+            use caper::nalgebra::core::storage::OwnedStorage;
             use caper::nphysics3d::world::World;
             use caper::nphysics3d::object::{ RigidBody, WorldObject };
             use caper::ncollide::shape::Cuboid;
@@ -55,8 +55,7 @@ macro_rules! game_loop {
                                 nVector3::new(ri_trans.scale.0, ri_trans.scale.1, ri_trans.scale.2));
                             let mut rb = RigidBody::new_static(geom, GLOBAL_REST, 0.6);
 
-                            rb.append_translation(
-                                &nVector3::new(ri_trans.pos.0, ri_trans.pos.1, ri_trans.pos.2));
+                            rb.append_translation(&Translation3::new(ri_trans.pos.0, ri_trans.pos.1, ri_trans.pos.2));
 
                             // track which render item instance this refers to
                             rb.set_user_data(Some(Box::new((i, j))));
@@ -74,8 +73,7 @@ macro_rules! game_loop {
                                 nVector3::new(ri_trans.scale.0, ri_trans.scale.1, ri_trans.scale.2));
                             let mut rb = RigidBody::new_dynamic(geom, 5.0, GLOBAL_REST, 0.8);
 
-                            rb.append_translation(
-                                &nVector3::new(ri_trans.pos.0, ri_trans.pos.1, ri_trans.pos.2));
+                            rb.append_translation(&Translation3::new(ri_trans.pos.0, ri_trans.pos.1, ri_trans.pos.2));
 
                             // track which render item instance this refers to
                             rb.set_user_data(Some(Box::new((i, j))));
@@ -119,9 +117,9 @@ macro_rules! game_loop {
                         let rb = wo.borrow_rigid_body();
 
                         // update the RenderItem transform pos
-                        let trans = rb.position().translation;
-                        let rot = rb.position().rotation();
-                        let quat = to_quaternion((rot.x, rot.y, rot.z));
+                        let trans = rb.position().translation.vector;
+                        let rot = rb.position().rotation.coords.data.as_slice();
+                        //let quat = to_quaternion((rot.x, rot.y, rot.z));
 
                         let user_data = rb.user_data().unwrap();
                         let &(ri_i, ri_it_i) = user_data.downcast_ref::<(usize, usize)>().unwrap();
@@ -130,7 +128,7 @@ macro_rules! game_loop {
                             (trans.x / PHYSICS_DIVISOR,
                              trans.y / PHYSICS_DIVISOR,
                              trans.z / PHYSICS_DIVISOR);
-                        $render_items[ri_i].instance_transforms[ri_it_i].rot = quat;
+                        $render_items[ri_i].instance_transforms[ri_it_i].rot = (rot[0], rot[1], rot[2], rot[3]);
                     }
                 }
 
@@ -174,9 +172,9 @@ macro_rules! game_loop {
                         // update the rb transform pos
                         let ri_pos = $render_items[ri_i].instance_transforms[ri_it_i].pos;
                         rb.set_translation(
-                            nVector3::new(ri_pos.0 * PHYSICS_DIVISOR,
-                                          ri_pos.1 * PHYSICS_DIVISOR,
-                                          ri_pos.2 * PHYSICS_DIVISOR));
+                            Translation3::new(ri_pos.0 * PHYSICS_DIVISOR,
+                                              ri_pos.1 * PHYSICS_DIVISOR,
+                                              ri_pos.2 * PHYSICS_DIVISOR));
 
                         /* re updating the rb causes problems
                         let ri_rot = to_euler($render_items[ri_i].instance_transforms[ri_it_i].rot);
