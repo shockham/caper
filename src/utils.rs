@@ -31,6 +31,7 @@ macro_rules! game_loop {
             use caper::ncollide::shape::Cuboid;
 
             use std::boxed::Box;
+            use std::time::Instant;
 
             const PHYSICS_DIVISOR:f32 = 2f32;
             const GLOBAL_REST:f32 = 0.05f32;
@@ -100,14 +101,17 @@ macro_rules! game_loop {
 
             $start;
 
+            let mut delta = 0.016666667f32;
+
             // the main loop
             loop {
+                let frame_start = Instant::now();
                 // quit
                 if $input.keys_down.contains(&Key::Escape) { break; }
 
                 // block for updating physics
                 {
-                    world.step(0.016666667);
+                    world.step(delta);
 
                     for rbi in world.rigid_bodies() {
                         // actually get access to the rb :|
@@ -180,6 +184,8 @@ macro_rules! game_loop {
                         */
                     }
                 }
+
+                delta = 0.000000001f32 * frame_start.elapsed().subsec_nanos() as f32;
             }
         }
     };

@@ -218,7 +218,6 @@ impl Renderer {
 
     /// When called with the same path adds a frame to a gif at the path
     pub fn save_add_to_gif(&mut self, path:&'static str) {
-
         // reading the front buffer into a gif frame
         let image: RawImage2d<u8> = self.display.read_front_buffer();
         let (w, h) = (image.width, image.height);
