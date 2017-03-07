@@ -9,12 +9,12 @@ Small game framework using [rust](https://www.rust-lang.org/) and [glium](https:
 #[macro_use]
 extern crate caper;
 
-use caper::types::{ RenderItem, Transform };
+use caper::types::{ RenderItem, Transform, PhysicsType };
 use caper::mesh::gen_cube;
 
 fn main() {
     // define some items to be rendered
-    let render_items = vec![
+    let mut render_items = vec![
         RenderItem {
             vertices: gen_cube(),
             shader_name: String::from("dist"),
@@ -27,6 +27,7 @@ fn main() {
                 }
             ],
             active: true,
+            physics_type: PhysicsType::None,
         },
     ];
 
