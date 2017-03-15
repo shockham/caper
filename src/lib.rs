@@ -58,7 +58,6 @@ fn main() {
 
 */
 
-
 #[macro_use]
 pub extern crate glium;
 pub extern crate imgui;

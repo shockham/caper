@@ -124,11 +124,13 @@ macro_rules! game_loop {
                         let user_data = rb.user_data().unwrap();
                         let &(ri_i, ri_it_i) = user_data.downcast_ref::<(usize, usize)>().unwrap();
 
-                        $render_items[ri_i].instance_transforms[ri_it_i].pos =
-                            (trans.x / PHYSICS_DIVISOR,
-                             trans.y / PHYSICS_DIVISOR,
-                             trans.z / PHYSICS_DIVISOR);
-                        $render_items[ri_i].instance_transforms[ri_it_i].rot = (rot[0], rot[1], rot[2], rot[3]);
+                        if $render_items.len() > ri_i && $render_items[ri_i].instance_transforms.len() > ri_it_i {
+                            $render_items[ri_i].instance_transforms[ri_it_i].pos =
+                                (trans.x / PHYSICS_DIVISOR,
+                                 trans.y / PHYSICS_DIVISOR,
+                                 trans.z / PHYSICS_DIVISOR);
+                            $render_items[ri_i].instance_transforms[ri_it_i].rot = (rot[0], rot[1], rot[2], rot[3]);
+                        }
                     }
                 }
 
@@ -169,17 +171,15 @@ macro_rules! game_loop {
 
                         let mut rb = wo.borrow_mut_rigid_body();
 
-                        // update the rb transform pos
-                        let ri_pos = $render_items[ri_i].instance_transforms[ri_it_i].pos;
-                        rb.set_translation(
-                            Translation3::new(ri_pos.0 * PHYSICS_DIVISOR,
-                                              ri_pos.1 * PHYSICS_DIVISOR,
-                                              ri_pos.2 * PHYSICS_DIVISOR));
-
-                        /* re updating the rb causes problems
-                        let ri_rot = to_euler($render_items[ri_i].instance_transforms[ri_it_i].rot);
-                        rb.set_rotation(nVector3::new(ri_rot.0, ri_rot.1, ri_rot.2));
-                        */
+                        // check if it actually exists, if it doesn't remove
+                        if $render_items.len() > ri_i && $render_items[ri_i].instance_transforms.len() > ri_it_i {
+                            // update the rb transform pos
+                            println!("{},{}", ri_i, ri_it_i);
+                            let ri_pos = $render_items[ri_i].instance_transforms[ri_it_i].pos;
+                            rb.set_translation(Translation3::new(ri_pos.0 * PHYSICS_DIVISOR,
+                                                                 ri_pos.1 * PHYSICS_DIVISOR,
+                                                                 ri_pos.2 * PHYSICS_DIVISOR));
+                        }
                     }
                 }
 
