@@ -174,7 +174,6 @@ macro_rules! game_loop {
                         // check if it actually exists, if it doesn't remove
                         if $render_items.len() > ri_i && $render_items[ri_i].instance_transforms.len() > ri_it_i {
                             // update the rb transform pos
-                            println!("{},{}", ri_i, ri_it_i);
                             let ri_pos = $render_items[ri_i].instance_transforms[ri_it_i].pos;
                             rb.set_translation(Translation3::new(ri_pos.0 * PHYSICS_DIVISOR,
                                                                  ri_pos.1 * PHYSICS_DIVISOR,
