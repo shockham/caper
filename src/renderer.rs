@@ -2,7 +2,7 @@ use glium::{ Display, DrawParameters, DisplayBuild, Surface, Depth, Blend };
 use glium::index::{ NoIndices, PrimitiveType };
 use glium::DepthTest::IfLess;
 use glium::vertex::VertexBuffer;
-use glium::glutin::{ WindowBuilder, get_primary_monitor };
+use glium::glutin::{ WindowBuilder, get_primary_monitor, GlRequest, Api };
 use glium::glutin::CursorState::Hide;//{ Grab, Hide };
 use glium::draw_parameters::BackfaceCullingMode::CullClockwise;
 use glium::texture::RawImage2d;
@@ -60,10 +60,11 @@ impl Renderer {
             .with_depth_buffer(24)
             .with_title(title)
             .with_vsync()
+            .with_gl(GlRequest::Specific(Api::OpenGl, (4, 0)))
             .with_fullscreen(get_primary_monitor())
             .build_glium()
             .unwrap();
-
+            
         // create a text system instance and font
         let text_system = TextSystem::new(&display);
         let font = FontTexture::new(&display, &include_bytes!("./resources/font.otf")[..], 100).unwrap();
