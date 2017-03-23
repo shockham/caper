@@ -58,6 +58,8 @@ fn main() {
 
 */
 
+#![deny(missing_docs)]
+
 #[macro_use]
 pub extern crate glium;
 pub extern crate imgui;
