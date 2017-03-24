@@ -1,9 +1,37 @@
-// enum to return the informaiton on a collision test
+/// enum to return the informaiton on a collision test
 #[derive(PartialEq)]
 pub enum CollisionInfo {
-    Separate3D{ top: f32, bottom: f32, right: f32, left: f32, up: f32, down: f32, },
-    Separate2D{ top: f32, bottom: f32, right: f32, left: f32 },
+    /// Represents the distance of separation in 3d space
+    Separate3D{
+        /// The overlapping distance at the front of the objects (slightly confusing used for parity
+        /// with Separate 2D)
+        top: f32,
+        /// The overlapping distance at the back of the objects (slightly confusing used for parity
+        /// with Separate 2D)
+        bottom: f32,
+        /// The overlapping distance at the right of the objects
+        right: f32,
+        /// The overlapping distance at the left of the objects
+        left: f32,
+        /// The overlapping distance above the objects
+        up: f32,
+        /// The overlapping distance below the objects
+        down: f32,
+    },
+    /// Represents the distance of separation in 2d space
+    Separate2D{
+        /// The overlapping distance at the top of the objects
+        top: f32,
+        /// The overlapping distance at the bottom of the objects
+        bottom: f32,
+        /// The overlapping distance at the left of the objects
+        right: f32,
+        /// The overlapping distance at the right of the objects
+        left: f32,
+    },
+    /// Used for if two objects are overlapping each other
     Overlapping,
+    /// When no collision has taken place
     NoCollision,
 }
 

@@ -76,12 +76,21 @@ extern crate rustc_serialize;
 extern crate image;
 extern crate gif;
 
+/// A module for rendering items
 pub mod renderer;
+/// Utility functions and macros
 pub mod utils;
+/// Module for input handing
 pub mod input;
+/// Module for dealing with shaders
 pub mod shader;
+/// Module for procedurally generated meshes
 pub mod mesh;
+/// Rendering post processing effects
 pub mod posteffect;
+/// All of the caper types
 pub mod types;
+/// Simple collision detection
 pub mod collision;
+/// Module for saving and loading data
 pub mod persist;

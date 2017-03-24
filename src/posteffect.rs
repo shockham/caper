@@ -20,8 +20,10 @@ pub struct PostEffect {
     index_buffer: IndexBuffer<u16>,
     target_color: RefCell<Option<Texture2d>>,
     target_depth: RefCell<Option<DepthRenderBuffer>>,
+    /// The current shader being used for post processing
     pub current_shader: &'static str,
     start_time: f32,
+    /// The scale factor that the scene will be rendered in relation to to the full window resolution
     pub downscale_factor: f32,
 }
 
@@ -66,6 +68,7 @@ impl PostEffect {
     }
 }
 
+/// Renders the post effect on to the scene rendered in the draw FnMut
 pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut T, mut draw: F)
     -> R where T: Surface, F: FnMut(&mut SimpleFrameBuffer) -> R {
 

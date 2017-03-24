@@ -16,15 +16,25 @@ const TWO_PI:f32 = PI * 2f32;
 
 /// struct for abstracting the state for all the inputs
 pub struct Input {
+    /// The position of the mouse
     pub mouse_pos: (i32, i32),
+    /// The difference in mouse position from the last frame
     pub mouse_delta: (f32, f32),
+    /// The difference in position of the mouse wheen from the previous frame
     pub mouse_wheel_delta: (f32, f32),
+    /// The keys that are currently pressed down
     pub keys_down: Vec<Key>,
+    /// The keys that have been pressed on this frame
     pub keys_pressed: Vec<Key>,
+    /// The keys that have been released on this frame
     pub keys_released: Vec<Key>,
+    /// The mouse buttons that are currently pressed down
     pub mouse_btns_down: Vec<MouseButton>,
+    /// The mouse buttons that have been pressed down on this frame
     pub mouse_btns_pressed: Vec<MouseButton>,
+    /// The mouse buttons that have been release on this frame
     pub mouse_btns_released: Vec<MouseButton>,
+    /// Whether to show or hide the mouse
     pub hide_mouse: bool,
     cursor_grabbed: bool,
 }

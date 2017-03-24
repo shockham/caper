@@ -3,9 +3,12 @@ use types::Vertex;
 use noise::{ perlin2, Seed };
 use std::f32::consts::PI;
 
+/// The default normal to give a mesh vertex
 pub const DEF_NORMAL:[f32; 3] = [0f32, 0f32, 0f32];
+/// The default uv coordinate to give a mesh vertex
 pub const DEF_UV:[f32; 2] = [0f32, 0f32];
 const PI2:f32 = PI * 2f32;
+/// The default seed base for creating a perlin mesh
 pub const DEF_SEED_BASE:u32 = 0;
 
 /// Generates a quad mesh with each side length 1

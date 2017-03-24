@@ -1,5 +1,6 @@
+/// OpenGL 3.3 shaders with height roll off
 pub mod gl330 {
-    // fragment shader
+    /// Height fragment shader that rolls off to white in relation to the y-axis
     pub const FRAG: &'static str =
         "
         #version 330

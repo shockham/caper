@@ -1,5 +1,6 @@
+/// OpenGL 3.3 shaders for wireframe rendering
 pub mod gl330 {
-    // fragment shader
+    /// Line fragment shader for wireframes
     pub const FRAG: &'static str =
         "
         #version 330
@@ -22,7 +23,7 @@ pub mod gl330 {
         }
     ";
 
-    // geometry shader
+    /// Line geometry shader for wireframes
     pub const GEOM: &'static str =
         "
         #version 330

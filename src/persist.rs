@@ -6,8 +6,10 @@ use std::fs::{File, create_dir };
 use std::thread;
 use std::io::{ Read, Write };
 
+/// The base path the persistent items will be placed
 const PERSIST_BASE_PATH:&'static str = "./persist/";
 
+/// Save and encodable type to persistence at the key
 pub fn save<T: Encodable>(to_save: &T, key: &'static str) {
     let encoded: Vec<u8> = encode(to_save, SizeLimit::Infinite).unwrap();
 
@@ -26,6 +28,7 @@ pub fn save<T: Encodable>(to_save: &T, key: &'static str) {
     }).join();
 }
 
+/// Load a decodable type from persistence using the key
 pub fn load<T: Decodable>(key: &'static str) -> Result<T, String> {
     let mut f = match File::open(format!("{}{}", PERSIST_BASE_PATH, key)) {
         Ok(f) => f,

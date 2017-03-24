@@ -1,14 +1,21 @@
+/// Default shaders
 pub mod default;
+/// Distance shaders for roll off to white in relation to the camera position
 pub mod dist;
+/// Height shaders for rolling of to white in relation to the y-axis
 pub mod height;
+/// Line shaders for rendering wireframes
 pub mod line;
 
 use glium::{ Program, Display };
 use std::collections::HashMap;
 use std::error::Error;
 
+/// Contains all the shaders to be used
 pub struct Shaders {
+    /// Map containing all the shaders used to render the RenderItems
     pub shaders: HashMap<&'static str, Program>,
+    /// Map containing all the shaders to be used for post processing
     pub post_shaders: HashMap<&'static str, Program>,
 }
 
@@ -87,6 +94,7 @@ impl Shaders {
         }
     }
 
+    /// Add a new shader to the map that can used for rendering the RenderItems
     pub fn add_shader(&mut self, display: &Display,
                       name: &'static str, vert: &'static str,
                       frag: &'static str, geom: &'static str,
@@ -113,6 +121,7 @@ impl Shaders {
         Ok("shader added")
     }
 
+    /// Add a new shader to the post_shaders map that can be used for rendering post processing
     pub fn add_post_shader(&mut self, display: &Display,
                            name: &'static str, vert: &'static str,
                            frag: &'static str) -> Result<&str, &str> {

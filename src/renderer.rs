@@ -30,19 +30,24 @@ use utils::*;
 use posteffect::*;
 use types::*;
 
-pub const FIXED_TIME_STAMP: u64 = 16666667;
 
 /// struct for abstracting the render state
 pub struct Renderer {
+    /// The glium display used for rendering
     pub display: Display,
+    /// The glium_text system used for rendering TextItem
     pub text_system: TextSystem,
     default_font: FontTexture,
     imgui: ImGui,
     imgui_rend: ImGuiRenderer,
+    /// Instance of PostEffect used for rendering post processing
     pub post_effect: PostEffect,
+    /// The render/engine start time
     pub start_time: f64,
+    /// The shaders that can be used for rendering
     pub shaders: Shaders,
     fps_counter: FPSCounter,
+    /// The current frames per second the Renderer is drawing at
     pub fps: f32,
     gif_info: Option<GifInfo>,
 }
@@ -103,6 +108,7 @@ impl Renderer {
         window.set_cursor_state(Hide).ok();
     }
 
+    /// Update imgui's interal input state
     pub fn update_imgui_input(&mut self, pos: (i32, i32), btns: (bool, bool, bool)) {
         self.imgui.set_mouse_pos(pos.0 as f32, pos.1 as f32);
         self.imgui.set_mouse_down(&[btns.0, btns.1, btns.2, false, false]);
