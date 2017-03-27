@@ -1,6 +1,6 @@
 use renderer::Renderer;
 use types::{ RenderItem, TextItem, CamState, PhysicsType };
-use input::{ Input, Key, MouseButton };
+use input::{ Input, MouseButton };
 use imgui::Ui;
 use nalgebra::Vector3 as nVector3;
 use nalgebra::Translation3;
@@ -30,6 +30,7 @@ pub struct Game {
     pub render_items: Vec<RenderItem>,
     /// All the text items to be rendered in the game
     pub text_items: Vec<TextItem>,
+    delta: f32,
 }
 
 impl Game {
@@ -52,6 +53,7 @@ impl Game {
             cam_state: cam_state,
             render_items: Vec::new(),
             text_items: Vec::new(),
+            delta: 0.016666667f32,
         }
     }
 
@@ -106,90 +108,82 @@ impl Game {
     }
 
     /// Starting the game loop
-    pub fn start<U: FnMut(&Game), F: FnMut(&Ui)>(&mut self, mut update: U, mut render_imgui: F) {
+    pub fn update<F: FnMut(&Ui)>(&mut self, mut render_imgui: F) {
+        let frame_start = Instant::now();
 
-        let mut delta = 0.016666667f32;
+        // block for updating physics
+        {
+            self.physics.step(self.delta);
 
-        // the main loop
-        loop {
-            let frame_start = Instant::now();
-            // quit
-            if self.input.keys_down.contains(&Key::Escape) { break; }
+            for rbi in self.physics.rigid_bodies() {
+                // actually get access to the rb :|
+                let wo = WorldObject::RigidBody(rbi.clone());
+                let rb = wo.borrow_rigid_body();
 
-            // block for updating physics
-            {
-                self.physics.step(delta);
+                // update the RenderItem transform pos
+                let trans = rb.position().translation.vector;
+                let rot = rb.position().rotation.coords.data.as_slice();
+                //let quat = to_quaternion((rot.x, rot.y, rot.z));
 
-                for rbi in self.physics.rigid_bodies() {
-                    // actually get access to the rb :|
-                    let wo = WorldObject::RigidBody(rbi.clone());
-                    let rb = wo.borrow_rigid_body();
+                let user_data = rb.user_data().unwrap();
+                let &(ri_i, ri_it_i) = user_data.downcast_ref::<(usize, usize)>().unwrap();
 
-                    // update the RenderItem transform pos
-                    let trans = rb.position().translation.vector;
-                    let rot = rb.position().rotation.coords.data.as_slice();
-                    //let quat = to_quaternion((rot.x, rot.y, rot.z));
-
-                    let user_data = rb.user_data().unwrap();
-                    let &(ri_i, ri_it_i) = user_data.downcast_ref::<(usize, usize)>().unwrap();
-
-                    if self.render_items.len() > ri_i && self.render_items[ri_i].instance_transforms.len() > ri_it_i {
-                        self.render_items[ri_i].instance_transforms[ri_it_i].pos =
-                            (trans.x / PHYSICS_DIVISOR,
-                             trans.y / PHYSICS_DIVISOR,
-                             trans.z / PHYSICS_DIVISOR);
-                        self.render_items[ri_i].instance_transforms[ri_it_i].rot = (rot[0], rot[1], rot[2], rot[3]);
-                    }
+                if self.render_items.len() > ri_i && self.render_items[ri_i].instance_transforms.len() > ri_it_i {
+                    self.render_items[ri_i].instance_transforms[ri_it_i].pos =
+                        (trans.x / PHYSICS_DIVISOR,
+                         trans.y / PHYSICS_DIVISOR,
+                         trans.z / PHYSICS_DIVISOR);
+                    self.render_items[ri_i].instance_transforms[ri_it_i].rot = (rot[0], rot[1], rot[2], rot[3]);
                 }
             }
+        }
 
-            {
-                // render the frame
-                self.renderer.draw(&self.cam_state, &self.render_items, &self.text_items, &mut render_imgui);
+        {
+            // render the frame
+            self.renderer.draw(&self.cam_state, &self.render_items, &self.text_items, &mut render_imgui);
 
-                // updating and handling the inputs
-                self.input.update_inputs(&self.renderer.display);
+            // updating and handling the inputs
+            self.input.update_inputs(&self.renderer.display);
 
-                // update the inputs for imgui
-                self.renderer.update_imgui_input(self.input.mouse_pos,
+            // update the inputs for imgui
+            self.renderer.update_imgui_input(self.input.mouse_pos,
                                              (self.input.mouse_btns_down.contains(
                                                      &MouseButton::Left), false, false));
-            }
+        }
 
-            // the update block for other updates
-            {
-                update(&self);
-            }
+        // the update block for other updates
+        {
+            //update(&self);
+        }
 
-            // update the new positions back to rb
-            {
-                for rbi in self.physics.rigid_bodies() {
-                    // actually get access to the rb :|
-                    let mut wo = WorldObject::RigidBody(rbi.clone());
+        // update the new positions back to rb
+        {
+            for rbi in self.physics.rigid_bodies() {
+                // actually get access to the rb :|
+                let mut wo = WorldObject::RigidBody(rbi.clone());
 
-                    let (ri_i, ri_it_i) = {
-                        let rb = wo.borrow_rigid_body();
+                let (ri_i, ri_it_i) = {
+                    let rb = wo.borrow_rigid_body();
 
-                        let user_data = rb.user_data().unwrap();
-                        let tup_ref = user_data.downcast_ref::<(usize, usize)>().unwrap();
+                    let user_data = rb.user_data().unwrap();
+                    let tup_ref = user_data.downcast_ref::<(usize, usize)>().unwrap();
 
-                        *tup_ref
-                    };
+                    *tup_ref
+                };
 
-                    let mut rb = wo.borrow_mut_rigid_body();
+                let mut rb = wo.borrow_mut_rigid_body();
 
-                    // check if it actually exists, if it doesn't remove
-                    if self.render_items.len() > ri_i && self.render_items[ri_i].instance_transforms.len() > ri_it_i {
-                        // update the rb transform pos
-                        let ri_pos = self.render_items[ri_i].instance_transforms[ri_it_i].pos;
-                        rb.set_translation(Translation3::new(ri_pos.0 * PHYSICS_DIVISOR,
-                                                             ri_pos.1 * PHYSICS_DIVISOR,
-                                                             ri_pos.2 * PHYSICS_DIVISOR));
-                    }
+                // check if it actually exists, if it doesn't remove
+                if self.render_items.len() > ri_i && self.render_items[ri_i].instance_transforms.len() > ri_it_i {
+                    // update the rb transform pos
+                    let ri_pos = self.render_items[ri_i].instance_transforms[ri_it_i].pos;
+                    rb.set_translation(Translation3::new(ri_pos.0 * PHYSICS_DIVISOR,
+                                                         ri_pos.1 * PHYSICS_DIVISOR,
+                                                         ri_pos.2 * PHYSICS_DIVISOR));
                 }
             }
-
-            delta = 0.000000001f32 * frame_start.elapsed().subsec_nanos() as f32;
         }
+
+        self.delta = 0.000000001f32 * frame_start.elapsed().subsec_nanos() as f32;
     }
 }

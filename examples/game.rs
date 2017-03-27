@@ -5,6 +5,7 @@ use caper::types::{ RenderItem, Transform, PhysicsType };
 use caper::game::Game;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;
+use caper::input::Key;
 
 fn main() {
     // crate an instance of the game struct
@@ -29,13 +30,15 @@ fn main() {
     ];
 
     game.init();
-    game.start(
-        // update function
-        |game:&Game| {
-            //game.input.handle_fp_inputs(&mut game.cam_state);
-        },
-        // function for ui rendering
-        |ui:&Ui|{
 
-        });
+    loop {
+        // run the engine update
+        game.update(|ui:&Ui|{ });
+
+        // update the first person inputs
+        game.input.handle_fp_inputs(&mut game.cam_state);
+
+        // quit
+        if game.input.keys_down.contains(&Key::Escape) { break; }
+    }
 }
