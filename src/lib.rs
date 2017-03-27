@@ -94,3 +94,5 @@ pub mod types;
 pub mod collision;
 /// Module for saving and loading data
 pub mod persist;
+/// Module represent another way of creating a game
+pub mod game;
