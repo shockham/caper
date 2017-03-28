@@ -55,7 +55,9 @@ macro_rules! game_loop {
                                 nVector3::new(ri_trans.scale.0, ri_trans.scale.1, ri_trans.scale.2));
                             let mut rb = RigidBody::new_static(geom, GLOBAL_REST, 0.6);
 
-                            rb.append_translation(&Translation3::new(ri_trans.pos.0, ri_trans.pos.1, ri_trans.pos.2));
+                            rb.append_translation(&Translation3::new(ri_trans.pos.0 * PHYSICS_DIVISOR,
+                                                                     ri_trans.pos.1 * PHYSICS_DIVISOR,
+                                                                     ri_trans.pos.2 * PHYSICS_DIVISOR));
 
                             // track which render item instance this refers to
                             rb.set_user_data(Some(Box::new((i, j))));
@@ -73,7 +75,9 @@ macro_rules! game_loop {
                                 nVector3::new(ri_trans.scale.0, ri_trans.scale.1, ri_trans.scale.2));
                             let mut rb = RigidBody::new_dynamic(geom, 5.0, GLOBAL_REST, 0.8);
 
-                            rb.append_translation(&Translation3::new(ri_trans.pos.0, ri_trans.pos.1, ri_trans.pos.2));
+                            rb.append_translation(&Translation3::new(ri_trans.pos.0 * PHYSICS_DIVISOR,
+                                                                     ri_trans.pos.1 * PHYSICS_DIVISOR,
+                                                                     ri_trans.pos.2 * PHYSICS_DIVISOR));
 
                             // track which render item instance this refers to
                             rb.set_user_data(Some(Box::new((i, j))));

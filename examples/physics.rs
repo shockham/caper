@@ -16,7 +16,7 @@ fn main() {
             instance_transforms: vec![
                 Transform {
                     active: true,
-                    pos: (-0.5, -5.0, -5.0),
+                    pos: (0f32, -5.0, -5.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (20f32, 1f32, 20f32),
                 }
@@ -30,19 +30,19 @@ fn main() {
             instance_transforms: vec![
                 Transform {
                     active: true,
-                    pos: (-0.5, 0.0, -5.0),
+                    pos: (0f32, 0.0, -5.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (1f32, 1f32, 1f32),
                 },
                 Transform {
                     active: true,
-                    pos: (-0.5, 5.0, -5.0),
+                    pos: (0f32, 5.0, -5.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (1f32, 2f32, 1f32),
                 },
                 Transform {
                     active: true,
-                    pos: (-0.5, 10.0, -5.0),
+                    pos: (0f32, 10.0, -5.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (1f32, 2f32, 1f32),
                 },
@@ -66,19 +66,19 @@ fn main() {
                 },
                 Transform {
                     active: true,
-                    pos: (-3.0, 2.0, -5.0),
+                    pos: (-2.0, 2.0, -5.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (1f32, 1f32, 1f32),
                 },
                 Transform {
                     active: true,
-                    pos: (-3.0, 4.0, -5.0),
+                    pos: (-2.0, 4.0, -5.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (1f32, 1f32, 1f32),
                 },
                 Transform {
                     active: true,
-                    pos: (-3.0, 6.0, -5.0),
+                    pos: (-2.0, 6.0, -5.0),
                     rot: (0f32, 0f32, 0f32, 1f32),
                     scale: (1f32, 1f32, 1f32),
                 }],
