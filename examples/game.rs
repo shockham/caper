@@ -12,7 +12,7 @@ fn main() {
     let mut game = Game::new();
 
     // define some items to be rendered
-    game.render_items = vec![
+    game.add_render_item(
         RenderItem {
             vertices: gen_cube(),
             shader_name: "dist".to_string(),
@@ -26,10 +26,7 @@ fn main() {
             ],
             active: true,
             physics_type: PhysicsType::None,
-        },
-    ];
-
-    game.init();
+        });
 
     loop {
         // run the engine update
