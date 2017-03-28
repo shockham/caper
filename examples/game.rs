@@ -1,4 +1,3 @@
-
 extern crate caper;
 
 use caper::types::{ RenderItem, Transform, PhysicsType };
