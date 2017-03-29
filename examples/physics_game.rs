@@ -92,6 +92,8 @@ fn main() {
         });
 
     loop {
+        // clone of the RenderItem for access in the ui rendering
+        let debug_render_item = game.get_render_item(1).clone();
         // updating the game & ui rendering
         game.update(|ui:&Ui| {
             ui.window(im_str!("Editor"))
@@ -99,20 +101,18 @@ fn main() {
                 .position((0.0, 0.0), ImGuiSetCond_FirstUseEver)
                 .movable(false)
                 .build(|| {
-                    /*let render_item = game.get_render_item(1);
-
-                    ui.text(im_str!("{:?}", render_item.instance_transforms[0].pos));
+                    ui.text(im_str!("{:?}", debug_render_item.instance_transforms[0].pos));
 
                     let (mut x, mut y, mut z, mut w) =
-                        (render_item.instance_transforms[0].rot.0.to_string(),
-                        render_item.instance_transforms[0].rot.1.to_string(),
-                        render_item.instance_transforms[0].rot.2.to_string(),
-                        render_item.instance_transforms[0].rot.3.to_string());
+                        (debug_render_item.instance_transforms[0].rot.0.to_string(),
+                        debug_render_item.instance_transforms[0].rot.1.to_string(),
+                        debug_render_item.instance_transforms[0].rot.2.to_string(),
+                        debug_render_item.instance_transforms[0].rot.3.to_string());
                     x.truncate(5);
                     y.truncate(5);
                     z.truncate(5);
                     w.truncate(5);
-                    ui.text(im_str!("|({},{},{},{})", x, y, z, w));*/
+                    ui.text(im_str!("|({},{},{},{})", x, y, z, w));
                 });
         });
 
