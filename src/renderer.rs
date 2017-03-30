@@ -23,6 +23,7 @@ use gif::SetParameter;
 use std::path::Path;
 use std::fs::File;
 use std::fs::OpenOptions;
+use std::thread;
 
 
 use shader::Shaders;
@@ -69,7 +70,7 @@ impl Renderer {
             .with_fullscreen(get_primary_monitor())
             .build_glium()
             .unwrap();
-            
+
         // create a text system instance and font
         let text_system = TextSystem::new(&display);
         let font = FontTexture::new(&display, &include_bytes!("./resources/font.otf")[..], 100).unwrap();
@@ -80,7 +81,7 @@ impl Renderer {
         let shaders = Shaders::new(&display);
         let post_fx = PostEffect::new(&display);
 
-        let fps_counter = FPSCounter::new(); 
+        let fps_counter = FPSCounter::new();
 
         let renderer = Renderer {
             display: display,
@@ -184,7 +185,7 @@ impl Renderer {
         // drawing the text items
         for text_item in text_items.iter().filter(|r| r.active) {
             // create the matrix for the text
-            let matrix = [[0.02 * text_item.scale.0, 0.0, 0.0, 0.0], 
+            let matrix = [[0.02 * text_item.scale.0, 0.0, 0.0, 0.0],
             [0.0, 0.02 * text_item.scale.1 * (width as f32) / (height as f32), 0.0, 0.0],
             [0.0, 0.0, 0.02 * text_item.scale.2, 0.0],
             [text_item.pos.0, text_item.pos.1, text_item.pos.2, 1.0f32]];
@@ -216,11 +217,14 @@ impl Renderer {
     pub fn save_screenshot(&self) {
         // reading the front buffer into an image
         let image: RawImage2d<u8> = self.display.read_front_buffer();
-        let image = image::ImageBuffer::from_raw(image.width, image.height, image.data.into_owned()).unwrap();
-        let image = image::DynamicImage::ImageRgba8(image).flipv();
-        let mut output = File::create(&Path::new(format!("./screenshot_{}.png", 
-                                                                  time::precise_time_s()).as_str())).unwrap();
-        image.save(&mut output, image::ImageFormat::PNG).unwrap();
+
+        thread::spawn(move || {
+            let image = image::ImageBuffer::from_raw(image.width, image.height, image.data.into_owned()).unwrap();
+            let image = image::DynamicImage::ImageRgba8(image).flipv();
+            let mut output = File::create(&Path::new(format!("./screenshot_{}.png",
+                                                                      time::precise_time_s()).as_str())).unwrap();
+            image.save(&mut output, image::ImageFormat::PNG).unwrap();
+        });
     }
 
     /// When called with the same path adds a frame to a gif at the path
@@ -229,11 +233,12 @@ impl Renderer {
         let image: RawImage2d<u8> = self.display.read_front_buffer();
         let (w, h) = (image.width, image.height);
         let image = image::ImageBuffer::from_raw(w, h, image.data.into_owned()).unwrap();
+
         let mut image = image::DynamicImage::ImageRgba8(image).flipv();
         let image = image.as_mut_rgba8().unwrap();
         let mut image = image.clone().into_raw();
         let frame = gif::Frame::from_rgba(w as u16, h as u16, image.as_mut_slice());
-        
+
         // if there is no encoder present create one
         let new_file = {
             match self.gif_info.as_ref() {
@@ -242,7 +247,7 @@ impl Renderer {
             }
         };
         if self.gif_info.is_none() || new_file {
-            let output = OpenOptions::new().write(true).create(true).open(path).unwrap(); 
+            let output = OpenOptions::new().write(true).create(true).open(path).unwrap();
             let mut encoder = gif::Encoder::new(output, w as u16, h as u16, &[]).unwrap();
             encoder.set(gif::Repeat::Infinite).unwrap();
 
