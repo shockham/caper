@@ -22,32 +22,32 @@ pub fn gen_quad() -> Vec<Vertex> {
         Vertex {
             position: p_00,
             normal: DEF_NORMAL,
-            texture: [0f32, 0f32]
+            texture: [1f32, 0f32]
         },
         Vertex {
             position: p_01,
             normal: DEF_NORMAL,
-            texture: [0f32, 1f32]
+            texture: [1f32, 1f32]
         },
         Vertex {
             position: p_11,
             normal: DEF_NORMAL,
-            texture: [1f32, 1f32]
+            texture: [0f32, 1f32]
         },
         Vertex {
             position: p_00,
             normal: DEF_NORMAL,
-            texture: [0f32, 0f32]
+            texture: [1f32, 0f32]
         },
         Vertex {
             position: p_11,
             normal: DEF_NORMAL,
-            texture: [1f32, 1f32]
+            texture: [0f32, 1f32]
         },
         Vertex {
             position: p_10,
             normal: DEF_NORMAL,
-            texture: [1f32, 0f32]
+            texture: [0f32, 0f32]
         }
     )
 }
