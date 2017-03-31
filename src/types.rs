@@ -47,6 +47,8 @@ pub struct RenderItem {
     pub vertices: Vec<Vertex>,
     /// The shader that will used to render this item
     pub shader_name: String,
+    /// The texture that will be used
+    pub texture_name: String,
     /// The instances of this item
     pub instance_transforms: Vec<Transform>,
     /// Whether the item is active/should be rendered

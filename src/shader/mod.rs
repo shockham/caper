@@ -6,10 +6,14 @@ pub mod dist;
 pub mod height;
 /// Line shaders for rendering wireframes
 pub mod line;
+/// Shader for rendering with textures
+pub mod texture;
 
 use glium::{ Program, Display };
+use glium::texture::compressed_srgb_texture2d::CompressedSrgbTexture2d;
 use std::collections::HashMap;
 use std::error::Error;
+
 
 /// Contains all the shaders to be used
 pub struct Shaders {
@@ -17,6 +21,8 @@ pub struct Shaders {
     pub shaders: HashMap<&'static str, Program>,
     /// Map containing all the shaders to be used for post processing
     pub post_shaders: HashMap<&'static str, Program>,
+    /// Texture that can be passed to the shaders
+    pub textures: HashMap<&'static str, CompressedSrgbTexture2d>,
 }
 
 impl Shaders {
@@ -49,6 +55,16 @@ impl Shaders {
                                         vertex: default::gl330::VERT,
                                         fragment: line::gl330::FRAG,
                                         geometry: line::gl330::GEOM,
+                                        tessellation_control: default::gl330::TESS_CONTROL,
+                                        tessellation_evaluation: default::gl330::TESS_EVAL
+                                    }).unwrap());
+
+        // the shader programs
+        shader_map.insert("texture", program!(display,
+                                    330 => {
+                                        vertex: default::gl330::VERT,
+                                        fragment: texture::gl330::FRAG,
+                                        geometry: default::gl330::GEOM,
                                         tessellation_control: default::gl330::TESS_CONTROL,
                                         tessellation_evaluation: default::gl330::TESS_EVAL
                                     }).unwrap());
@@ -88,9 +104,14 @@ impl Shaders {
                              }
             ).unwrap());
 
+        let mut textures = HashMap::new();
+
+        textures.insert("default", load_texture!("../resources/caper.png", display));
+
         Shaders {
             shaders: shader_map,
             post_shaders: post_shader_map,
+            textures: textures,
         }
     }
 

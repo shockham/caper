@@ -231,6 +231,7 @@ pub fn create_skydome(shader_name: &'static str) -> RenderItem {
     RenderItem {
         vertices: load_wavefront(include_bytes!("./resources/skydome.obj")),
         shader_name: String::from(shader_name),
+        texture_name: "default".to_string(),
         instance_transforms: vec![
             Transform {
                 active: true,

@@ -138,12 +138,10 @@ impl Renderer {
         };
 
         // uniforms passed to the shaders
-        let uniforms = uniform! {
-            projection_matrix: build_persp_proj_mat(60f32, width as f32/height as f32, 0.01f32, 1000f32),
-            modelview_matrix: build_fp_view_matrix(cam_state),
-            cam_pos: cam_state.cam_pos,
-            time: (time::precise_time_s() - self.start_time) as f32,
-        };
+        let projection_matrix = build_persp_proj_mat(60f32, width as f32/height as f32, 0.01f32, 1000f32);
+        let modelview_matrix = build_fp_view_matrix(cam_state);
+        let cam_pos = cam_state.cam_pos;
+        let time = (time::precise_time_s() - self.start_time) as f32;
 
         // drawing a frame
         let mut target = self.display.draw();
@@ -171,6 +169,14 @@ impl Renderer {
                                 }).collect::<Vec<_>>();
 
                                 VertexBuffer::dynamic(&self.display, &data).unwrap()
+                            };
+
+                            let uniforms = uniform! {
+                                projection_matrix: projection_matrix,
+                                modelview_matrix: modelview_matrix,
+                                cam_pos: cam_pos,
+                                time: time,
+                                tex: self.shaders.textures.get(item.texture_name.as_str()).unwrap(),
                             };
 
                             target.draw((&vertex_buffer, per_instance.per_instance().unwrap()),
