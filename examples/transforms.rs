@@ -31,6 +31,7 @@ fn main() {
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/sphere.obj")),
             shader_name: "dist".to_string(),
+            texture_name: "default".to_string(),
             instance_transforms: vec![
                 Transform {
                     active: true,
@@ -51,6 +52,7 @@ fn main() {
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/floor.obj")),
             shader_name: "height".to_string(),
+            texture_name: "default".to_string(),
             instance_transforms: vec![
                 Transform {
                     active: true,
@@ -70,7 +72,8 @@ fn main() {
         },
         RenderItem {
             vertices: gen_quad(),
-            shader_name: "dist".to_string(),
+            shader_name: "texture".to_string(),
+            texture_name: "default".to_string(),
             instance_transforms: vec![
                 Transform {
                     active: true,
@@ -85,6 +88,7 @@ fn main() {
         RenderItem {
             vertices: gen_sphere(),
             shader_name: "dist".to_string(),
+            texture_name: "default".to_string(),
             instance_transforms: vec![
                 Transform {
                     active: true,
@@ -99,6 +103,7 @@ fn main() {
         RenderItem {
             vertices: gen_cube(),
             shader_name: "dist".to_string(),
+            texture_name: "default".to_string(),
             instance_transforms: vec![
                 Transform {
                     active: true,

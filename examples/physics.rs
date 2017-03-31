@@ -13,6 +13,7 @@ fn main() {
         RenderItem {
             vertices: gen_cube(),
             shader_name: "dist".to_string(),
+            texture_name: "default".to_string(),
             instance_transforms: vec![
                 Transform {
                     active: true,
@@ -27,6 +28,7 @@ fn main() {
         RenderItem {
             vertices: gen_cube(),
             shader_name: "height".to_string(),
+            texture_name: "default".to_string(),
             instance_transforms: vec![
                 Transform {
                     active: true,

@@ -34,6 +34,7 @@ fn main() {
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/cube.obj")),
             shader_name: "dist".to_string(),
+            texture_name: "default".to_string(),
             instance_transforms: transforms,
             active: true,
             physics_type: PhysicsType::None,

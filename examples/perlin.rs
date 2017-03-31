@@ -34,6 +34,7 @@ fn main() {
         RenderItem {
             vertices: gen_perlin_mesh(pseu_cam_pos, map_size),
             shader_name: "height".to_string(),
+            texture_name: "default".to_string(),
             instance_transforms: vec![
                 Transform {
                     active: true,
@@ -49,6 +50,7 @@ fn main() {
         RenderItem {
             vertices: gen_sphere(),
             shader_name: "line".to_string(),
+            texture_name: "default".to_string(),
             instance_transforms: vec![
                 Transform {
                     active: true,

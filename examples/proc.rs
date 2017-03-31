@@ -24,6 +24,7 @@ fn main() {
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/sphere.obj")),
             shader_name: "height".to_string(),
+            texture_name: "default".to_string(),
             instance_transforms: transforms,
             active: true,
             physics_type: PhysicsType::None,
