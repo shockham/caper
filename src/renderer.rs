@@ -173,12 +173,11 @@ impl Renderer {
                                 VertexBuffer::dynamic(&self.display, &data).unwrap()
                             };
 
-                            target.draw(
-                                (&vertex_buffer, per_instance.per_instance().unwrap()),
-                                &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
-                                &self.shaders.shaders.get(item.shader_name.as_str()).unwrap(),
-                                &uniforms,
-                                &params).unwrap();
+                            target.draw((&vertex_buffer, per_instance.per_instance().unwrap()),
+                                        &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
+                                        &self.shaders.shaders.get(item.shader_name.as_str()).unwrap(),
+                                        &uniforms,
+                                        &params).unwrap();
                         }
                     });
 
@@ -231,9 +230,9 @@ impl Renderer {
     pub fn save_add_to_gif(&mut self, path:&'static str) {
         // reading the front buffer into a gif frame
         let image: RawImage2d<u8> = self.display.read_front_buffer();
+
         let (w, h) = (image.width, image.height);
         let image = image::ImageBuffer::from_raw(w, h, image.data.into_owned()).unwrap();
-
         let mut image = image::DynamicImage::ImageRgba8(image).flipv();
         let image = image.as_mut_rgba8().unwrap();
         let mut image = image.clone().into_raw();
