@@ -132,63 +132,63 @@ pub fn gen_cube() -> Vec<Vertex> {
         Vertex {
             position: p_110,
             normal: DEF_NORMAL,
-            texture: [1f32, 0f32]
+            texture: [1f32, 1f32]
         },
         Vertex {
             position: p_010,
             normal: DEF_NORMAL,
-            texture: [0f32, 0f32]
+            texture: [0f32, 1f32]
         },
         Vertex {
             position: p_011,
             normal: DEF_NORMAL,
-            texture: [0f32, 1f32]
+            texture: [0f32, 0f32]
         },
         Vertex {
             position: p_111,
             normal: DEF_NORMAL,
-            texture: [1f32, 1f32]
+            texture: [1f32, 0f32]
         },
         Vertex {
             position: p_110,
             normal: DEF_NORMAL,
-            texture: [1f32, 0f32]
+            texture: [1f32, 1f32]
         },
         Vertex {
             position: p_011,
             normal: DEF_NORMAL,
-            texture: [0f32, 1f32]
+            texture: [0f32, 0f32]
         },
         // left face
         Vertex {
             position: p_010,
             normal: DEF_NORMAL,
-            texture: [1f32, 0f32]
+            texture: [1f32, 1f32]
         },
         Vertex {
             position: p_000,
             normal: DEF_NORMAL,
-            texture: [0f32, 0f32]
+            texture: [0f32, 1f32]
         },
         Vertex {
             position: p_001,
             normal: DEF_NORMAL,
-            texture: [0f32, 1f32]
+            texture: [0f32, 0f32]
         },
         Vertex {
             position: p_011,
             normal: DEF_NORMAL,
-            texture: [1f32, 1f32]
+            texture: [1f32, 0f32]
         },
         Vertex {
             position: p_010,
             normal: DEF_NORMAL,
-            texture: [1f32, 0f32]
+            texture: [1f32, 1f32]
         },
         Vertex {
             position: p_001,
             normal: DEF_NORMAL,
-            texture: [0f32, 1f32]
+            texture: [0f32, 0f32]
         },
         // right face
         Vertex {
