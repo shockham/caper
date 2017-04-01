@@ -124,7 +124,7 @@ extern crate gif;
 
 /// Module for utility functions for textures
 #[macro_use]
-mod texture;
+pub mod texture;
 /// A module for rendering items
 pub mod renderer;
 /// Utility functions and macros
