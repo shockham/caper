@@ -87,7 +87,7 @@ fn main() {
         },
         RenderItem {
             vertices: gen_sphere(),
-            shader_name: "dist".to_string(),
+            shader_name: "texture".to_string(),
             texture_name: "default".to_string(),
             instance_transforms: vec![
                 Transform {
