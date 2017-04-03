@@ -42,7 +42,7 @@ fn main() {
 
     loop {
         // run the engine update
-        game.update(|ui:&Ui|{ });
+        game.update(|_:&Ui|{ });
 
         // update the first person inputs
         game.input.handle_fp_inputs(&mut game.cam_state);
