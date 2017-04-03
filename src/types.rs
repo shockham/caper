@@ -64,6 +64,9 @@ pub struct Material {
     /// The texture that will be used
     #[builder(default="None")]
     pub texture_name: Option<String>,
+    /// The normal texture that will be used
+    #[builder(default="None")]
+    pub normal_texture_name: Option<String>,
 }
 
 /// struct for abstacting text items to be rendered

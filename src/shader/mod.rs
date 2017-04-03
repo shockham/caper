@@ -107,6 +107,7 @@ impl Shaders {
         let mut textures = HashMap::new();
 
         textures.insert("default", load_texture!("../resources/caper.png", display));
+        textures.insert("default_normal", load_texture!("../resources/normal.png", display));
 
         Shaders {
             shaders: shader_map,

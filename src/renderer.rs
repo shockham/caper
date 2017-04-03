@@ -171,10 +171,10 @@ impl Renderer {
                                 VertexBuffer::dynamic(&self.display, &data).unwrap()
                             };
 
-                            let tex_name = match item.material.texture_name.clone() {
-                                Some(n) => n,
-                                None => "default".to_string(),
-                            };
+                            let tex_name = item.material.texture_name.clone().unwrap_or("default".to_string());
+                            let normal_tex_name = item.material.normal_texture_name
+                                .clone()
+                                .unwrap_or("default_normal".to_string());
 
                             let uniforms = uniform! {
                                 projection_matrix: projection_matrix,
@@ -182,6 +182,7 @@ impl Renderer {
                                 cam_pos: cam_pos,
                                 time: time,
                                 tex: self.shaders.textures.get(tex_name.as_str()).unwrap(),
+                                normal_tex: self.shaders.textures.get(normal_tex_name.as_str()).unwrap(),
                             };
 
                             target.draw((&vertex_buffer, per_instance.per_instance().unwrap()),
