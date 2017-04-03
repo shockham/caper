@@ -1,6 +1,4 @@
 extern crate time;
-
-#[macro_use]
 extern crate caper;
 
 use caper::utils::load_wavefront;

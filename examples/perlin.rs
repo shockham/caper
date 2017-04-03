@@ -1,8 +1,6 @@
 extern crate time;
 extern crate fps_counter;
 extern crate noise;
-
-#[macro_use]
 extern crate caper;
 
 #[macro_use]

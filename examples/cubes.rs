@@ -1,9 +1,5 @@
 extern crate time;
-
-#[macro_use]
 extern crate caper;
-
-#[macro_use]
 extern crate imgui;
 
 extern crate noise;
@@ -12,8 +8,8 @@ use caper::utils::load_wavefront;
 use caper::types::{ RenderItem, Transform, PhysicsType, MaterialBuilder };
 use caper::game::Game;
 use caper::input::Key;
+use caper::imgui::Ui;
 use noise::{ perlin2, Seed };
-use imgui::*;
 
 fn main() {
     // create an instance of Game

@@ -1,9 +1,5 @@
 extern crate time;
-
-#[macro_use]
 extern crate caper;
-
-#[macro_use]
 extern crate imgui;
 
 use caper::utils::load_wavefront;
@@ -12,7 +8,6 @@ use caper::mesh::{ gen_quad, gen_sphere, gen_cube };
 use caper::game::Game;
 use caper::imgui::Ui;
 use caper::input::Key;
-use imgui::*;
 
 fn main() {
     let mut game = Game::new();
