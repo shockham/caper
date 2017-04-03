@@ -1,6 +1,6 @@
 [package]
 name = "caper"
-version = "0.1.8"
+version = "0.2.0-pre"
 authors = ["shockham <samuel.hockham@gmail.com>"]
 license = "MIT"
 readme = "README.md"

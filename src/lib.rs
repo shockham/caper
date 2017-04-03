@@ -8,7 +8,7 @@ Small game framework.
 #[macro_use]
 extern crate caper;
 
-use caper::types::{ RenderItem, Transform, PhysicsType };
+use caper::types::{ RenderItem, Transform, PhysicsType, MaterialBuilder };
 use caper::mesh::gen_cube;
 
 fn main() {
@@ -16,7 +16,7 @@ fn main() {
     let mut render_items = vec![
         RenderItem {
             vertices: gen_cube(),
-            shader_name: String::from("dist"),
+            material: MaterialBuilder::default().build().unwrap(),
             instance_transforms: vec![
                 Transform {
                     active: true,
@@ -62,7 +62,7 @@ Another [example](https://github.com/shockham/caper/blob/master/examples/game.rs
 ```
 extern crate caper;
 
-use caper::types::{ RenderItem, Transform, PhysicsType };
+use caper::types::{ RenderItem, Transform, PhysicsType, MaterialBuilder };
 use caper::game::Game;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;
@@ -76,7 +76,7 @@ fn main() {
     game.add_render_item(
         RenderItem {
             vertices: gen_cube(),
-            shader_name: "dist".to_string(),
+            material: MaterialBuilder::default().build().unwrap(),
             instance_transforms: vec![
                 Transform {
                     active: true,
