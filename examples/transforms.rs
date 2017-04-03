@@ -9,9 +9,13 @@ extern crate imgui;
 use caper::utils::load_wavefront;
 use caper::types::{ RenderItem, Transform, PhysicsType, MaterialBuilder };
 use caper::mesh::{ gen_quad, gen_sphere, gen_cube };
+use caper::game::Game;
+use caper::imgui::Ui;
+use caper::input::Key;
 use imgui::*;
 
 fn main() {
+    let mut game = Game::new();
 
     fn sin_y (t:&mut Transform) {
         t.pos = (t.pos.0, time::precise_time_s().sin() as f32, t.pos.2);
@@ -27,7 +31,7 @@ fn main() {
         t.rot = (update_time.cos() as f32, t.rot.1, t.rot.2, update_time.sin() as f32);
     }
 
-    let mut render_items = vec![
+    game.add_render_item(
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/sphere.obj")),
             material: MaterialBuilder::default().build().unwrap(),
@@ -47,7 +51,8 @@ fn main() {
             ],
             active: true,
             physics_type: PhysicsType::None,
-        },
+        });
+    game.add_render_item(
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/floor.obj")),
             material: MaterialBuilder::default()
@@ -70,7 +75,8 @@ fn main() {
             ],
             active: true,
             physics_type: PhysicsType::None,
-        },
+        });
+    game.add_render_item(
         RenderItem {
             vertices: gen_quad(),
             material: MaterialBuilder::default()
@@ -87,7 +93,8 @@ fn main() {
             ],
             active: true,
             physics_type: PhysicsType::None,
-        },
+        });
+    game.add_render_item(
         RenderItem {
             vertices: gen_sphere(),
             material: MaterialBuilder::default()
@@ -104,7 +111,8 @@ fn main() {
             ],
             active: true,
             physics_type: PhysicsType::None,
-        },
+        });
+    game.add_render_item(
         RenderItem {
             vertices: gen_cube(),
             material: MaterialBuilder::default().build().unwrap(),
@@ -118,35 +126,22 @@ fn main() {
             ],
             active: true,
             physics_type: PhysicsType::None,
-        },
-    ];
+        });
 
-    let text_items = Vec::new();
+    loop {
+        // run the engine update
+        game.update(|ui:&Ui|{ });
 
-    game_loop! {
-        Input => input,
-        Renderer => renderer,
-        CamState => cam_state,
-        RenderItems => render_items,
-        TextItems => text_items,
-        // define a block for start
-        start => {
-            // yay start code
-            println!("{:?}", cam_state.cam_pos);
-        },
-        // define block for update
-        update => {
-            // first person input
-            input.handle_fp_inputs(&mut cam_state);
+        // first person input
+        game.input.handle_fp_inputs(&mut game.cam_state);
 
-            // temporary fix after removal of update_fn
-            sin_y(&mut render_items[0].instance_transforms[0]);
-            circle(&mut render_items[0].instance_transforms[0]);
-            circle(&mut render_items[0].instance_transforms[1]);
-            spin(&mut render_items[1].instance_transforms[1]);
-        },
-        ui => {
-
-        }
+        // temporary fix after removal of update_fn
+        sin_y(&mut game.get_render_item(0).instance_transforms[0]);
+        circle(&mut game.get_render_item(0).instance_transforms[0]);
+        circle(&mut game.get_render_item(0).instance_transforms[1]);
+        spin(&mut game.get_render_item(1).instance_transforms[1]);
+        
+        // quit
+        if game.input.keys_down.contains(&Key::Escape) { break; }
     }
 }

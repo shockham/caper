@@ -10,10 +10,15 @@ extern crate noise;
 
 use caper::utils::load_wavefront;
 use caper::types::{ RenderItem, Transform, PhysicsType, MaterialBuilder };
+use caper::game::Game;
+use caper::input::Key;
 use noise::{ perlin2, Seed };
 use imgui::*;
 
 fn main() {
+    // create an instance of Game
+    let mut game = Game::new();
+
     // generate the instance positions
     let map_size = 50f32;
     let transforms = (0 .. 2500)
@@ -29,40 +34,24 @@ fn main() {
         })
     .collect::<Vec<_>>();
 
-    // create a vector of render items
-    let mut render_items = vec![
+    // add a render item to the game
+    game.add_render_item(
         RenderItem {
             vertices: load_wavefront(include_bytes!("assets/cube.obj")),
             material: MaterialBuilder::default().build().unwrap(),
             instance_transforms: transforms,
             active: true,
             physics_type: PhysicsType::None,
-        }
-    ];
+        });
 
-    let text_items = Vec::new();
+    loop {
+        // run the engine update
+        game.update(|ui:&Ui|{ });
 
-    game_loop! {
-        Input => input,
-        Renderer => renderer,
-        CamState => cam_state,
-        RenderItems => render_items,
-        TextItems => text_items,
-        // define a block for start
-        start => {
-            // yay start code
-            println!("{:?}", cam_state.cam_pos);
-        },
-        // define a block for update
-        update => {
-            // first person input
-            input.handle_fp_inputs(&mut cam_state);
+        // update the first person inputs
+        game.input.handle_fp_inputs(&mut game.cam_state);
 
-            // update some items
-            //let update_time = time::precise_time_s();
-        },
-        ui => {
-            // ui code here
-        }
+        // quit
+        if game.input.keys_down.contains(&Key::Escape) { break; }
     }
 }

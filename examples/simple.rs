@@ -1,12 +1,17 @@
-#[macro_use]
 extern crate caper;
 
 use caper::types::{ RenderItem, Transform, PhysicsType, MaterialBuilder };
+use caper::game::Game;
 use caper::mesh::gen_cube;
+use caper::imgui::Ui;
+use caper::input::Key;
 
 fn main() {
+    // crate an instance of the game struct
+    let mut game = Game::new();
+
     // define some items to be rendered
-    let mut render_items = vec![
+    game.add_render_item(
         RenderItem {
             vertices: gen_cube(),
             material: MaterialBuilder::default().build().unwrap(),
@@ -20,30 +25,16 @@ fn main() {
             ],
             active: true,
             physics_type: PhysicsType::None,
-        },
-    ];
+        });
 
-    // define a vector for potential text items
-    let text_items = Vec::new();
+    loop {
+        // run the engine update
+        game.update(|ui:&Ui|{ });
 
-    game_loop! {
-        // following are identities for access to the frameworks systems
-        Input => input,
-        Renderer => renderer,
-        CamState => cam_state,
-        RenderItems => render_items,
-        TextItems => text_items,
-        // define a block for start
-        start => {
-            println!("{:?}", cam_state.cam_pos);
-        },
-        // define block for update
-        update => {
-            input.handle_fp_inputs(&mut cam_state);
-        },
-        // block for ui rendering
-        ui => {
+        // update the first person inputs
+        game.input.handle_fp_inputs(&mut game.cam_state);
 
-        }
+        // quit
+        if game.input.keys_down.contains(&Key::Escape) { break; }
     }
 }
