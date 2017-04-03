@@ -5,7 +5,7 @@ use std::ops::{Add, Mul};
 use std::iter::Sum;
 use std::f32::consts::PI;
 
-use types::{ RenderItem, Transform, Vertex, Quaternion, Vector3, CamState, PhysicsType };
+use types::{ RenderItem, Transform, Vertex, Quaternion, Vector3, CamState, PhysicsType, MaterialBuilder };
 
 /// quick macro to use in the examples for easily defining all the modules and game loop
 #[macro_export]
@@ -230,8 +230,10 @@ pub fn load_wavefront( data: &[u8]) -> Vec<Vertex> {
 pub fn create_skydome(shader_name: &'static str) -> RenderItem {
     RenderItem {
         vertices: load_wavefront(include_bytes!("./resources/skydome.obj")),
-        shader_name: String::from(shader_name),
-        texture_name: "default".to_string(),
+        material: MaterialBuilder::default()
+            .shader_name(shader_name.to_string())
+            .build()
+            .unwrap(),
         instance_transforms: vec![
             Transform {
                 active: true,

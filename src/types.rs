@@ -17,7 +17,7 @@ pub struct Vertex {
 implement_vertex!(Vertex, position, normal, texture);
 
 /// struct for handling transform data
-#[derive(Copy, Clone, RustcEncodable, RustcDecodable, PartialEq)]
+#[derive(Builder, Copy, Clone, RustcEncodable, RustcDecodable, PartialEq)]
 pub struct Transform {
     /// The position of the transform
     pub pos: Vector3,
@@ -41,14 +41,12 @@ pub enum PhysicsType {
 }
 
 /// struct for abstracting items to be sent to render
-#[derive(Clone, RustcEncodable, RustcDecodable, PartialEq)]
+#[derive(Builder, Clone, RustcEncodable, RustcDecodable, PartialEq)]
 pub struct RenderItem {
     /// The vertices representing this items mesh
     pub vertices: Vec<Vertex>,
-    /// The shader that will used to render this item
-    pub shader_name: String,
-    /// The texture that will be used
-    pub texture_name: String,
+    /// The material that will be used for rendering the Item
+    pub material: Material,
     /// The instances of this item
     pub instance_transforms: Vec<Transform>,
     /// Whether the item is active/should be rendered
@@ -57,8 +55,19 @@ pub struct RenderItem {
     pub physics_type: PhysicsType,
 }
 
+/// Struct for containing material information
+#[derive(Builder, Clone, RustcEncodable, RustcDecodable, PartialEq)]
+pub struct Material {
+    /// The shader that will used to render this item
+    #[builder(default="\"dist\".to_string()")]
+    pub shader_name: String,
+    /// The texture that will be used
+    #[builder(default="None")]
+    pub texture_name: Option<String>,
+}
+
 /// struct for abstacting text items to be rendered
-#[derive(Clone, RustcEncodable, RustcDecodable, PartialEq)]
+#[derive(Builder, Clone, RustcEncodable, RustcDecodable, PartialEq)]
 pub struct TextItem {
     /// The text that the item displays
     pub text: String,
@@ -73,7 +82,7 @@ pub struct TextItem {
 }
 
 /// struct for abstracting the camera state
-#[derive(Copy, Clone, RustcEncodable, RustcDecodable, PartialEq)]
+#[derive(Builder, Copy, Clone, RustcEncodable, RustcDecodable, PartialEq)]
 pub struct CamState {
     /// The position of the camera in 3d space
     pub cam_pos: Vector3,

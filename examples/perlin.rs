@@ -9,7 +9,7 @@ extern crate caper;
 extern crate imgui;
 
 use caper::utils::create_skydome;
-use caper::types::{ RenderItem, TextItem, Transform, PhysicsType };
+use caper::types::{ RenderItem, TextItem, Transform, PhysicsType, MaterialBuilder };
 use caper::mesh::{ gen_perlin_mesh, gen_sphere, get_pos_perlin, DEF_SEED_BASE };
 use noise::Seed;
 use fps_counter::FPSCounter;
@@ -33,8 +33,10 @@ fn main() {
     let mut render_items = vec![
         RenderItem {
             vertices: gen_perlin_mesh(pseu_cam_pos, map_size),
-            shader_name: "height".to_string(),
-            texture_name: "default".to_string(),
+            material: MaterialBuilder::default()
+                .shader_name("height".to_string())
+                .build()
+                .unwrap(),
             instance_transforms: vec![
                 Transform {
                     active: true,
@@ -49,8 +51,10 @@ fn main() {
         create_skydome("height"),
         RenderItem {
             vertices: gen_sphere(),
-            shader_name: "line".to_string(),
-            texture_name: "default".to_string(),
+            material: MaterialBuilder::default()
+                .shader_name("line".to_string())
+                .build()
+                .unwrap(),
             instance_transforms: vec![
                 Transform {
                     active: true,

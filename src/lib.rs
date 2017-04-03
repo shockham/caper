@@ -112,6 +112,8 @@ pub extern crate imgui;
 pub extern crate ncollide;
 pub extern crate nphysics3d;
 pub extern crate nalgebra;
+#[macro_use]
+extern crate derive_builder;
 
 extern crate glium_text;
 extern crate noise;

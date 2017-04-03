@@ -171,17 +171,22 @@ impl Renderer {
                                 VertexBuffer::dynamic(&self.display, &data).unwrap()
                             };
 
+                            let tex_name = match item.material.texture_name.clone() {
+                                Some(n) => n,
+                                None => "default".to_string(),
+                            };
+
                             let uniforms = uniform! {
                                 projection_matrix: projection_matrix,
                                 modelview_matrix: modelview_matrix,
                                 cam_pos: cam_pos,
                                 time: time,
-                                tex: self.shaders.textures.get(item.texture_name.as_str()).unwrap(),
+                                tex: self.shaders.textures.get(tex_name.as_str()).unwrap(),
                             };
 
                             target.draw((&vertex_buffer, per_instance.per_instance().unwrap()),
                                         &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
-                                        &self.shaders.shaders.get(item.shader_name.as_str()).unwrap(),
+                                        &self.shaders.shaders.get(item.material.shader_name.as_str()).unwrap(),
                                         &uniforms,
                                         &params).unwrap();
                         }

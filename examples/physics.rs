@@ -3,7 +3,7 @@ extern crate caper;
 #[macro_use]
 extern crate imgui;
 
-use caper::types::{ RenderItem, Transform, PhysicsType };
+use caper::types::{ RenderItem, Transform, PhysicsType, MaterialBuilder };
 use caper::mesh::gen_cube;
 use imgui::*;
 
@@ -12,8 +12,7 @@ fn main() {
     let mut render_items = vec![
         RenderItem {
             vertices: gen_cube(),
-            shader_name: "dist".to_string(),
-            texture_name: "default".to_string(),
+            material: MaterialBuilder::default().build().unwrap(),
             instance_transforms: vec![
                 Transform {
                     active: true,
@@ -27,8 +26,10 @@ fn main() {
         },
         RenderItem {
             vertices: gen_cube(),
-            shader_name: "height".to_string(),
-            texture_name: "default".to_string(),
+            material: MaterialBuilder::default()
+                .shader_name("height".to_string())
+                .build()
+                .unwrap(),
             instance_transforms: vec![
                 Transform {
                     active: true,

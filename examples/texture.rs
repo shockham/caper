@@ -1,6 +1,6 @@
 extern crate caper;
 
-use caper::types::{ RenderItem, Transform, PhysicsType };
+use caper::types::{ RenderItem, Transform, PhysicsType, MaterialBuilder };
 use caper::game::Game;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;
@@ -14,8 +14,11 @@ fn main() {
     game.add_render_item(
         RenderItem {
             vertices: gen_cube(),
-            shader_name: "texture".to_string(),
-            texture_name: "default".to_string(),
+            material: MaterialBuilder::default()
+                .shader_name("texture".to_string())
+                .texture_name(Some("default".to_string()))
+                .build()
+                .unwrap(),
             instance_transforms: vec![
                 Transform {
                     active: true,
