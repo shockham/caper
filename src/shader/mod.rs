@@ -33,47 +33,47 @@ impl Shaders {
 
         // the shader programs
         shader_map.insert("dist", program!(display,
-                                    330 => {
-                                        vertex: default::gl330::VERT,
-                                        fragment: dist::gl330::FRAG,
-                                        geometry: default::gl330::GEOM,
-                                        tessellation_control: default::gl330::TESS_CONTROL,
-                                        tessellation_evaluation: default::gl330::TESS_EVAL
-                                    }).unwrap());
+                                           330 => {
+                                               vertex: default::gl330::VERT,
+                                               fragment: dist::gl330::FRAG,
+                                               geometry: default::gl330::GEOM,
+                                               tessellation_control: default::gl330::TESS_CONTROL,
+                                               tessellation_evaluation: default::gl330::TESS_EVAL
+                                           }).unwrap());
 
         shader_map.insert("height", program!(display,
-                                      330 => {
-                                          vertex: default::gl330::VERT,
-                                          fragment: height::gl330::FRAG,
-                                          geometry: default::gl330::GEOM,
-                                          tessellation_control: default::gl330::TESS_CONTROL,
-                                          tessellation_evaluation: default::gl330::TESS_EVAL
-                                      }).unwrap());
+                                             330 => {
+                                                 vertex: default::gl330::VERT,
+                                                 fragment: height::gl330::FRAG,
+                                                 geometry: default::gl330::GEOM,
+                                                 tessellation_control: default::gl330::TESS_CONTROL,
+                                                 tessellation_evaluation: default::gl330::TESS_EVAL
+                                             }).unwrap());
 
         shader_map.insert("line", program!(display,
-                                    330 => {
-                                        vertex: default::gl330::VERT,
-                                        fragment: line::gl330::FRAG,
-                                        geometry: line::gl330::GEOM,
-                                        tessellation_control: default::gl330::TESS_CONTROL,
-                                        tessellation_evaluation: default::gl330::TESS_EVAL
-                                    }).unwrap());
+                                           330 => {
+                                               vertex: default::gl330::VERT,
+                                               fragment: line::gl330::FRAG,
+                                               geometry: line::gl330::GEOM,
+                                               tessellation_control: default::gl330::TESS_CONTROL,
+                                               tessellation_evaluation: default::gl330::TESS_EVAL
+                                           }).unwrap());
 
         // the shader programs
         shader_map.insert("texture", program!(display,
-                                    330 => {
-                                        vertex: default::gl330::VERT,
-                                        fragment: texture::gl330::FRAG,
-                                        geometry: default::gl330::GEOM,
-                                        tessellation_control: default::gl330::TESS_CONTROL,
-                                        tessellation_evaluation: default::gl330::TESS_EVAL
-                                    }).unwrap());
+                                              330 => {
+                                                  vertex: default::gl330::VERT,
+                                                  fragment: texture::gl330::FRAG,
+                                                  geometry: default::gl330::GEOM,
+                                                  tessellation_control: default::gl330::TESS_CONTROL,
+                                                  tessellation_evaluation: default::gl330::TESS_EVAL
+                                              }).unwrap());
 
         let mut post_shader_map = HashMap::new();
 
         post_shader_map.insert("default", program!(display,
-                             330 => {
-                                 vertex: r"
+                                                   330 => {
+                                                       vertex: r"
                             #version 330
 
                             layout(location = 0) in vec3 position;
@@ -91,6 +91,7 @@ impl Shaders {
 
                             uniform vec2 resolution;
                             uniform sampler2D tex;
+                            uniform sampler2D depth_buf;
 
                             in vec2 v_tex_coords;
 
@@ -98,11 +99,12 @@ impl Shaders {
 
                             void main() {
                                 vec4 color = texture(tex, v_tex_coords);
+                                vec4 depth = texture(depth_buf, v_tex_coords);
+
                                 frag_output = color;
                             }
                         "
-                             }
-            ).unwrap());
+                                                   }).unwrap());
 
         let mut textures = HashMap::new();
 
@@ -123,13 +125,13 @@ impl Shaders {
                       tess_cont: &'static str, tess_eval: &'static str) -> Result<&str, &str> {
 
         let shader_prog = match program!(display,
-                                      330 => {
-                                          vertex: vert,
-                                          fragment: frag,
-                                          geometry: geom,
-                                          tessellation_control: tess_cont,
-                                          tessellation_evaluation: tess_eval,
-                                      }) {
+                                         330 => {
+                                             vertex: vert,
+                                             fragment: frag,
+                                             geometry: geom,
+                                             tessellation_control: tess_cont,
+                                             tessellation_evaluation: tess_eval,
+                                         }) {
 
             Ok(s) => s,
             Err(e) => {
@@ -149,10 +151,10 @@ impl Shaders {
                            frag: &'static str) -> Result<&str, &str> {
 
         let post_shader_prog = match program!(display,
-                             330 => {
-                                 vertex: vert,
-                                 fragment: frag
-                             }) {
+                                              330 => {
+                                                  vertex: vert,
+                                                  fragment: frag
+                                              }) {
             Ok(s) => s,
             Err(e) => {
                 println!("{}", e.cause().unwrap());

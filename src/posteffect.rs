@@ -2,9 +2,8 @@ use glium::{ Surface, Program };
 use glium::index::{ PrimitiveType, IndexBuffer };
 use glium::vertex::VertexBuffer;
 use glium::backend::{ Facade, Context };
-use glium::framebuffer::{ SimpleFrameBuffer, DepthRenderBuffer };
-use glium::texture::Texture2d;
-use glium::texture::DepthFormat::I24;
+use glium::framebuffer::SimpleFrameBuffer;
+use glium::texture::{ Texture2d, DepthTexture2d, DepthFormat, MipmapsOption };
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -19,7 +18,7 @@ pub struct PostEffect {
     vertex_buffer: VertexBuffer<Vertex>,
     index_buffer: IndexBuffer<u16>,
     target_color: RefCell<Option<Texture2d>>,
-    target_depth: RefCell<Option<DepthRenderBuffer>>,
+    target_depth: RefCell<Option<DepthTexture2d>>,
     /// The current shader being used for post processing
     pub current_shader: &'static str,
     start_time: f32,
@@ -92,9 +91,10 @@ pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut 
                 (target_dimensions.1 as f32 * system.downscale_factor) as u32).unwrap();
             *target_color = Some(col_tex);
 
-            let dep_tex = DepthRenderBuffer::new(
+            let dep_tex = DepthTexture2d::empty_with_format(
                 &system.context,
-                I24,
+                DepthFormat::F32,
+                MipmapsOption::NoMipmap,
                 (target_dimensions.0 as f32 * system.downscale_factor) as u32,
                 (target_dimensions.1 as f32 * system.downscale_factor) as u32).unwrap();
             *target_depth = Some(dep_tex);
@@ -110,6 +110,7 @@ pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut 
 
         let uniforms = uniform! {
             tex: &*target_color,
+            depth_buf: &*target_depth,
             resolution: (target_dimensions.0 as f32, target_dimensions.1 as f32),
             time: time::precise_time_s() as f32 - system.start_time,
             downscale_factor: system.downscale_factor,

@@ -5,6 +5,7 @@ use glium::vertex::VertexBuffer;
 use glium::glutin::{ WindowBuilder, get_primary_monitor, GlRequest, Api };
 use glium::glutin::CursorState::Hide;//{ Grab, Hide };
 use glium::draw_parameters::BackfaceCullingMode::CullClockwise;
+use glium::draw_parameters::DepthClamp;
 use glium::texture::RawImage2d;
 
 use glium_text;
@@ -130,6 +131,7 @@ impl Renderer {
             depth: Depth {
                 test: IfLess,
                 write: true,
+                clamp: DepthClamp::Clamp,
                 .. Default::default()
             },
             blend: Blend::alpha_blending(),
