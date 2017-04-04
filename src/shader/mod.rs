@@ -99,7 +99,7 @@ impl Shaders {
 
                             void main() {
                                 vec4 color = texture(tex, v_tex_coords);
-                                vec4 depth = texture(depth_buf, v_tex_coords);
+                                float depth = texture(depth_buf, v_tex_coords).r;
 
                                 frag_output = color;
                             }

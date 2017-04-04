@@ -58,6 +58,11 @@ impl Game {
         }
     }
 
+    /// Get the len of render_items
+    pub fn render_items_len(&self) -> usize {
+        self.render_items.len()
+    }
+
     /// Get a ref to a render item
     pub fn get_render_item(&mut self, index:usize) -> &mut RenderItem {
         &mut self.render_items[index]
@@ -119,6 +124,16 @@ impl Game {
             },
             PhysicsType::None => {},
         }
+    }
+
+    /// Get the len of render_items
+    pub fn text_items_len(&self) -> usize {
+        self.text_items.len()
+    }
+
+    /// Get a ref to a text item
+    pub fn get_text_item(&mut self, index:usize) -> &mut TextItem {
+        &mut self.text_items[index]
     }
 
     /// Add a text item to the game
