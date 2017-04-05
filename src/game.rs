@@ -1,4 +1,5 @@
 use renderer::Renderer;
+use lighting::Lighting;
 use types::{ RenderItem, TextItem, CamState, PhysicsType };
 use input::{ Input, MouseButton };
 use imgui::Ui;
@@ -24,6 +25,8 @@ pub struct Game {
     pub renderer: Renderer,
     /// The physics system
     pub physics: World<f32>,
+    /// The lighting system
+    pub lighting: Lighting,
     /// Simple struct for camera data
     pub cam_state: CamState,
     /// All of the mesh items to be rendered in the game
@@ -47,9 +50,13 @@ impl Game {
             cam_rot: (0.0f32, 0.0, 0.0)
         };
 
+        let renderer = Renderer::new("caper window".to_string());
+        let lighting = Lighting::new(&renderer.display);
+
         Game {
             input: Input::new(),
-            renderer: Renderer::new("caper window".to_string()),
+            renderer: renderer,
+            lighting: lighting,
             physics: world,
             cam_state: cam_state,
             render_items: Vec::new(),

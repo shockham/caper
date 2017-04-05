@@ -92,3 +92,5 @@ pub mod collision;
 pub mod persist;
 /// Module represent another way of creating a game
 pub mod game;
+/// Module for the lighting system
+pub mod lighting;
