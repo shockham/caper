@@ -30,6 +30,7 @@ use shader::Shaders;
 use utils::*;
 use posteffect::*;
 use types::*;
+use lighting::Lighting;
 
 
 /// struct for abstracting the render state
@@ -51,6 +52,8 @@ pub struct Renderer {
     /// The current frames per second the Renderer is drawing at
     pub fps: f32,
     gif_info: Option<GifInfo>,
+    /// The lighting system
+    pub lighting: Lighting,
 }
 
 struct GifInfo {
@@ -80,6 +83,7 @@ impl Renderer {
 
         let shaders = Shaders::new(&display);
         let post_fx = PostEffect::new(&display);
+        let lighting = Lighting::new(&display);
 
         let fps_counter = FPSCounter::new();
 
@@ -95,6 +99,7 @@ impl Renderer {
             fps_counter: fps_counter,
             fps: 0f32,
             gif_info: None,
+            lighting: lighting,
         };
 
         renderer.setup();
@@ -177,6 +182,8 @@ impl Renderer {
                                 .clone()
                                 .unwrap_or("default_normal".to_string());
 
+                            let dir_lights = self.lighting.directional_tex.borrow();
+
                             let uniforms = uniform! {
                                 projection_matrix: projection_matrix,
                                 modelview_matrix: modelview_matrix,
@@ -184,6 +191,7 @@ impl Renderer {
                                 time: time,
                                 tex: self.shaders.textures.get(tex_name.as_str()).unwrap(),
                                 normal_tex: self.shaders.textures.get(normal_tex_name.as_str()).unwrap(),
+                                dir_lights: &*dir_lights,
                             };
 
                             target.draw((&vertex_buffer, per_instance.per_instance().unwrap()),

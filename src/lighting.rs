@@ -8,16 +8,21 @@ use std::rc::Rc;
 pub struct Lighting {
     context: Rc<Context>,
     directional_lights: Vec<Vector3>,
-    directional_tex: RefCell<Option<Texture1d>>,
+    /// Texture representing the positions of the directional lights
+    pub directional_tex: RefCell<Texture1d>,
 }
 
 impl Lighting {
     /// Create a new lighting system
     pub fn new<F>(facade: &F) -> Lighting where F: Facade + Clone {
+        let context = facade.get_context().clone();
+        let dir_lights:Vec<Vector3> = Vec::new();
+        let dir_tex = Texture1d::new(&context, dir_lights.as_slice()).unwrap();
+
         Lighting {
-            context: facade.get_context().clone(),
+            context: context,
             directional_lights: Vec::new(),
-            directional_tex: RefCell::new(None), 
+            directional_tex: RefCell::new(dir_tex), 
         }
     }
 
@@ -28,10 +33,7 @@ impl Lighting {
 
         // regenerate the tex that is used to send location to shader
         let mut dir_tex = self.directional_tex.borrow_mut();
-
-        if dir_tex.is_none() {
-            let dir_tex_1d = Texture1d::new(&self.context, self.directional_lights.as_slice()).unwrap();
-            *dir_tex = Some(dir_tex_1d);
-        }
+        let dir_tex_1d = Texture1d::new(&self.context, self.directional_lights.as_slice()).unwrap();
+        *dir_tex = dir_tex_1d;
     }
 }
