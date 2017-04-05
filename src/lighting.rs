@@ -36,4 +36,9 @@ impl Lighting {
         let dir_tex_1d = Texture1d::new(&self.context, self.directional_lights.as_slice()).unwrap();
         *dir_tex = dir_tex_1d;
     }
+
+    /// Get a ref to a directional light
+    pub fn get_directional_light(&mut self, index: usize) -> &mut Vector3 {
+        &mut self.directional_lights[index]
+    }
 }
