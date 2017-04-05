@@ -123,6 +123,8 @@ fn main() {
             physics_type: PhysicsType::None,
         });
 
+    game.renderer.lighting.add_directional_light((-0.2, 0.8, 0.1));
+
     loop {
         // run the engine update
         game.update(|_:&Ui|{ });

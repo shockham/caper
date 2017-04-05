@@ -9,6 +9,7 @@ pub mod gl330 {
         uniform vec3 cam_pos;
         uniform sampler2D tex;
         uniform sampler2D normal_tex;
+        uniform sampler1D dir_lights;
         const vec3 LIGHT = vec3(-0.2, 0.8, 0.1);
 
         in vec3 g_normal;
@@ -18,8 +19,8 @@ pub mod gl330 {
         out vec4 frag_output;
 
         void main() {
-            float lum = dot(normalize(g_normal), normalize(LIGHT));
-            float tex_lum = dot(normalize(vec3(texture(normal_tex, g_texture))), normalize(LIGHT));
+            float lum = max(dot(normalize(g_normal), normalize(texture(dir_lights, 0).xyz)), 0.0);
+            float tex_lum = dot(normalize(vec3(texture(normal_tex, g_texture))), normalize(texture(dir_lights, 0).xyz));
 
             float avg_lum = (lum + tex_lum) / 2.0;
 
