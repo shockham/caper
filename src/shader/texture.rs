@@ -19,8 +19,14 @@ pub mod gl330 {
         out vec4 frag_output;
 
         void main() {
-            float lum = max(dot(normalize(g_normal), normalize(texture(dir_lights, 0).xyz)), 0.0);
-            float tex_lum = dot(normalize(vec3(texture(normal_tex, g_texture))), normalize(texture(dir_lights, 0).xyz));
+            int size = textureSize(dir_lights, 0);
+            float lum = 0.0;
+            float tex_lum = 0.0;
+            for (int i = 0; i < size; i++) {
+                vec3 light_norm = normalize(texture(dir_lights, i).xyz);
+                lum += max(dot(normalize(g_normal), light_norm), 0.0);
+                tex_lum += dot(normalize(vec3(texture(normal_tex, g_texture))), light_norm);
+            }
 
             float avg_lum = (lum + tex_lum) / 2.0;
 

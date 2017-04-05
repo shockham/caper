@@ -15,12 +15,16 @@ pub mod gl330 {
         out vec4 frag_output;
 
         void main() {
-            float lum = max(dot(normalize(g_normal), normalize(texture(dir_lights, 0).xyz)), 0.0);
+            int size = textureSize(dir_lights, 0);
+            float lum = 0.0;
+            for (int i = 0; i < size; i++) {
+                vec3 light_norm = normalize(texture(dir_lights, i).xyz);
+                lum += max(dot(normalize(g_normal), light_norm), 0.0);
+            }
+
             float dist = abs(distance(cam_pos, g_pos)) / 80.0;
 
-            vec3 base_color = vec3(1.0, 1.0, 1.0);
-
-            vec3 color = base_color * (0.3 + (0.2 * lum) + (0.5 * dist));
+            vec3 color = vec3(0.3 + (0.2 * lum) + (0.5 * dist));
             frag_output = vec4(color, 1.0);
         }
     ";

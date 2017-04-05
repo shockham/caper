@@ -124,6 +124,8 @@ fn main() {
         });
 
     game.renderer.lighting.add_directional_light((-0.2, 0.8, 0.1));
+    game.renderer.lighting.add_directional_light((1.0, 0.0, 0.0));
+    game.renderer.lighting.add_directional_light((0.0, 1.0, 0.0));
 
     loop {
         // run the engine update
