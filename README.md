@@ -3,6 +3,13 @@ Caper
 [![crates.io version](https://img.shields.io/crates/v/caper.svg)](https://crates.io/crates/caper)
 
 Small game framework using [rust](https://www.rust-lang.org/) and [glium](https://github.com/tomaka/glium).
+Currently has systems for:
+- Rendering
+- Input
+- Physics (using [nphysics](https://github.com/sebcrozet/nphysics))
+
+Still to be added:
+- Audio
 
 [**Documentation**](https://shockham.github.io/caper/caper/)
 
