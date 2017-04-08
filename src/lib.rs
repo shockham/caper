@@ -1,6 +1,13 @@
 /*!
 
 Small game framework.
+Currently has systems for:
+- Rendering
+- Input
+- Physics (using [nphysics](https://github.com/sebcrozet/nphysics))
+
+Still to be added:
+- Audio
 
 [Example](https://github.com/shockham/caper/blob/master/examples/simple.rs) of a basis for a game:
 
