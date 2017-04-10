@@ -40,14 +40,9 @@ pub mod gl330 {
             float depth = texture(depth_buf, v_tex_coords).r;
 
             // pseudo chromatic aberration
-            vec2 tex_size = vec2(1.0 - chrom_offset);
-            float edge_fade = 1.0 - (sin(v_tex_coords.x * M_PI) * sin(v_tex_coords.y * M_PI));
-            float chrom_r = texture(tex, vec2(min(v_tex_coords.x + chrom_offset, tex_size.x), v_tex_coords.y)).r;
-            float chrom_g = texture(tex, vec2(min(v_tex_coords.x - chrom_offset, tex_size.x), v_tex_coords.y)).g;
-            float chrom_b = texture(tex, vec2(v_tex_coords.x, min(v_tex_coords.y + chrom_offset, tex_size.y))).b;
-            color.r = mix(color.r, chrom_r, edge_fade * chrom_amt);
-            color.b = mix(color.g, chrom_g, edge_fade * chrom_amt);
-            color.b = mix(color.b, chrom_b, edge_fade * chrom_amt);
+            vec2 edge_offset = vec2(cos(v_tex_coords.x * M_PI), cos(v_tex_coords.y * M_PI)) * chrom_offset;
+            float chrom_r = texture(tex, v_tex_coords + edge_offset).r;
+            color.r = mix(color.r, chrom_r, chrom_amt);
 
             frag_output = color;
         }
