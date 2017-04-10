@@ -8,6 +8,8 @@ pub mod height;
 pub mod line;
 /// Shader for rendering with textures
 pub mod texture;
+/// Default post effect shader
+pub mod post;
 
 use glium::{ Program, Display };
 use glium::texture::compressed_srgb_texture2d::CompressedSrgbTexture2d;
@@ -73,37 +75,8 @@ impl Shaders {
 
         post_shader_map.insert("default", program!(display,
                                                    330 => {
-                                                       vertex: r"
-                            #version 330
-
-                            layout(location = 0) in vec3 position;
-                            layout(location = 1) in vec2 texture;
-
-                            out vec2 v_tex_coords;
-
-                            void main() {
-                                gl_Position = vec4(position, 1.0);
-                                v_tex_coords = texture;
-                            }
-                        ",
-                        fragment: r"
-                            #version 330
-
-                            uniform vec2 resolution;
-                            uniform sampler2D tex;
-                            uniform sampler2D depth_buf;
-
-                            in vec2 v_tex_coords;
-
-                            out vec4 frag_output;
-
-                            void main() {
-                                vec4 color = texture(tex, v_tex_coords);
-                                float depth = texture(depth_buf, v_tex_coords).r;
-
-                                frag_output = color;
-                            }
-                        "
+                                                       vertex: post::gl330::VERT,
+                                                       fragment: post::gl330::FRAG,
                                                    }).unwrap());
 
         let mut textures = HashMap::new();
