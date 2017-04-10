@@ -24,6 +24,10 @@ pub struct PostEffect {
     start_time: f32,
     /// The scale factor that the scene will be rendered in relation to to the full window resolution
     pub downscale_factor: f32,
+    /// The offset for the chromatic aberration
+    pub chrom_offset: f32,
+    /// The mix amount for the chromatic aberration
+    pub chrom_amt: f32,
 }
 
 impl PostEffect {
@@ -63,6 +67,8 @@ impl PostEffect {
             current_shader: "default",
             start_time: time::precise_time_s() as f32,
             downscale_factor: 1.0f32,
+            chrom_offset: 0.003f32,
+            chrom_amt: 0.0f32,
         }
     }
 }
@@ -114,6 +120,8 @@ pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut 
             resolution: (target_dimensions.0 as f32, target_dimensions.1 as f32),
             time: time::precise_time_s() as f32 - system.start_time,
             downscale_factor: system.downscale_factor,
+            chrom_offset: system.chrom_offset,
+            chrom_amt: system.chrom_amt,
         };
 
         // second pass draw the post effect
