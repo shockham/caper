@@ -97,6 +97,9 @@ pub struct PostShaderOptions {
     /// Bokeh focal depth
     #[builder(default="0.0f32")]
     pub bokeh_focal_depth: f32,
+    /// Colour grading
+    #[builder(default="(1f32, 1f32, 1f32, 1f32)")]
+    pub color_offset: (f32, f32, f32, f32),
 }
 
 /// Renders the post effect on to the scene rendered in the draw FnMut
@@ -156,6 +159,7 @@ pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut 
             blur_weight: system.post_shader_options.blur_weight,
             bokeh: system.post_shader_options.bokeh,
             bokeh_focal_depth: system.post_shader_options.bokeh_focal_depth,
+            color_offset: system.post_shader_options.color_offset,
         };
 
         // second pass draw the post effect
