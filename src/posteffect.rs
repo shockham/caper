@@ -65,7 +65,7 @@ impl PostEffect {
             current_shader: "default",
             start_time: time::precise_time_s() as f32,
             downscale_factor: 1.0f32,
-            post_shader_options: PostShaderOptionsBuilder::default().blur(true).build().unwrap(),
+            post_shader_options: PostShaderOptionsBuilder::default().build().unwrap(),
         }
     }
 }
@@ -82,6 +82,15 @@ pub struct PostShaderOptions {
     /// Whether blur is on
     #[builder(default="false")]
     pub blur: bool,
+    /// The amount of blur
+    #[builder(default="1.0f32")]
+    pub blur_amt: f32,
+    /// The radius of the blur
+    #[builder(default="1.0f32")]
+    pub blur_radius: f32,
+    /// The weight of the blur
+    #[builder(default="1.0f32")]
+    pub blur_weight: f32,
     /// Whether bokeh is on
     #[builder(default="false")]
     pub bokeh: bool,
@@ -129,14 +138,19 @@ pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut 
                                                                     target_depth).unwrap());
 
         let uniforms = uniform! {
+            // general uniforms
             tex: &*target_color,
             depth_buf: &*target_depth,
             resolution: (target_dimensions.0 as f32, target_dimensions.1 as f32),
             time: time::precise_time_s() as f32 - system.start_time,
             downscale_factor: system.downscale_factor,
+            // post effect param uniforms
             chrom_offset: system.post_shader_options.chrom_offset,
             chrom_amt: system.post_shader_options.chrom_amt,
             blur: system.post_shader_options.blur,
+            blur_amt: system.post_shader_options.blur_amt,
+            blur_radius: system.post_shader_options.blur_radius,
+            blur_weight: system.post_shader_options.blur_weight,
             bokeh: system.post_shader_options.bokeh,
         };
 

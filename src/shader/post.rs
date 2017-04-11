@@ -33,6 +33,9 @@ pub mod gl330 {
 
         // blur params
         uniform bool blur;
+        uniform float blur_amt;
+        uniform float blur_radius;
+        uniform float blur_weight;
 
         // bokeh params
         uniform bool bokeh;
@@ -41,9 +44,9 @@ pub mod gl330 {
 
         out vec4 frag_output;
 
-        float w_offset[3] = float[]( 0.0, 1.5 / resolution.x, 3.0 / resolution.x );
-        float h_offset[3] = float[]( 0.0, 1.5 / resolution.y, 3.0 / resolution.x );
-        float weight[3] = float[]( 0.05, 0.075, 0.015 );
+        float w_offset[3] = float[]( 0.0, (1.5 * blur_radius) / resolution.x, (3.0 * blur_radius) / resolution.x );
+        float h_offset[3] = float[]( 0.0, (1.5 * blur_radius) / resolution.y, (3.0 * blur_radius) / resolution.x );
+        float weight[3] = float[]( 0.05 * blur_weight, 0.075 * blur_weight, 0.015 * blur_weight );
 
         void main() {
             vec4 color = texture(tex, v_tex_coords);
@@ -73,7 +76,7 @@ pub mod gl330 {
             if (bokeh) {
                 frag_output = mix(color, vec4(tc, 1.0), sin(depth * M_PI / 2.0));
             } else if (blur) {
-                frag_output = mix(color, vec4(tc, 1.0), 1.0);
+                frag_output = mix(color, vec4(tc, 1.0), blur_amt);
             } else {
                 frag_output = color;
             }
