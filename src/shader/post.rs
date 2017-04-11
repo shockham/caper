@@ -39,6 +39,7 @@ pub mod gl330 {
 
         // bokeh params
         uniform bool bokeh;
+        uniform float bokeh_focal_depth;
 
         in vec2 v_tex_coords;
 
@@ -74,7 +75,7 @@ pub mod gl330 {
 
             // mix with depth buffer for bokeh
             if (bokeh) {
-                frag_output = mix(color, vec4(tc, 1.0), sin(depth * M_PI / 2.0));
+                frag_output = mix(color, vec4(tc, 1.0), abs(sin(depth * M_PI / 2.0) - bokeh_focal_depth));
             } else if (blur) {
                 frag_output = mix(color, vec4(tc, 1.0), blur_amt);
             } else {

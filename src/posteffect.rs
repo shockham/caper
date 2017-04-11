@@ -94,6 +94,9 @@ pub struct PostShaderOptions {
     /// Whether bokeh is on
     #[builder(default="false")]
     pub bokeh: bool,
+    /// Bokeh focal depth
+    #[builder(default="0.0f32")]
+    pub bokeh_focal_depth: f32,
 }
 
 /// Renders the post effect on to the scene rendered in the draw FnMut
@@ -152,6 +155,7 @@ pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut 
             blur_radius: system.post_shader_options.blur_radius,
             blur_weight: system.post_shader_options.blur_weight,
             bokeh: system.post_shader_options.bokeh,
+            bokeh_focal_depth: system.post_shader_options.bokeh_focal_depth,
         };
 
         // second pass draw the post effect
