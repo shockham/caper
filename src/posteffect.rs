@@ -24,10 +24,8 @@ pub struct PostEffect {
     start_time: f32,
     /// The scale factor that the scene will be rendered in relation to to the full window resolution
     pub downscale_factor: f32,
-    /// The offset for the chromatic aberration
-    pub chrom_offset: f32,
-    /// The mix amount for the chromatic aberration
-    pub chrom_amt: f32,
+    /// Options for the default post shader
+    pub post_shader_options: PostShaderOptions,
 }
 
 impl PostEffect {
@@ -67,10 +65,26 @@ impl PostEffect {
             current_shader: "default",
             start_time: time::precise_time_s() as f32,
             downscale_factor: 1.0f32,
-            chrom_offset: 0.003f32,
-            chrom_amt: 0.0f32,
+            post_shader_options: PostShaderOptionsBuilder::default().blur(true).build().unwrap(),
         }
     }
+}
+
+/// Contains all the options for the default post shader
+#[derive(Builder, Clone, PartialEq)]
+pub struct PostShaderOptions {
+    /// The offset for the chromatic aberration
+    #[builder(default="0.003f32")]
+    pub chrom_offset: f32,
+    /// The mix amount for the chromatic aberration, if this is at 0.0 chromatic aberration is off
+    #[builder(default="0.0f32")]
+    pub chrom_amt: f32,
+    /// Whether blur is on
+    #[builder(default="false")]
+    pub blur: bool,
+    /// Whether bokeh is on
+    #[builder(default="false")]
+    pub bokeh: bool,
 }
 
 /// Renders the post effect on to the scene rendered in the draw FnMut
@@ -120,8 +134,10 @@ pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut 
             resolution: (target_dimensions.0 as f32, target_dimensions.1 as f32),
             time: time::precise_time_s() as f32 - system.start_time,
             downscale_factor: system.downscale_factor,
-            chrom_offset: system.chrom_offset,
-            chrom_amt: system.chrom_amt,
+            chrom_offset: system.post_shader_options.chrom_offset,
+            chrom_amt: system.post_shader_options.chrom_amt,
+            blur: system.post_shader_options.blur,
+            bokeh: system.post_shader_options.bokeh,
         };
 
         // second pass draw the post effect

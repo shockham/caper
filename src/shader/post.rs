@@ -31,6 +31,12 @@ pub mod gl330 {
         uniform float chrom_amt;
         uniform float chrom_offset;
 
+        // blur params
+        uniform bool blur;
+
+        // bokeh params
+        uniform bool bokeh;
+
         in vec2 v_tex_coords;
 
         out vec4 frag_output;
@@ -52,17 +58,25 @@ pub mod gl330 {
 
             // blur
             vec3 tc = color.rgb;
-            for (int i=1; i<3; i++) {
-                tc += texture(tex, v_tex_coords + vec2(0.0, h_offset[i])).rgb * weight[i];
-                tc += texture(tex, v_tex_coords - vec2(0.0, h_offset[i])).rgb * weight[i];
-                tc += texture(tex, v_tex_coords + vec2(w_offset[i], 0.0)).rgb * weight[i];
-                tc += texture(tex, v_tex_coords - vec2(w_offset[i], 0.0)).rgb * weight[i];
-                tc += texture(tex, v_tex_coords + vec2(w_offset[i], h_offset[i])).rgb * weight[i];
-                tc += texture(tex, v_tex_coords - vec2(w_offset[i], h_offset[i])).rgb * weight[i];
+            if (blur || bokeh) {
+                for (int i=1; i<3; i++) {
+                    tc += texture(tex, v_tex_coords + vec2(0.0, h_offset[i])).rgb * weight[i];
+                    tc += texture(tex, v_tex_coords - vec2(0.0, h_offset[i])).rgb * weight[i];
+                    tc += texture(tex, v_tex_coords + vec2(w_offset[i], 0.0)).rgb * weight[i];
+                    tc += texture(tex, v_tex_coords - vec2(w_offset[i], 0.0)).rgb * weight[i];
+                    tc += texture(tex, v_tex_coords + vec2(w_offset[i], h_offset[i])).rgb * weight[i];
+                    tc += texture(tex, v_tex_coords - vec2(w_offset[i], h_offset[i])).rgb * weight[i];
+                }
             }
 
             // mix with depth buffer for bokeh
-            frag_output = mix(color, vec4(tc, 1.0), sin(depth * M_PI / 2.0));
+            if (bokeh) {
+                frag_output = mix(color, vec4(tc, 1.0), sin(depth * M_PI / 2.0));
+            } else if (blur) {
+                frag_output = mix(color, vec4(tc, 1.0), 1.0);
+            } else {
+                frag_output = color;
+            }
         }
     ";
 }
