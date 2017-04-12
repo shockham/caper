@@ -95,7 +95,7 @@ pub struct PostShaderOptions {
     #[builder(default="false")]
     pub bokeh: bool,
     /// Bokeh focal depth
-    #[builder(default="0.0f32")]
+    #[builder(default="0.2f32")]
     pub bokeh_focal_depth: f32,
     /// Colour grading
     #[builder(default="(1f32, 1f32, 1f32, 1f32)")]
