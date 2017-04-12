@@ -48,8 +48,18 @@ pub mod gl330 {
 
         out vec4 frag_output;
 
-        float w_offset[4] = float[]( -1.5/resolution.x, -0.5/resolution.x, 0.5/resolution.x, 1.5/resolution.x );
-        float h_offset[4] = float[]( -1.5/resolution.y, -0.5/resolution.y, 0.5/resolution.y, 1.5/resolution.y );
+        float w_offset[4] = float[](
+            (-1.5 * blur_radius) / resolution.x,
+            (-0.5 * blur_radius) / resolution.x,
+            (0.5 * blur_radius) / resolution.x,
+            (1.5 * blur_radius) / resolution.x
+        );
+        float h_offset[4] = float[](
+            (-1.5 * blur_radius) / resolution.y,
+            (-0.5 * blur_radius) / resolution.y,
+            (0.5 * blur_radius) / resolution.y,
+            (1.5 * blur_radius) / resolution.y
+        );
 
         void main() {
             vec4 color = texture(tex, v_tex_coords);
@@ -67,14 +77,12 @@ pub mod gl330 {
             if (blur || bokeh) {
                for (int i = 0 ; i < 4 ; i++) {
                     for (int j = 0 ; j < 4 ; j++) {
-                        vec2 sample_coords = v_tex_coords;
-                        sample_coords.x = v_tex_coords.x + w_offset[j];
-                        sample_coords.y = v_tex_coords.y + h_offset[i];
-                        tc += texture(tex, sample_coords).xyz;
+                        tc += texture(tex, vec2(v_tex_coords.x + w_offset[j], v_tex_coords.y + h_offset[i])).xyz;
                     }
                 }
 
                 tc /= 16.0;
+                tc *= blur_weight;
             }
 
             // mix with depth buffer for bokeh
