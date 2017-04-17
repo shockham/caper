@@ -48,14 +48,19 @@ pub enum PhysicsType {
 #[derive(Builder, Clone, RustcEncodable, RustcDecodable, PartialEq)]
 pub struct RenderItem {
     /// The vertices representing this items mesh
+    #[builder(default="Vec::new()")]
     pub vertices: Vec<Vertex>,
     /// The material that will be used for rendering the Item
+    #[builder(default="MaterialBuilder::default().build().unwrap()")]
     pub material: Material,
     /// The instances of this item
+    #[builder(default="Vec::new()")]
     pub instance_transforms: Vec<Transform>,
     /// Whether the item is active/should be rendered
+    #[builder(default="true")]
     pub active: bool,
     /// How this item acts in the physics engine
+    #[builder(default="PhysicsType::None")]
     pub physics_type: PhysicsType,
 }
 

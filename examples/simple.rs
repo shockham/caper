@@ -1,6 +1,6 @@
 extern crate caper;
 
-use caper::types::{ RenderItem, TransformBuilder, PhysicsType, MaterialBuilder };
+use caper::types::{ RenderItemBuilder, TransformBuilder };
 use caper::game::Game;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;
@@ -12,18 +12,16 @@ fn main() {
 
     // define some items to be rendered
     game.add_render_item(
-        RenderItem {
-            vertices: gen_cube(),
-            material: MaterialBuilder::default().build().unwrap(),
-            instance_transforms: vec![
+        RenderItemBuilder::default()
+            .vertices(gen_cube())
+            .instance_transforms(vec![
                 TransformBuilder::default()
                     .pos((-0.5, 0.0, -5.0))
                     .build()
                     .unwrap()
-            ],
-            active: true,
-            physics_type: PhysicsType::None,
-        });
+            ])
+            .build()
+            .unwrap());
 
     loop {
         // run the engine update
