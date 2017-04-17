@@ -14,7 +14,7 @@ Still to be added:
 ```
 extern crate caper;
 
-use caper::types::{ RenderItem, Transform, PhysicsType, MaterialBuilder };
+use caper::types::{ RenderItemBuilder, TransformBuilder };
 use caper::game::Game;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;
@@ -26,24 +26,20 @@ fn main() {
 
     // define some items to be rendered
     game.add_render_item(
-        RenderItem {
-            vertices: gen_cube(),
-            material: MaterialBuilder::default().build().unwrap(),
-            instance_transforms: vec![
-                Transform {
-                    active: true,
-                    pos: (-0.5, 0.0, -5.0),
-                    rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (1f32, 1f32, 1f32),
-                }
-            ],
-            active: true,
-            physics_type: PhysicsType::None,
-        });
+        RenderItemBuilder::default()
+            .vertices(gen_cube())
+            .instance_transforms(vec![
+                TransformBuilder::default()
+                    .pos((-0.5, 0.0, -5.0))
+                    .build()
+                    .unwrap()
+            ])
+            .build()
+            .unwrap());
 
     loop {
         // run the engine update
-        game.update(|ui:&Ui|{ });
+        game.update(|_:&Ui|{ });
 
         // update the first person inputs
         game.input.handle_fp_inputs(&mut game.cam_state);
