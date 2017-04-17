@@ -20,12 +20,16 @@ implement_vertex!(Vertex, position, normal, texture);
 #[derive(Builder, Copy, Clone, RustcEncodable, RustcDecodable, PartialEq)]
 pub struct Transform {
     /// The position of the transform
+    #[builder(default="(0f32, 0f32, 0f32)")]
     pub pos: Vector3,
     /// The rotation of the transform
+    #[builder(default="(0f32, 0f32, 0f32, 1f32)")]
     pub rot: Quaternion,
     /// The scale of the transform
+    #[builder(default="(1f32, 1f32, 1f32)")]
     pub scale: Vector3,
     /// Whether the transform is currently active/should be rendered
+    #[builder(default="true")]
     pub active: bool,
 }
 

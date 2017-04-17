@@ -1,6 +1,6 @@
 extern crate caper;
 
-use caper::types::{ RenderItem, Transform, PhysicsType, MaterialBuilder };
+use caper::types::{ RenderItem, TransformBuilder, PhysicsType, MaterialBuilder };
 use caper::game::Game;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;
@@ -16,12 +16,10 @@ fn main() {
             vertices: gen_cube(),
             material: MaterialBuilder::default().build().unwrap(),
             instance_transforms: vec![
-                Transform {
-                    active: true,
-                    pos: (-0.5, 0.0, -5.0),
-                    rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (1f32, 1f32, 1f32),
-                }
+                TransformBuilder::default()
+                    .pos((-0.5, 0.0, -5.0))
+                    .build()
+                    .unwrap()
             ],
             active: true,
             physics_type: PhysicsType::None,
