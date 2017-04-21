@@ -82,14 +82,19 @@ pub struct Material {
 #[derive(Builder, Clone, RustcEncodable, RustcDecodable, PartialEq)]
 pub struct TextItem {
     /// The text that the item displays
+    #[builder(default="\"\".to_string()")]
     pub text: String,
     /// The color the text is displayed in
+    #[builder(default="(0f32, 0f32, 0f32, 1f32)")]
     pub color: (f32, f32, f32, f32),
     /// The position to display this text
+    #[builder(default="(0f32, 0f32, 0f32)")]
     pub pos: Vector3,
     /// The scale/size the text is displayed at
+    #[builder(default="(1f32, 1f32, 1f32)")]
     pub scale: Vector3,
     /// Whether this item is active/should be rendered
+    #[builder(default="false")]
     pub active: bool,
 }
 
