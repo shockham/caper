@@ -102,8 +102,10 @@ pub struct TextItem {
 #[derive(Builder, Copy, Clone, RustcEncodable, RustcDecodable, PartialEq)]
 pub struct CamState {
     /// The position of the camera in 3d space
+    #[builder(default="(0f32, 0f32, 0f32)")]
     pub cam_pos: Vector3,
     /// The euler rotation of the camera
+    #[builder(default="(0f32, 0f32, 0f32)")]
     pub cam_rot: Vector3,
 }
 
