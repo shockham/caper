@@ -5,7 +5,7 @@ pub type Vector3 = (f32, f32, f32);
 pub type Quaternion = (f32, f32, f32, f32);
 
 /// struct for defining a Vector for creating meshes
-#[derive(Copy, Clone, RustcEncodable, RustcDecodable, PartialEq)]
+#[derive(Copy, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Vertex {
     /// The position of the vertex
     pub position: [f32; 3],
@@ -17,7 +17,7 @@ pub struct Vertex {
 implement_vertex!(Vertex, position, normal, texture);
 
 /// struct for handling transform data
-#[derive(Builder, Copy, Clone, RustcEncodable, RustcDecodable, PartialEq)]
+#[derive(Builder, Copy, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Transform {
     /// The position of the transform
     #[builder(default="(0f32, 0f32, 0f32)")]
@@ -34,7 +34,7 @@ pub struct Transform {
 }
 
 /// Denotes how the RenderItem acts in the physics engine
-#[derive(Clone, RustcEncodable, RustcDecodable, PartialEq)]
+#[derive(Clone, Serialize, Deserialize, PartialEq)]
 pub enum PhysicsType {
     /// Item is Collidable but does not move
     Static,
@@ -45,7 +45,7 @@ pub enum PhysicsType {
 }
 
 /// struct for abstracting items to be sent to render
-#[derive(Builder, Clone, RustcEncodable, RustcDecodable, PartialEq)]
+#[derive(Builder, Clone, Serialize, Deserialize, PartialEq)]
 pub struct RenderItem {
     /// The vertices representing this items mesh
     #[builder(default="Vec::new()")]
@@ -65,7 +65,7 @@ pub struct RenderItem {
 }
 
 /// Struct for containing material information
-#[derive(Builder, Clone, RustcEncodable, RustcDecodable, PartialEq)]
+#[derive(Builder, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Material {
     /// The shader that will used to render this item
     #[builder(default="\"dist\".to_string()")]
@@ -79,7 +79,7 @@ pub struct Material {
 }
 
 /// struct for abstacting text items to be rendered
-#[derive(Builder, Clone, RustcEncodable, RustcDecodable, PartialEq)]
+#[derive(Builder, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TextItem {
     /// The text that the item displays
     #[builder(default="\"\".to_string()")]
@@ -99,7 +99,7 @@ pub struct TextItem {
 }
 
 /// struct for abstracting the camera state
-#[derive(Builder, Copy, Clone, RustcEncodable, RustcDecodable, PartialEq)]
+#[derive(Builder, Copy, Clone, Serialize, Deserialize, PartialEq)]
 pub struct CamState {
     /// The position of the camera in 3d space
     #[builder(default="(0f32, 0f32, 0f32)")]
@@ -110,7 +110,7 @@ pub struct CamState {
 }
 
 /// struct for shader attributes
-#[derive(Copy, Clone, RustcEncodable, RustcDecodable, PartialEq)]
+#[derive(Copy, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Attr {
     /// The world position to be passed to the shader
     pub world_position: Vector3,

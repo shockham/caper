@@ -68,7 +68,9 @@ extern crate noise;
 extern crate time;
 extern crate fps_counter;
 extern crate bincode;
-extern crate rustc_serialize;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde;
 extern crate image;
 extern crate gif;
 

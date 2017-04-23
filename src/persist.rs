@@ -1,6 +1,6 @@
-use bincode::SizeLimit;
-use bincode::rustc_serialize::{encode, decode};
-use rustc_serialize::{Encodable, Decodable};
+use bincode::{serialize, deserialize, Infinite};
+use serde::ser::Serialize;
+use serde::de::Deserialize;
 
 use std::fs::{File, create_dir };
 use std::thread;
@@ -10,8 +10,8 @@ use std::io::{ Read, Write };
 const PERSIST_BASE_PATH:&'static str = "./persist/";
 
 /// Save and encodable type to persistence at the key
-pub fn save<T: Encodable>(to_save: &T, key: &'static str) {
-    let encoded: Vec<u8> = encode(to_save, SizeLimit::Infinite).unwrap();
+pub fn save<T: Serialize>(to_save: &T, key: &'static str) {
+    let encoded: Vec<u8> = serialize(to_save, Infinite).unwrap();
 
     let _ = thread::spawn(move || {
         // TODO handle this better
@@ -29,7 +29,7 @@ pub fn save<T: Encodable>(to_save: &T, key: &'static str) {
 }
 
 /// Load a decodable type from persistence using the key
-pub fn load<T: Decodable>(key: &'static str) -> Result<T, String> {
+pub fn load<T: Deserialize>(key: &'static str) -> Result<T, String> {
     let mut f = match File::open(format!("{}{}", PERSIST_BASE_PATH, key)) {
         Ok(f) => f,
         Err(e) => return Err(format!("{}", e)),
@@ -38,18 +38,18 @@ pub fn load<T: Decodable>(key: &'static str) -> Result<T, String> {
     let mut byte_vec = Vec::new();
     let _ = f.read_to_end(&mut byte_vec);
 
-    let decoded: T = decode(&byte_vec[..]).unwrap();
+    let decoded: T = deserialize(&byte_vec[..]).unwrap();
 
     Ok(decoded)
 }
 
-#[derive(RustcEncodable, RustcDecodable, PartialEq)]
+#[derive(Serialize, Deserialize, PartialEq)]
 struct Entity {
     x: f32,
     y: f32,
 }
 
-#[derive(RustcEncodable, RustcDecodable, PartialEq)]
+#[derive(Serialize, Deserialize, PartialEq)]
 struct World {
     entities: Vec<Entity>
 }
