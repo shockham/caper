@@ -228,34 +228,37 @@ pub fn gen_cube() -> Vec<Vertex> {
 
 /// Generates a sphere mesh
 pub fn gen_sphere() -> Vec<Vertex> {
+    gen_sphere_segments(10f32, 10f32)
+}
+
+/// Generates a sphere mesh with segments and rings specified
+pub fn gen_sphere_segments(segs: f32, rings: f32) -> Vec<Vertex> {
     let mut vertices = Vec::new();
 
-    let segs = 10f32;
-
-    for m in 0 .. segs as i32 {
+    for m in 0 .. rings as i32 {
         for n in 0 .. segs as i32 {
             let n_plus = n + 1;
             let m_plus = m + 1;
             let verts = vec!(
-                [(PI * m as f32/segs).sin() * (PI2 * n as f32/segs).cos(),
-                (PI * m as f32/segs).sin() * (PI2 * n as f32/segs).sin(),
-                (PI * m as f32/segs).cos()],
-                [(PI * m_plus as f32/segs).sin() * (PI2 * n as f32/segs).cos(),
-                (PI * m_plus as f32/segs).sin() * (PI2 * n as f32/segs).sin(),
-                (PI * m_plus as f32/segs).cos()],
-                [(PI * m as f32/segs).sin() * (PI2 * n_plus as f32/segs).cos(),
-                (PI * m as f32/segs).sin() * (PI2 * n_plus as f32/segs).sin(),
-                (PI * m as f32/segs).cos()],
+                [(PI * m as f32/rings).sin() * (PI2 * n as f32/segs).cos(),
+                (PI * m as f32/rings).sin() * (PI2 * n as f32/segs).sin(),
+                (PI * m as f32/rings).cos()],
+                [(PI * m_plus as f32/rings).sin() * (PI2 * n as f32/segs).cos(),
+                (PI * m_plus as f32/rings).sin() * (PI2 * n as f32/segs).sin(),
+                (PI * m_plus as f32/rings).cos()],
+                [(PI * m as f32/rings).sin() * (PI2 * n_plus as f32/segs).cos(),
+                (PI * m as f32/rings).sin() * (PI2 * n_plus as f32/segs).sin(),
+                (PI * m as f32/rings).cos()],
 
-                [(PI * m as f32/segs).sin() * (PI2 * n_plus as f32/segs).cos(),
-                (PI * m as f32/segs).sin() * (PI2 * n_plus as f32/segs).sin(),
-                (PI * m as f32/segs).cos()],
-                [(PI * m_plus as f32/segs).sin() * (PI2 * n as f32/segs).cos(),
-                (PI * m_plus as f32/segs).sin() * (PI2 * n as f32/segs).sin(),
-                (PI * m_plus as f32/segs).cos()],
-                [(PI * m_plus as f32/segs).sin() * (PI2 * n_plus as f32/segs).cos(),
-                (PI * m_plus as f32/segs).sin() * (PI2 * n_plus as f32/segs).sin(),
-                (PI * m_plus as f32/segs).cos()]);
+                [(PI * m as f32/rings).sin() * (PI2 * n_plus as f32/segs).cos(),
+                (PI * m as f32/rings).sin() * (PI2 * n_plus as f32/segs).sin(),
+                (PI * m as f32/rings).cos()],
+                [(PI * m_plus as f32/rings).sin() * (PI2 * n as f32/segs).cos(),
+                (PI * m_plus as f32/rings).sin() * (PI2 * n as f32/segs).sin(),
+                (PI * m_plus as f32/rings).cos()],
+                [(PI * m_plus as f32/rings).sin() * (PI2 * n_plus as f32/segs).cos(),
+                (PI * m_plus as f32/rings).sin() * (PI2 * n_plus as f32/segs).sin(),
+                (PI * m_plus as f32/rings).cos()]);
 
             let normal = calc_normal(verts[0], verts[1], verts[2]);
 
