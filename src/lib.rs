@@ -71,7 +71,7 @@ extern crate bincode;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde;
-extern crate image;
+pub extern crate image;
 extern crate gif;
 
 /// Module for utility functions for textures

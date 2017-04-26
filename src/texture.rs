@@ -1,11 +1,11 @@
 /// Macro for including and loading a texture
 #[macro_export]
 macro_rules! load_texture (
-    ($file:expr, $display:ident) => {{
-        use glium::texture::compressed_srgb_texture2d::CompressedSrgbTexture2d;
+    ($file:expr, $display:expr) => {{
+        use $crate::glium::texture::compressed_srgb_texture2d::CompressedSrgbTexture2d;
         use std::io::Cursor;
-        use glium;
-        use image;
+        use $crate::glium;
+        use $crate::image;
 
         let image = image::load(Cursor::new(&include_bytes!($file)[..]), 
                                 image::PNG).unwrap().to_rgba();
