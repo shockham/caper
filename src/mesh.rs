@@ -233,9 +233,9 @@ pub fn gen_sphere() -> Vec<Vertex> {
 
 /// Generates a sphere mesh with segments and rings specified
 pub fn gen_sphere_segments(segs: f32, rings: f32) -> Vec<Vertex> {
-    let mut vertices = Vec::new();
+    assert!(segs > 1.0 && rings > 1.0, "segs and rings needs to be greater than 1");
 
-    // handle the first ring, and maybe also the last
+    let mut vertices = Vec::new();
 
     for m in 0 .. rings as i32 {
         for n in 0 .. segs as i32 {
@@ -246,6 +246,7 @@ pub fn gen_sphere_segments(segs: f32, rings: f32) -> Vec<Vertex> {
 
             let mut verts: Vec<[f32;3]> = Vec::new();
 
+            // skip first triangle on first ring
             if r > 0.0 {
                 verts.push([(PI * r/rings).sin() * (PI2 * s_plus/segs).cos(),
                     (PI * r/rings).cos(),
@@ -258,6 +259,7 @@ pub fn gen_sphere_segments(segs: f32, rings: f32) -> Vec<Vertex> {
                     (PI * r/rings).sin() * (PI2 * s/segs).sin()]);
             }
 
+            // skip last triangle on last ring
             if r < rings - 1.0 {
                 verts.push([(PI * r_plus/rings).sin() * (PI2 * s_plus/segs).cos(),
                     (PI * r_plus/rings).cos(),
