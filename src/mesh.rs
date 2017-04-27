@@ -233,32 +233,44 @@ pub fn gen_sphere() -> Vec<Vertex> {
 
 /// Generates a sphere mesh with segments and rings specified
 pub fn gen_sphere_segments(segs: f32, rings: f32) -> Vec<Vertex> {
+    assert!(segs > 1.0 && rings > 1.0, "segs and rings needs to be greater than 1");
+
     let mut vertices = Vec::new();
 
     for m in 0 .. rings as i32 {
         for n in 0 .. segs as i32 {
-            let n_plus = n + 1;
-            let m_plus = m + 1;
-            let verts = vec!(
-                [(PI * m as f32/rings).sin() * (PI2 * n as f32/segs).cos(),
-                (PI * m as f32/rings).sin() * (PI2 * n as f32/segs).sin(),
-                (PI * m as f32/rings).cos()],
-                [(PI * m_plus as f32/rings).sin() * (PI2 * n as f32/segs).cos(),
-                (PI * m_plus as f32/rings).sin() * (PI2 * n as f32/segs).sin(),
-                (PI * m_plus as f32/rings).cos()],
-                [(PI * m as f32/rings).sin() * (PI2 * n_plus as f32/segs).cos(),
-                (PI * m as f32/rings).sin() * (PI2 * n_plus as f32/segs).sin(),
-                (PI * m as f32/rings).cos()],
+            let r = m as f32;
+            let s = n as f32;
+            let r_plus = r + 1.0;
+            let s_plus = s + 1.0;
 
-                [(PI * m as f32/rings).sin() * (PI2 * n_plus as f32/segs).cos(),
-                (PI * m as f32/rings).sin() * (PI2 * n_plus as f32/segs).sin(),
-                (PI * m as f32/rings).cos()],
-                [(PI * m_plus as f32/rings).sin() * (PI2 * n as f32/segs).cos(),
-                (PI * m_plus as f32/rings).sin() * (PI2 * n as f32/segs).sin(),
-                (PI * m_plus as f32/rings).cos()],
-                [(PI * m_plus as f32/rings).sin() * (PI2 * n_plus as f32/segs).cos(),
-                (PI * m_plus as f32/rings).sin() * (PI2 * n_plus as f32/segs).sin(),
-                (PI * m_plus as f32/rings).cos()]);
+            let mut verts: Vec<[f32;3]> = Vec::new();
+
+            // skip first triangle on first ring
+            if r > 0.0 {
+                verts.push([(PI * r/rings).sin() * (PI2 * s_plus/segs).cos(),
+                    (PI * r/rings).cos(),
+                    (PI * r/rings).sin() * (PI2 * s_plus/segs).sin()]);
+                verts.push([(PI * r_plus/rings).sin() * (PI2 * s/segs).cos(),
+                    (PI * r_plus/rings).cos(),
+                    (PI * r_plus/rings).sin() * (PI2 * s/segs).sin()]);
+                verts.push([(PI * r/rings).sin() * (PI2 * s/segs).cos(),
+                    (PI * r/rings).cos(),
+                    (PI * r/rings).sin() * (PI2 * s/segs).sin()]);
+            }
+
+            // skip last triangle on last ring
+            if r < rings - 1.0 {
+                verts.push([(PI * r_plus/rings).sin() * (PI2 * s_plus/segs).cos(),
+                    (PI * r_plus/rings).cos(),
+                    (PI * r_plus/rings).sin() * (PI2 * s_plus/segs).sin()]);
+                verts.push([(PI * r_plus/rings).sin() * (PI2 * s/segs).cos(),
+                    (PI * r_plus/rings).cos(),
+                    (PI * r_plus/rings).sin() * (PI2 * s/segs).sin()]);
+                verts.push([(PI * r/rings).sin() * (PI2 * s_plus/segs).cos(),
+                    (PI * r/rings).cos(),
+                    (PI * r/rings).sin() * (PI2 * s_plus/segs).sin()]);
+            }
 
             let normal = calc_normal(verts[0], verts[1], verts[2]);
 
