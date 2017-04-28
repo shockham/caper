@@ -97,6 +97,9 @@ pub struct PostShaderOptions {
     /// Bokeh focal depth
     #[builder(default="0.2f32")]
     pub bokeh_focal_depth: f32,
+    /// Bokeh focal width
+    #[builder(default="0.2f32")]
+    pub bokeh_focal_width: f32,
     /// Colour grading
     #[builder(default="(1f32, 1f32, 1f32, 1f32)")]
     pub color_offset: (f32, f32, f32, f32),
@@ -159,6 +162,7 @@ pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut 
             blur_weight: system.post_shader_options.blur_weight,
             bokeh: system.post_shader_options.bokeh,
             bokeh_focal_depth: system.post_shader_options.bokeh_focal_depth,
+            bokeh_focal_width: system.post_shader_options.bokeh_focal_width,
             color_offset: system.post_shader_options.color_offset,
         };
 
