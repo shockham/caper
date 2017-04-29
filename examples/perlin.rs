@@ -7,7 +7,7 @@ extern crate caper;
 extern crate imgui;
 
 use caper::utils::create_skydome;
-use caper::types::{ RenderItem, TextItem, Transform, PhysicsType, MaterialBuilder };
+use caper::types::{ RenderItemBuilder, TextItemBuilder, TransformBuilder, MaterialBuilder };
 use caper::mesh::{ gen_perlin_mesh, gen_sphere, get_pos_perlin, DEF_SEED_BASE };
 use caper::game::Game;
 use caper::input::Key;
@@ -32,51 +32,43 @@ fn main() {
 
     // create a vector of render items
     game.add_render_item(
-        RenderItem {
-            vertices: gen_perlin_mesh(pseu_cam_pos, map_size),
-            material: MaterialBuilder::default()
+        RenderItemBuilder::default()
+            .vertices(gen_perlin_mesh(pseu_cam_pos, map_size))
+            .material(MaterialBuilder::default()
                 .shader_name("height".to_string())
                 .build()
-                .unwrap(),
-            instance_transforms: vec![
-                Transform {
-                    active: true,
-                    pos: (fixed_val, 0.0, fixed_val),
-                    rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (1f32, 1f32, 1f32),
-                }
-            ],
-            active: true,
-            physics_type: PhysicsType::None,
-        });
+                .unwrap())
+            .instance_transforms(vec![
+                TransformBuilder::default()
+                    .pos((fixed_val, 0.0, fixed_val))
+                    .build()
+                    .unwrap()
+            ])
+            .build()
+            .unwrap());
     game.add_render_item(create_skydome("height"));
     game.add_render_item(
-        RenderItem {
-            vertices: gen_sphere(),
-            material: MaterialBuilder::default()
+        RenderItemBuilder::default()
+            .vertices(gen_sphere())
+            .material(MaterialBuilder::default()
                 .shader_name("line".to_string())
                 .build()
-                .unwrap(),
-            instance_transforms: vec![
-                Transform {
-                    active: true,
-                    pos: (sphere_pos.0, 3.0, sphere_pos.1),
-                    rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (1f32, 1f32, 1f32),
-                }
-            ],
-            active: true,
-            physics_type: PhysicsType::None,
-        });
+                .unwrap())
+            .instance_transforms(vec![
+                TransformBuilder::default()
+                    .pos((sphere_pos.0, 3.0, sphere_pos.1))
+                    .build()
+                    .unwrap()
+            ])
+            .build()
+            .unwrap());
 
     game.add_text_item(
-        TextItem {
-            text: "test text".to_string(),
-            pos: (-1.0f32, 0.5f32, 0f32),
-            color: (0f32, 0f32, 0f32, 1f32),
-            scale: (1f32, 1f32, 1f32),
-            active: true,
-        });
+        TextItemBuilder::default()
+            .text("test text".to_string())
+            .pos((-1.0f32, 0.5f32, 0f32))
+            .build()
+            .unwrap());
 
     game.cam_state.cam_pos.1 = 2.5f32 + get_pos_perlin(((pseu_cam_pos.0 - fixed_val),
                                                             (pseu_cam_pos.1 - fixed_val)),

@@ -3,7 +3,7 @@ extern crate caper;
 extern crate imgui;
 
 use caper::utils::load_wavefront;
-use caper::types::{ RenderItem, Transform, PhysicsType, MaterialBuilder };
+use caper::types::{ RenderItemBuilder, TransformBuilder, Transform, MaterialBuilder };
 use caper::mesh::{ gen_quad, gen_sphere, gen_cube };
 use caper::game::Game;
 use caper::imgui::Ui;
@@ -27,101 +27,82 @@ fn main() {
     }
 
     game.add_render_item(
-        RenderItem {
-            vertices: load_wavefront(include_bytes!("assets/sphere.obj")),
-            material: MaterialBuilder::default().build().unwrap(),
-            instance_transforms: vec![
-                Transform {
-                    active: true,
-                    pos: (0.0, (0.0 as f32).sin(), 0.0),
-                    rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (0.5f32, 0.5f32, 0.5f32),
-                },
-                Transform {
-                    active: true,
-                    pos: (0.0f32.sin(), 0.0, 0.0f32.cos()),
-                    rot: (0f32, 0f32, 0f32, 0f32),
-                    scale: (1f32, 1f32, 1f32),
-                }
-            ],
-            active: true,
-            physics_type: PhysicsType::None,
-        });
+        RenderItemBuilder::default()
+            .vertices(load_wavefront(include_bytes!("assets/sphere.obj")))
+            .instance_transforms(vec![
+                TransformBuilder::default()
+                    .pos((0.0, (0.0 as f32).sin(), 0.0))
+                    .rot((0f32, 0f32, 0f32, 1f32))
+                    .scale((0.5f32, 0.5f32, 0.5f32))
+                    .build()
+                    .unwrap(),
+                TransformBuilder::default()
+                    .pos((0.0f32.sin(), 0.0, 0.0f32.cos()))
+                    .build()
+                    .unwrap()
+            ])
+            .build()
+            .unwrap());
     game.add_render_item(
-        RenderItem {
-            vertices: load_wavefront(include_bytes!("assets/floor.obj")),
-            material: MaterialBuilder::default()
+        RenderItemBuilder::default()
+            .vertices(load_wavefront(include_bytes!("assets/floor.obj")))
+            .material(MaterialBuilder::default()
                 .shader_name("height".to_string())
                 .build()
-                .unwrap(),
-            instance_transforms: vec![
-                Transform {
-                    active: true,
-                    pos: (0.0, 0.0, 0.0),
-                    rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (1f32, 1f32, 1f32),
-                },
-                Transform {
-                    active: true,
-                    pos: (15.0, 0.0, 0.0),
-                    rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (2.0f32, 2.0f32, 2.0f32),
-                }
-            ],
-            active: true,
-            physics_type: PhysicsType::None,
-        });
+                .unwrap())
+            .instance_transforms(vec![
+                TransformBuilder::default().build().unwrap(),
+                TransformBuilder::default()
+                    .active(true)
+                    .pos((15.0, 0.0, 0.0))
+                    .rot((0f32, 0f32, 0f32, 1f32))
+                    .scale((2.0f32, 2.0f32, 2.0f32))
+                    .build()
+                    .unwrap()
+            ])
+            .build()
+            .unwrap());
     game.add_render_item(
-        RenderItem {
-            vertices: gen_quad(),
-            material: MaterialBuilder::default()
+        RenderItemBuilder::default()
+            .vertices(gen_quad())
+            .material(MaterialBuilder::default()
                 .shader_name("texture".to_string())
                 .build()
-                .unwrap(),
-            instance_transforms: vec![
-                Transform {
-                    active: true,
-                    pos: (0.0, 1.0, 0.0),
-                    rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (1f32, 1f32, 1f32),
-                }
-            ],
-            active: true,
-            physics_type: PhysicsType::None,
-        });
+                .unwrap())
+            .instance_transforms(vec![
+                TransformBuilder::default()
+                    .pos((0.0, 1.0, 0.0))
+                    .build()
+                    .unwrap()
+            ])
+            .build()
+            .unwrap());
     game.add_render_item(
-        RenderItem {
-            vertices: gen_sphere(),
-            material: MaterialBuilder::default()
+        RenderItemBuilder::default()
+            .vertices(gen_sphere())
+            .material(MaterialBuilder::default()
                 .shader_name("texture".to_string())
                 .build()
-                .unwrap(),
-            instance_transforms: vec![
-                Transform {
-                    active: true,
-                    pos: (0.0, 3.0, 0.0),
-                    rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (1f32, 1f32, 1f32),
-                }
-            ],
-            active: true,
-            physics_type: PhysicsType::None,
-        });
+                .unwrap())
+            .instance_transforms(vec![
+                TransformBuilder::default()
+                    .pos((0.0, 3.0, 0.0))
+                    .build()
+                    .unwrap()
+            ])
+            .build()
+            .unwrap());
     game.add_render_item(
-        RenderItem {
-            vertices: gen_cube(),
-            material: MaterialBuilder::default().build().unwrap(),
-            instance_transforms: vec![
-                Transform {
-                    active: true,
-                    pos: (0.0, 8.0, 0.0),
-                    rot: (0f32, 0f32, 0f32, 1f32),
-                    scale: (1f32, 1f32, 1f32),
-                }
-            ],
-            active: true,
-            physics_type: PhysicsType::None,
-        });
+        RenderItemBuilder::default()
+            .vertices(gen_cube())
+            .instance_transforms(vec![
+                TransformBuilder::default()
+                    .pos((0.0, 8.0, 0.0))
+                    .build()
+                    .unwrap()
+            ])
+            .build()
+            .unwrap());
 
     game.renderer.lighting.add_directional_light((-0.2, 0.8, 0.1));
     game.renderer.lighting.add_directional_light((1.0, 0.0, 0.0));
@@ -139,7 +120,7 @@ fn main() {
         circle(&mut game.get_render_item(0).instance_transforms[0]);
         circle(&mut game.get_render_item(0).instance_transforms[1]);
         spin(&mut game.get_render_item(1).instance_transforms[1]);
-        
+
         // quit
         if game.input.keys_down.contains(&Key::Escape) { break; }
     }

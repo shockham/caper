@@ -2,7 +2,7 @@ extern crate time;
 extern crate caper;
 
 use caper::utils::load_wavefront;
-use caper::types::{ RenderItem, Transform, PhysicsType, MaterialBuilder };
+use caper::types::{ RenderItemBuilder, TransformBuilder, MaterialBuilder };
 use caper::game::Game;
 use caper::imgui::Ui;
 use caper::input::Key;
@@ -13,27 +13,26 @@ fn main() {
     // generate the instance positions
     let transforms = (0 .. 200)
         .map(|i| {
-            Transform {
-                active: true,
-                pos: ((i as f32 % 10f32) * 2f32, 0.0f32, (i as f32 / 10f32) * 2f32),
-                rot: (0f32, 0f32, 0f32, 1f32),
-                scale: (1f32, 1f32, 1f32),
-            }
+            TransformBuilder::default()
+                .pos(((i as f32 % 10f32) * 2f32, 0.0f32, (i as f32 / 10f32) * 2f32))
+                .rot((0f32, 0f32, 0f32, 1f32))
+                .scale((1f32, 1f32, 1f32))
+                .build()
+                .unwrap()
         })
     .collect::<Vec<_>>();
 
     // create a vector of render items
     game.add_render_item(
-        RenderItem {
-            vertices: load_wavefront(include_bytes!("assets/sphere.obj")),
-            material: MaterialBuilder::default()
+        RenderItemBuilder::default()
+            .vertices(load_wavefront(include_bytes!("assets/sphere.obj")))
+            .material(MaterialBuilder::default()
                 .shader_name("height".to_string())
                 .build()
-                .unwrap(),
-            instance_transforms: transforms,
-            active: true,
-            physics_type: PhysicsType::None,
-        });
+                .unwrap())
+            .instance_transforms(transforms)
+            .build()
+            .unwrap());
 
 
     loop {

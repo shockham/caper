@@ -94,7 +94,7 @@ pub struct TextItem {
     #[builder(default="(1f32, 1f32, 1f32)")]
     pub scale: Vector3,
     /// Whether this item is active/should be rendered
-    #[builder(default="false")]
+    #[builder(default="true")]
     pub active: bool,
 }
 
