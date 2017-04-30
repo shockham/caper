@@ -89,8 +89,8 @@ pub mod gl330 {
             // mix with depth buffer for bokeh
             if (bokeh) {
                 float bokeh_blur_amt = abs(sin(depth * M_PI / 2.0) - bokeh_focal_depth);
-                float focal_width_amt = smoothstep(0.0, bokeh_focal_width / 2.0, bokeh_blur_amt);
-                color = mix(color, vec4(tc, 1.0), focal_width_amt);
+                //float focal_width_amt = smoothstep(0.0, bokeh_focal_width / 2.0, bokeh_blur_amt);
+                color = mix(color, vec4(tc, 1.0), bokeh_blur_amt);
             } else if (blur) {
                 color = mix(color, vec4(tc, 1.0), blur_amt);
             }
