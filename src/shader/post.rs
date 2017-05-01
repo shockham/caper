@@ -69,30 +69,31 @@ pub mod gl330 {
             // pseudo chromatic aberration
             if (chrom_amt > 0.0) {
                 vec2 edge_offset = vec2(cos(v_tex_coords.x * M_PI), cos(v_tex_coords.y * M_PI)) * chrom_offset;
-                float chrom_r = texture(tex, v_tex_coords + edge_offset).r;
+                float chrom_r = texture(tex, clamp(v_tex_coords + edge_offset, vec2(0.0), vec2(1.0))).r;
                 color.r = mix(color.r, chrom_r, chrom_amt);
             }
 
             // blur
-            vec3 tc = color.rgb;
+            vec3 blur_color = color.rgb;
             if (blur || bokeh) {
                for (int i = 0 ; i < 4 ; i++) {
                     for (int j = 0 ; j < 4 ; j++) {
-                        tc += texture(tex, vec2(v_tex_coords.x + w_offset[j], v_tex_coords.y + h_offset[i])).xyz;
+                        vec2 sample_pos = vec2(v_tex_coords.x + w_offset[j], v_tex_coords.y + h_offset[i]);
+                        blur_color += texture(tex, clamp(sample_pos, vec2(0.01), vec2(0.99))).xyz;
                     }
                 }
 
-                tc /= 16.0;
-                tc *= blur_weight;
+                blur_color /= 16.0;
+                blur_color *= blur_weight;
             }
 
             // mix with depth buffer for bokeh
             if (bokeh) {
                 float bokeh_blur_amt = abs(sin(depth * M_PI / 2.0) - bokeh_focal_depth);
                 float focal_width_amt = smoothstep(0.0, bokeh_focal_width / 2.0, bokeh_blur_amt) * bokeh_blur_amt;
-                color = mix(color, vec4(tc, 1.0), focal_width_amt);
+                color = mix(color, vec4(blur_color, 1.0), focal_width_amt);
             } else if (blur) {
-                color = mix(color, vec4(tc, 1.0), blur_amt);
+                color = mix(color, vec4(blur_color, 1.0), blur_amt);
             }
 
             frag_output = color * color_offset;
