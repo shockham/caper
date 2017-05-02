@@ -26,4 +26,4 @@ nalgebra = "0.11"
 ncollide = "0.11"
 image = "0.12"
 gif = "0.9"
-derive_builder = { version = "0.4", features = ["private_fields"] }
+derive_builder = { version = "0.4.7", features = ["private_fields"] }
