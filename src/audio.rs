@@ -1,7 +1,7 @@
 use rodio;
 use rodio::Endpoint;
 use std::collections::HashMap;
-use std::io::BufReader;
+use std::io::{ BufReader, SeekFrom, Seek };
 use std::fs::File;
 
 /// Struct representing the Audio system
@@ -28,7 +28,8 @@ impl Audio {
     /// Plays an piece of Audio that has been loaded into the system
     pub fn play(&self, name: &'static str) {
         let audio = self.audio.get(name).unwrap();
-        let audio = (*audio).try_clone().unwrap();
+        let mut audio = (*audio).try_clone().unwrap();
+        audio.seek(SeekFrom::Start(0u64));
         rodio::play_once(&self.endpoint, BufReader::new(audio)).unwrap(); 
     }
 }
