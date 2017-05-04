@@ -1,4 +1,5 @@
 use renderer::Renderer;
+use audio::Audio;
 use types::{ RenderItem, TextItem, CamState, PhysicsType };
 use input::{ Input, MouseButton };
 use imgui::Ui;
@@ -24,6 +25,8 @@ pub struct Game {
     pub renderer: Renderer,
     /// The physics system
     pub physics: World<f32>,
+    /// The audio system
+    pub audio: Audio,
     /// Simple struct for camera data
     pub cam_state: CamState,
     /// All of the mesh items to be rendered in the game
@@ -51,6 +54,7 @@ impl Game {
             input: Input::new(),
             renderer: Renderer::new("caper window".to_string()),
             physics: world,
+            audio: Audio::new(),
             cam_state: cam_state,
             render_items: Vec::new(),
             text_items: Vec::new(),

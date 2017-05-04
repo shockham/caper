@@ -56,23 +56,25 @@ fn main() {
 
 #[macro_use]
 pub extern crate glium;
+#[macro_use]
+extern crate derive_builder;
+#[macro_use]
+extern crate serde_derive;
+
 pub extern crate imgui;
 pub extern crate ncollide;
 pub extern crate nphysics3d;
 pub extern crate nalgebra;
-#[macro_use]
-extern crate derive_builder;
+pub extern crate image;
 
 extern crate glium_text;
 extern crate noise;
 extern crate time;
 extern crate fps_counter;
 extern crate bincode;
-#[macro_use]
-extern crate serde_derive;
 extern crate serde;
-pub extern crate image;
 extern crate gif;
+extern crate rodio;
 
 /// Module for utility functions for textures
 #[macro_use]
@@ -99,3 +101,5 @@ pub mod persist;
 pub mod game;
 /// Module for the lighting system
 pub mod lighting;
+/// Module for the audio system
+pub mod audio;
