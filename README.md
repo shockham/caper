@@ -2,14 +2,12 @@ Caper
 ========
 [![crates.io version](https://img.shields.io/crates/v/caper.svg)](https://crates.io/crates/caper)
 
-Small game framework using [rust](https://www.rust-lang.org/) and [glium](https://github.com/tomaka/glium).
+Small game framework using [rust](https://www.rust-lang.org/).
 Currently has systems for:
-- Rendering
-- Input
-- Physics (using [nphysics](https://github.com/sebcrozet/nphysics))
-
-Still to be added:
-- Audio
+- Rendering ([glium](https://github.com/tomaka/glium))
+- Input ([glutin](https://github.com/tomaka/glutin))
+- Physics ([nphysics](https://github.com/sebcrozet/nphysics))
+- Audio ([rodio](https://github.com/tomaka/rodio))
 
 [**Documentation**](https://shockham.github.io/caper/caper/)
 
