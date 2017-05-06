@@ -28,6 +28,7 @@ fn main() {
 
     game.add_render_item(
         RenderItemBuilder::default()
+            .name("sphere".to_string())
             .vertices(load_wavefront(include_bytes!("assets/sphere.obj")))
             .instance_transforms(vec![
                 TransformBuilder::default()
@@ -45,6 +46,7 @@ fn main() {
             .unwrap());
     game.add_render_item(
         RenderItemBuilder::default()
+            .name("floor".to_string())
             .vertices(load_wavefront(include_bytes!("assets/floor.obj")))
             .material(MaterialBuilder::default()
                 .shader_name("height".to_string())
@@ -116,10 +118,10 @@ fn main() {
         game.input.handle_fp_inputs(&mut game.cam_state);
 
         // temporary fix after removal of update_fn
-        sin_y(&mut game.get_render_item(0).instance_transforms[0]);
-        circle(&mut game.get_render_item(0).instance_transforms[0]);
-        circle(&mut game.get_render_item(0).instance_transforms[1]);
-        spin(&mut game.get_render_item(1).instance_transforms[1]);
+        sin_y(&mut game.get_render_item_by_name("sphere".to_string()).unwrap().instance_transforms[0]);
+        circle(&mut game.get_render_item_by_name("sphere".to_string()).unwrap().instance_transforms[0]);
+        circle(&mut game.get_render_item_by_name("sphere".to_string()).unwrap().instance_transforms[1]);
+        spin(&mut game.get_render_item_by_name("floor".to_string()).unwrap().instance_transforms[1]);
 
         // quit
         if game.input.keys_down.contains(&Key::Escape) { break; }
