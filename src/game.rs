@@ -72,6 +72,16 @@ impl Game {
         &mut self.render_items[index]
     }
 
+    /// Get a ref to a render item from its name, returning the first found
+    pub fn get_render_item_by_name(&mut self, name: String) -> Option<&mut RenderItem> {
+        for i in 0 .. self.render_items.len() {
+            if self.render_items[i].name == name {
+                return Some(&mut self.render_items[i]);
+            }
+        }
+        None
+    }
+
     /// Add a render item to the game
     pub fn add_render_item(&mut self, render_item: RenderItem) {
         // add the render item
@@ -138,6 +148,16 @@ impl Game {
     /// Get a ref to a text item
     pub fn get_text_item(&mut self, index:usize) -> &mut TextItem {
         &mut self.text_items[index]
+    }
+
+    /// Get a ref to a text item from its name, returning the first found
+    pub fn get_text_item_by_name(&mut self, name: String) -> Option<&mut TextItem> {
+        for i in 0 .. self.text_items.len() {
+            if self.text_items[i].name == name {
+                return Some(&mut self.text_items[i]);
+            }
+        }
+        None
     }
 
     /// Add a text item to the game

@@ -62,6 +62,9 @@ pub struct RenderItem {
     /// How this item acts in the physics engine
     #[builder(default="PhysicsType::None")]
     pub physics_type: PhysicsType,
+    /// The name of the RenderItem for lookup
+    #[builder(default="\"ri\".to_string()")]
+    pub name: String,
 }
 
 /// Struct for containing material information
@@ -96,6 +99,9 @@ pub struct TextItem {
     /// Whether this item is active/should be rendered
     #[builder(default="true")]
     pub active: bool,
+    /// The name of the RenderItem for lookup
+    #[builder(default="\"ti\".to_string()")]
+    pub name: String,
 }
 
 /// struct for abstracting the camera state

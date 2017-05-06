@@ -5,7 +5,8 @@ use std::ops::{Add, Mul};
 use std::iter::Sum;
 use std::f32::consts::PI;
 
-use types::{ RenderItem, Transform, Vertex, Quaternion, Vector3, CamState, PhysicsType, MaterialBuilder };
+use types::{ RenderItem, RenderItemBuilder, TransformBuilder };
+use types::{ Vertex, Quaternion, Vector3, CamState, MaterialBuilder };
 
 
 /// Returns a Vec<Vertex> that should be converted to buffer and rendered as `TrianglesList`.
@@ -43,23 +44,21 @@ pub fn load_wavefront( data: &[u8]) -> Vec<Vertex> {
 
 /// Returns a RenderItem for the skydome
 pub fn create_skydome(shader_name: &'static str) -> RenderItem {
-    RenderItem {
-        vertices: load_wavefront(include_bytes!("./resources/skydome.obj")),
-        material: MaterialBuilder::default()
+    RenderItemBuilder::default()
+        .name("skydome".to_string())
+        .vertices(load_wavefront(include_bytes!("./resources/skydome.obj")))
+        .material(MaterialBuilder::default()
             .shader_name(shader_name.to_string())
             .build()
-            .unwrap(),
-        instance_transforms: vec![
-            Transform {
-                active: true,
-                pos: (0.0, 0.0, 0.0),
-                rot: (0f32, 0f32, 0f32, 1f32),
-                scale: (300f32, 300f32, 300f32),
-            }
-        ],
-        active: true,
-        physics_type: PhysicsType::None,
-    }
+            .unwrap())
+        .instance_transforms(vec![
+            TransformBuilder::default()
+                .scale((300f32, 300f32, 300f32))
+                .build()
+                .unwrap()
+        ])
+        .build()
+        .unwrap()
 }
 
 /// Returns the dot product of two vectors
