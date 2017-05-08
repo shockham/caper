@@ -166,7 +166,10 @@ impl Renderer {
 
                             // add positions for instances
                             let per_instance = {
-                                let data = item.instance_transforms.iter().filter(|t| t.active).map(|t| {
+                                let data = item.instance_transforms.iter().filter(|t| {
+                                    // TODO add more culling
+                                    t.active
+                                }).map(|t| {
                                     Attr {
                                         world_position: t.pos,
                                         world_rotation: t.rot,
