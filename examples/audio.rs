@@ -25,6 +25,7 @@ fn main() {
 
     // add some audio
     game.audio.add_audio("test", "./examples/assets/test.ogg");
+    game.audio.add_packed_audio("test_packed", include_bytes!("./assets/test.ogg").to_vec());
 
     // play the audio on start
     //game.audio.play("test");
@@ -36,9 +37,14 @@ fn main() {
         // update the first person inputs
         game.input.handle_fp_inputs(&mut game.cam_state);
 
-        // play audio is e is pressed
+        // play audio when e is pressed
         if game.input.keys_pressed.contains(&Key::E) {
             game.audio.play("test");
+        }
+
+        // play packed audio when q is pressed
+        if game.input.keys_pressed.contains(&Key::Q) {
+            game.audio.play("test_packed");
         }
 
         // quit

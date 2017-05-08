@@ -1,13 +1,18 @@
 use rodio;
 use rodio::{ Endpoint, Sink };
 use std::collections::HashMap;
-use std::io::{ BufReader, SeekFrom, Seek };
+use std::io::{ BufReader, SeekFrom, Seek, Cursor };
 use std::fs::File;
+
+enum AudioType {
+    Packed(Vec<u8>),
+    Loose(File),
+}
 
 /// Struct representing the Audio system
 pub struct Audio {
     endpoint: Endpoint,
-    audio: HashMap<&'static str, File>,
+    audio: HashMap<&'static str, AudioType>,
     channels: HashMap<&'static str, Sink>,
 }
 
@@ -24,17 +29,32 @@ impl Audio {
     /// Adds a piece of audio to the system
     pub fn add_audio(&mut self, name: &'static str, path: &'static str) {
         let file = File::open(path).unwrap();
-        self.audio.insert(name, file);
+        self.audio.insert(name, AudioType::Loose(file));
+        self.channels.insert(name, Sink::new(&self.endpoint));
+    }
+
+    /// Add audio that is packed into the binary
+    pub fn add_packed_audio(&mut self, name: &'static str, bytes: Vec<u8>) {
+        self.audio.insert(name, AudioType::Packed(bytes));
         self.channels.insert(name, Sink::new(&self.endpoint));
     }
 
     /// Plays an piece of Audio that has been loaded into the system
     pub fn play(&mut self, name: &'static str) {
         let audio = self.audio.get(name).unwrap();
-        let mut audio = (*audio).try_clone().unwrap();
-        audio.seek(SeekFrom::Start(0u64)).unwrap();
 
-        self.channels.get(name).unwrap().append(rodio::Decoder::new(BufReader::new(audio)).unwrap());
+        match *audio {
+            AudioType::Packed(ref audio) => {
+                let audio = audio.clone();
+                let cursor = Cursor::new(audio);
+                self.channels.get(name).unwrap().append(rodio::Decoder::new(BufReader::new(cursor)).unwrap());
+            },
+            AudioType::Loose(ref audio) => {
+                let mut audio = audio.try_clone().unwrap();
+                audio.seek(SeekFrom::Start(0u64)).unwrap();
 
+                self.channels.get(name).unwrap().append(rodio::Decoder::new(BufReader::new(audio)).unwrap());
+            },
+        }
     }
 }
