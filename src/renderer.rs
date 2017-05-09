@@ -159,8 +159,8 @@ impl Renderer {
                         // clear the colour and depth buffers
                         target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
-                        // drawing the render items
-                        for item in render_items.iter().filter(|r| r.active) {
+                        // drawing the render items (with more than one instance)
+                        for item in render_items.iter().filter(|r| r.active && r.instance_transforms.len() > 0) {
                             // building the vertex and index buffers
                             let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices).unwrap();
 
@@ -176,6 +176,11 @@ impl Renderer {
                                         world_scale: t.scale
                                     }
                                 }).collect::<Vec<_>>();
+
+                                // if there are no active transforms skip ri
+                                if data.len() <= 0 {
+                                    continue;
+                                }
 
                                 VertexBuffer::dynamic(&self.display, &data).unwrap()
                             };
