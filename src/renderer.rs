@@ -76,7 +76,8 @@ impl Renderer {
 
         // create a text system instance and font
         let text_system = TextSystem::new(&display);
-        let font = FontTexture::new(&display, &include_bytes!("./resources/font.otf")[..], 100).unwrap();
+        let font = FontTexture::new(&display, &include_bytes!("./resources/gt_font.ttf")[..],
+                                    100, glium_text::FontTexture::ascii_character_list()).unwrap();
 
         let mut imgui = ImGui::init();
         let imgui_rend = ImGuiRenderer::init(&mut imgui, &display).unwrap();
@@ -223,11 +224,11 @@ impl Renderer {
                                         text_item.text.as_str());
 
             // draw the text
-            glium_text::draw(&text,
-                             &self.text_system,
-                             &mut target,
-                             matrix,
-                             text_item.color);
+            let _ = glium_text::draw(&text,
+                                     &self.text_system,
+                                     &mut target,
+                                     matrix,
+                                     text_item.color);
         }
 
         // imgui elements

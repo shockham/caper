@@ -67,7 +67,7 @@ pub extern crate nphysics3d;
 pub extern crate nalgebra;
 pub extern crate image;
 
-extern crate glium_text;
+extern crate glium_text_rusttype as glium_text;
 extern crate noise;
 extern crate time;
 extern crate fps_counter;
