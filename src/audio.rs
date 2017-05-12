@@ -1,5 +1,6 @@
 use rodio;
 use rodio::{ Endpoint, Sink };
+use rodio::Source;
 use std::collections::HashMap;
 use std::io::{ BufReader, SeekFrom, Seek, Cursor };
 use std::fs::File;
@@ -52,8 +53,27 @@ impl Audio {
             AudioType::Loose(ref audio) => {
                 let mut audio = audio.try_clone().unwrap();
                 audio.seek(SeekFrom::Start(0u64)).unwrap();
-
                 self.channels.get(name).unwrap().append(rodio::Decoder::new(BufReader::new(audio)).unwrap());
+            },
+        }
+    }
+
+    /// Loops a piece of Audio that has been loaded into the system
+    pub fn repeat(&mut self, name: &'static str) {
+        let audio = self.audio.get(name).unwrap();
+
+        match *audio {
+            AudioType::Packed(ref audio) => {
+                let audio = audio.clone();
+                let cursor = Cursor::new(audio);
+                let decoder = rodio::Decoder::new(BufReader::new(cursor)).unwrap();
+                self.channels.get(name).unwrap().append(decoder.repeat_infinite());
+            },
+            AudioType::Loose(ref audio) => {
+                let mut audio = audio.try_clone().unwrap();
+                audio.seek(SeekFrom::Start(0u64)).unwrap();
+                let decoder = rodio::Decoder::new(BufReader::new(audio)).unwrap();
+                self.channels.get(name).unwrap().append(decoder.repeat_infinite());
             },
         }
     }
