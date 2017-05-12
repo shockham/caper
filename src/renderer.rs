@@ -76,7 +76,7 @@ impl Renderer {
 
         // create a text system instance and font
         let text_system = TextSystem::new(&display);
-        let font = FontTexture::new(&display, &include_bytes!("./resources/gt_font.ttf")[..],
+        let font = FontTexture::new(&display, &include_bytes!("./resources/font.ttf")[..],
                                     100, glium_text::FontTexture::ascii_character_list()).unwrap();
 
         let mut imgui = ImGui::init();
