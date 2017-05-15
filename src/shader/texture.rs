@@ -10,7 +10,6 @@ pub mod gl330 {
         uniform sampler2D tex;
         uniform sampler2D normal_tex;
         uniform sampler1D dir_lights;
-        const vec3 LIGHT = vec3(-0.2, 0.8, 0.1);
 
         in vec3 g_normal;
         in vec3 g_pos;
