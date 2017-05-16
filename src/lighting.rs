@@ -71,4 +71,14 @@ impl Lighting {
     pub fn get_directional_light(&mut self, index: usize) -> &mut DirectionalLight {
         &mut self.directional_lights[index]
     }
+
+    /// Get a ref to a directional light from its name, returning the first found
+    pub fn get_directional_light_by_name(&mut self, name: String) -> Option<&mut DirectionalLight> {
+        for i in 0 .. self.directional_lights.len() {
+            if self.directional_lights[i].name == name {
+                return Some(&mut self.directional_lights[i]);
+            }
+        }
+        None
+    }
 }

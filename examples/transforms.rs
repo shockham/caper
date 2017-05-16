@@ -110,6 +110,11 @@ fn main() {
     game.renderer.lighting.add_directional_light("two".to_string(), (1.0, 0.0, 0.0));
     game.renderer.lighting.add_directional_light("three".to_string(), (0.0, 1.0, 0.0));
 
+    // test getting a direcitonal light by name
+    {
+        let _ = game.renderer.lighting.get_directional_light_by_name("one".to_string()).unwrap();
+    }
+
     loop {
         // run the engine update
         game.update(|_:&Ui|{ });
