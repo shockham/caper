@@ -30,8 +30,12 @@ impl Lighting {
     /// Add a direction light with direction dir to the lighting system
     pub fn add_directional_light(&mut self, dir: Vector3) {
         self.directional_lights.push(dir); 
+        self.regenerate_dir_tex();
+    }
 
-        // regenerate the tex that is used to send location to shader
+
+    /// Regenerates the tex that is used to send location to shader
+    fn regenerate_dir_tex(&mut self) {
         let mut dir_tex = self.directional_tex.borrow_mut();
         let dir_tex_1d = Texture1d::new(&self.context, self.directional_lights.as_slice()).unwrap();
         *dir_tex = dir_tex_1d;
