@@ -7,9 +7,23 @@ use std::rc::Rc;
 /// Struct containing the data for the lighting system
 pub struct Lighting {
     context: Rc<Context>,
-    directional_lights: Vec<Vector3>,
+    directional_lights: Vec<DirectionalLight>,
     /// Texture representing the positions of the directional lights
     pub directional_tex: RefCell<Texture1d>,
+}
+
+/// Struct for defining a directional light
+#[derive(Builder, Clone, Serialize, Deserialize, PartialEq)]
+pub struct DirectionalLight {
+    /// The name of the directional light
+    #[builder(default="\"light\".to_string()")]
+    pub name: String,
+    /// The direction the light is facing
+    #[builder(default="(1f32, 1f32, 1f32)")]
+    pub dir: Vector3,
+    /// Whether the light is active
+    #[builder(default="true")]
+    pub active: bool,
 }
 
 impl Lighting {
@@ -22,14 +36,19 @@ impl Lighting {
         Lighting {
             context: context,
             directional_lights: Vec::new(),
-            directional_tex: RefCell::new(dir_tex), 
+            directional_tex: RefCell::new(dir_tex),
         }
     }
 
 
     /// Add a direction light with direction dir to the lighting system
-    pub fn add_directional_light(&mut self, dir: Vector3) {
-        self.directional_lights.push(dir); 
+    pub fn add_directional_light(&mut self, name: String, dir: Vector3) {
+        let light = DirectionalLightBuilder::default()
+                .name(name)
+                .dir(dir)
+                .build()
+                .unwrap();
+        self.directional_lights.push(light);
         self.regenerate_lighting_tex();
     }
 
@@ -38,12 +57,18 @@ impl Lighting {
     /// Note: must be called when mutating any lighting data
     pub fn regenerate_lighting_tex(&mut self) {
         let mut dir_tex = self.directional_tex.borrow_mut();
-        let dir_tex_1d = Texture1d::new(&self.context, self.directional_lights.as_slice()).unwrap();
+
+        let lights = self.directional_lights.iter()
+            .filter(|d| d.active)
+            .map(|d| d.dir)
+            .collect::<Vec<Vector3>>();
+
+        let dir_tex_1d = Texture1d::new(&self.context, lights.as_slice()).unwrap();
         *dir_tex = dir_tex_1d;
     }
 
     /// Get a ref to a directional light
-    pub fn get_directional_light(&mut self, index: usize) -> &mut Vector3 {
+    pub fn get_directional_light(&mut self, index: usize) -> &mut DirectionalLight {
         &mut self.directional_lights[index]
     }
 }

@@ -106,9 +106,9 @@ fn main() {
             .build()
             .unwrap());
 
-    game.renderer.lighting.add_directional_light((-0.2, 0.8, 0.1));
-    game.renderer.lighting.add_directional_light((1.0, 0.0, 0.0));
-    game.renderer.lighting.add_directional_light((0.0, 1.0, 0.0));
+    game.renderer.lighting.add_directional_light("one".to_string(), (-0.2, 0.8, 0.1));
+    game.renderer.lighting.add_directional_light("two".to_string(), (1.0, 0.0, 0.0));
+    game.renderer.lighting.add_directional_light("three".to_string(), (0.0, 1.0, 0.0));
 
     loop {
         // run the engine update
