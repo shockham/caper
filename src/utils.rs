@@ -48,14 +48,14 @@ pub fn create_skydome(shader_name: &'static str) -> RenderItem {
         .name("skydome".to_string())
         .vertices(load_wavefront(include_bytes!("./resources/skydome.obj")))
         .material(MaterialBuilder::default()
-            .shader_name(shader_name.to_string())
-            .build()
-            .unwrap())
+                  .shader_name(shader_name.to_string())
+                  .build()
+                  .unwrap())
         .instance_transforms(vec![
-            TransformBuilder::default()
-                .scale((300f32, 300f32, 300f32))
-                .build()
-                .unwrap()
+                             TransformBuilder::default()
+                             .scale((300f32, 300f32, 300f32))
+                             .build()
+                             .unwrap()
         ])
         .build()
         .unwrap()
@@ -86,6 +86,19 @@ pub fn calc_normal(p0: [f32; 3], p1: [f32; 3], p2: [f32; 3]) -> [f32; 3] {
     let b = sub_vec3(p2, p0);
 
     crossp(a, b)
+}
+
+/// returns the two matrices multiplied together
+pub fn mul_mat4(a: [[f32; 4]; 4], b: [[f32; 4]; 4]) -> [[f32; 4]; 4] {
+    let mul_vec = a.iter().zip(b.iter())
+        .map(|(&a, &b)| {
+            a.iter().zip(b.iter()).map(|(&c, &d)| c * d).collect()
+        }).collect::<Vec<Vec<f32>>>();
+
+    [[mul_vec[0][0], mul_vec[0][1], mul_vec[0][2], mul_vec[0][3]],
+    [mul_vec[1][0], mul_vec[1][1], mul_vec[1][2], mul_vec[1][3]],
+    [mul_vec[2][0], mul_vec[2][1], mul_vec[2][2], mul_vec[2][3]],
+    [mul_vec[3][0], mul_vec[3][1], mul_vec[3][2], mul_vec[3][3]]]
 }
 
 /// returns a euler angle as a quaternion
