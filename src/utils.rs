@@ -6,7 +6,7 @@ use std::iter::Sum;
 use std::f32::consts::PI;
 
 use types::{ RenderItem, RenderItemBuilder, TransformBuilder };
-use types::{ Vertex, Quaternion, Vector3, CamState, MaterialBuilder };
+use types::{ Vertex, Quaternion, Vector3, Matrix4, CamState, MaterialBuilder };
 
 
 /// Returns a Vec<Vertex> that should be converted to buffer and rendered as `TrianglesList`.
@@ -89,7 +89,7 @@ pub fn calc_normal(p0: [f32; 3], p1: [f32; 3], p2: [f32; 3]) -> [f32; 3] {
 }
 
 /// returns the two matrices multiplied together
-pub fn mul_mat4(a: [[f32; 4]; 4], b: [[f32; 4]; 4]) -> [[f32; 4]; 4] {
+pub fn mul_mat4(a: Matrix4, b: Matrix4) -> Matrix4 {
     let mul_vec = a.iter().zip(b.iter())
         .map(|(&a, &b)| {
             a.iter().zip(b.iter()).map(|(&c, &d)| c * d).collect()
@@ -136,7 +136,7 @@ pub fn to_euler(angle: Quaternion) -> Vector3 {
 }
 
 /// Returns perspective projection matrix given fov, aspect ratio, z near and far
-pub fn build_persp_proj_mat(fov:f32,aspect:f32,znear:f32,zfar:f32) -> [[f32; 4]; 4] {
+pub fn build_persp_proj_mat(fov:f32,aspect:f32,znear:f32,zfar:f32) -> Matrix4 {
     let ymax = znear * (fov * (PI/360.0)).tan();
     let ymin = -ymax;
     let xmax = ymax * aspect;
@@ -159,7 +159,7 @@ pub fn build_persp_proj_mat(fov:f32,aspect:f32,znear:f32,zfar:f32) -> [[f32; 4];
 }
 
 /// Returns the model view matrix for a first person view given cam position and rotation
-pub fn build_fp_view_matrix(cam_state: &CamState) -> [[f32; 4]; 4] {
+pub fn build_fp_view_matrix(cam_state: &CamState) -> Matrix4 {
 
     let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (
         cam_state.cam_rot.1.sin(),

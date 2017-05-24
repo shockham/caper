@@ -4,6 +4,9 @@ pub type Vector3 = (f32, f32, f32);
 /// type definition for a Quaternion
 pub type Quaternion = (f32, f32, f32, f32);
 
+/// type definition for a matrix4
+pub type Matrix4 = [[f32; 4]; 4];
+
 /// struct for defining a Vector for creating meshes
 #[derive(Copy, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Vertex {

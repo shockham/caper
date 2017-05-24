@@ -77,7 +77,7 @@ impl Renderer {
         // create a text system instance and font
         let text_system = TextSystem::new(&display);
         let font = FontTexture::new(&display, &include_bytes!("./resources/font.ttf")[..],
-                                    100, glium_text::FontTexture::ascii_character_list()).unwrap();
+        100, glium_text::FontTexture::ascii_character_list()).unwrap();
 
         let mut imgui = ImGui::init();
         let imgui_rend = ImGuiRenderer::init(&mut imgui, &display).unwrap();
@@ -122,6 +122,89 @@ impl Renderer {
         //self.imgui.set_mouse_wheel(self.mouse_wheel);
     }
 
+    /// Test whether an object is in the view frustrum
+    fn frustrum_test(pos: Vector3, radius: f32, frustrum_planes: Vec<(f32, f32, f32, f32)>) -> bool {
+        for plane in frustrum_planes {
+            if plane.0 * pos.0 + plane.1 * pos.1 + plane.2 * pos.2 + plane.3 <= -radius {
+                // sphere not in frustrum
+                return false;
+            }
+        }
+
+        true
+    }
+
+    /// Helper function that converts viewing matrix into frustum planes
+    fn get_frustum_planes(matrix: Matrix4) -> Vec<(f32, f32, f32, f32)> {
+        let mut planes = Vec::new();
+
+        /*// Left clipping plane
+        planes.push((matrix[3][0] + matrix[0][0],
+                     matrix[3][1] + matrix[0][1],
+                     matrix[3][2] + matrix[0][2],
+                     matrix[3][3] + matrix[0][3]));
+        // Right clipping plane
+        planes.push((matrix[3][0] - matrix[0][0],
+                     matrix[3][1] - matrix[0][1],
+                     matrix[3][2] - matrix[0][2],
+                     matrix[3][3] - matrix[0][3]));
+        // Top clipping plane
+        planes.push((matrix[3][0] - matrix[1][0],
+                     matrix[3][1] - matrix[1][1],
+                     matrix[3][2] - matrix[1][2],
+                     matrix[3][3] - matrix[1][3]));
+        // Bottom clipping plane
+        planes.push((matrix[3][0] + matrix[1][0],
+                     matrix[3][1] + matrix[1][1],
+                     matrix[3][2] + matrix[1][2],
+                     matrix[3][3] + matrix[1][3]));
+        // Near clipping plane
+        planes.push((matrix[3][0] + matrix[2][0],
+                     matrix[3][1] + matrix[2][1],
+                     matrix[3][2] + matrix[2][2],
+                     matrix[3][3] + matrix[2][3]));
+        // Far clipping plane
+        planes.push((matrix[3][0] - matrix[2][0],
+                     matrix[3][1] - matrix[2][1],
+                     matrix[3][2] - matrix[2][2],
+                     matrix[3][3] - matrix[2][3]));*/
+
+        //
+        // Left clipping plane
+        planes.push((matrix[0][3] + matrix[0][0],
+                     matrix[1][3] + matrix[1][0],
+                     matrix[2][3] + matrix[2][0],
+                     matrix[3][3] + matrix[3][0]));
+        // Right clipping plane
+        planes.push((matrix[0][3] - matrix[0][0],
+                     matrix[1][3] - matrix[1][0],
+                     matrix[2][3] - matrix[2][0],
+                     matrix[3][3] - matrix[3][0]));
+        // Top clipping plane
+        planes.push((matrix[0][3] - matrix[0][1],
+                     matrix[1][3] - matrix[1][1],
+                     matrix[2][3] - matrix[2][1],
+                     matrix[3][3] - matrix[3][1]));
+        // Bottom clipping plane
+        planes.push((matrix[0][3] + matrix[0][1],
+                     matrix[1][3] + matrix[1][1],
+                     matrix[2][3] + matrix[2][1],
+                     matrix[3][3] + matrix[3][1]));
+        // Near clipping plane
+        planes.push((matrix[0][2],
+                     matrix[1][2],
+                     matrix[2][2],
+                     matrix[3][2]));
+        // Far clipping plane
+        planes.push((matrix[0][3] - matrix[0][2],
+                     matrix[1][3] - matrix[1][2],
+                     matrix[2][3] - matrix[2][2],
+                     matrix[3][3] - matrix[3][2]));
+
+
+        planes
+    }
+
     /// Draws a frame
     pub fn draw<F: FnMut(&Ui)>(&mut self,
                                cam_state: &CamState,
@@ -150,6 +233,11 @@ impl Renderer {
         let cam_pos = cam_state.cam_pos;
         let time = (time::precise_time_s() - self.start_time) as f32;
 
+        // calc frustum places for culling
+        let combo_matrix = mul_mat4(projection_matrix, modelview_matrix);
+        let frustum_planes = Renderer::get_frustum_planes(combo_matrix);
+        //println!("planes: {:?}", frustum_planes);
+
         // drawing a frame
         let mut target = self.display.draw();
 
@@ -160,6 +248,8 @@ impl Renderer {
                         // clear the colour and depth buffers
                         target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
+                        let mut render_count = 0usize;
+
                         // drawing the render items (with more than one instance)
                         for item in render_items.iter().filter(|r| r.active && r.instance_transforms.len() > 0) {
                             // building the vertex and index buffers
@@ -168,8 +258,10 @@ impl Renderer {
                             // add positions for instances
                             let per_instance = {
                                 let data = item.instance_transforms.iter().filter(|t| {
-                                    // TODO add more culling
-                                    t.active
+                                    t.active &&
+                                        !Renderer::frustrum_test(t.pos,
+                                                                 t.scale.0.max(t.scale.1.max(t.scale.2)) / 2f32,
+                                                                 frustum_planes.clone())
                                 }).map(|t| {
                                     Attr {
                                         world_position: t.pos,
@@ -182,6 +274,9 @@ impl Renderer {
                                 if data.len() <= 0 {
                                     continue;
                                 }
+
+                                // add instances to render_count
+                                render_count += data.len();
 
                                 VertexBuffer::dynamic(&self.display, &data).unwrap()
                             };
@@ -204,11 +299,13 @@ impl Renderer {
                             };
 
                             target.draw((&vertex_buffer, per_instance.per_instance().unwrap()),
-                                        &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
-                                        &self.shaders.shaders.get(item.material.shader_name.as_str()).unwrap(),
-                                        &uniforms,
-                                        &params).unwrap();
+                            &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
+                            &self.shaders.shaders.get(item.material.shader_name.as_str()).unwrap(),
+                            &uniforms,
+                            &params).unwrap();
                         }
+
+                        println!("count: {}", render_count);
                     });
 
         // drawing the text items
@@ -251,7 +348,7 @@ impl Renderer {
             let image = image::ImageBuffer::from_raw(image.width, image.height, image.data.into_owned()).unwrap();
             let image = image::DynamicImage::ImageRgba8(image).flipv();
             let mut output = File::create(&Path::new(format!("./screenshot_{}.png",
-                                                                      time::precise_time_s()).as_str())).unwrap();
+                                                             time::precise_time_s()).as_str())).unwrap();
             image.save(&mut output, image::ImageFormat::PNG).unwrap();
         });
     }
