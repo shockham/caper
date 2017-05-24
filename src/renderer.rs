@@ -125,7 +125,7 @@ impl Renderer {
     /// Test whether an object is in the view frustrum
     fn frustrum_test(pos: Vector3, radius: f32, frustrum_planes: Vec<(f32, f32, f32, f32)>) -> bool {
         for plane in frustrum_planes {
-            if plane.0 * pos.0 + plane.1 * pos.1 + plane.2 * pos.2 + plane.3 <= -radius {
+            if dotp(&[pos.0, pos.1, pos.2], &[plane.0, plane.1, plane.2]) + plane.3 <= -radius {
                 // sphere not in frustrum
                 return false;
             }
@@ -138,7 +138,8 @@ impl Renderer {
     fn get_frustum_planes(matrix: Matrix4) -> Vec<(f32, f32, f32, f32)> {
         let mut planes = Vec::new();
 
-        /*// Left clipping plane
+        // column-major
+        // Left clipping plane
         planes.push((matrix[3][0] + matrix[0][0],
                      matrix[3][1] + matrix[0][1],
                      matrix[3][2] + matrix[0][2],
@@ -167,39 +168,39 @@ impl Renderer {
         planes.push((matrix[3][0] - matrix[2][0],
                      matrix[3][1] - matrix[2][1],
                      matrix[3][2] - matrix[2][2],
-                     matrix[3][3] - matrix[2][3]));*/
+                     matrix[3][3] - matrix[2][3]));
 
-        //
+        /*// row-major
         // Left clipping plane
         planes.push((matrix[0][3] + matrix[0][0],
-                     matrix[1][3] + matrix[1][0],
-                     matrix[2][3] + matrix[2][0],
-                     matrix[3][3] + matrix[3][0]));
+        matrix[1][3] + matrix[1][0],
+        matrix[2][3] + matrix[2][0],
+        matrix[3][3] + matrix[3][0]));
         // Right clipping plane
         planes.push((matrix[0][3] - matrix[0][0],
-                     matrix[1][3] - matrix[1][0],
-                     matrix[2][3] - matrix[2][0],
-                     matrix[3][3] - matrix[3][0]));
+        matrix[1][3] - matrix[1][0],
+        matrix[2][3] - matrix[2][0],
+        matrix[3][3] - matrix[3][0]));
         // Top clipping plane
         planes.push((matrix[0][3] - matrix[0][1],
-                     matrix[1][3] - matrix[1][1],
-                     matrix[2][3] - matrix[2][1],
-                     matrix[3][3] - matrix[3][1]));
+        matrix[1][3] - matrix[1][1],
+        matrix[2][3] - matrix[2][1],
+        matrix[3][3] - matrix[3][1]));
         // Bottom clipping plane
         planes.push((matrix[0][3] + matrix[0][1],
-                     matrix[1][3] + matrix[1][1],
-                     matrix[2][3] + matrix[2][1],
-                     matrix[3][3] + matrix[3][1]));
+        matrix[1][3] + matrix[1][1],
+        matrix[2][3] + matrix[2][1],
+        matrix[3][3] + matrix[3][1]));
         // Near clipping plane
         planes.push((matrix[0][2],
-                     matrix[1][2],
-                     matrix[2][2],
-                     matrix[3][2]));
+        matrix[1][2],
+        matrix[2][2],
+        matrix[3][2]));
         // Far clipping plane
         planes.push((matrix[0][3] - matrix[0][2],
-                     matrix[1][3] - matrix[1][2],
-                     matrix[2][3] - matrix[2][2],
-                     matrix[3][3] - matrix[3][2]));
+        matrix[1][3] - matrix[1][2],
+        matrix[2][3] - matrix[2][2],
+        matrix[3][3] - matrix[3][2]));*/
 
 
         planes
@@ -259,9 +260,9 @@ impl Renderer {
                             let per_instance = {
                                 let data = item.instance_transforms.iter().filter(|t| {
                                     t.active &&
-                                        !Renderer::frustrum_test(t.pos,
-                                                                 t.scale.0.max(t.scale.1.max(t.scale.2)) / 2f32,
-                                                                 frustum_planes.clone())
+                                        Renderer::frustrum_test(t.pos,
+                                                                t.scale.0.max(t.scale.1.max(t.scale.2)) / 2f32,
+                                                                frustum_planes.clone())
                                 }).map(|t| {
                                     Attr {
                                         world_position: t.pos,
