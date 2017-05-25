@@ -276,7 +276,6 @@ impl Renderer {
                         }
                     });
 
-        println!("rc:{}", render_count);
         self.render_count = render_count;
 
         // drawing the text items
