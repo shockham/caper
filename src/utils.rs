@@ -90,15 +90,17 @@ pub fn calc_normal(p0: [f32; 3], p1: [f32; 3], p2: [f32; 3]) -> [f32; 3] {
 
 /// returns the two matrices multiplied together
 pub fn mul_mat4(a: Matrix4, b: Matrix4) -> Matrix4 {
-    let mul_vec = a.iter().zip(b.iter())
-        .map(|(&a, &b)| {
-            a.iter().zip(b.iter()).map(|(&c, &d)| c * d).collect()
-        }).collect::<Vec<Vec<f32>>>();
+    let mut new_mat: Matrix4 = [[0f32; 4]; 4];
 
-    [[mul_vec[0][0], mul_vec[0][1], mul_vec[0][2], mul_vec[0][3]],
-    [mul_vec[1][0], mul_vec[1][1], mul_vec[1][2], mul_vec[1][3]],
-    [mul_vec[2][0], mul_vec[2][1], mul_vec[2][2], mul_vec[2][3]],
-    [mul_vec[3][0], mul_vec[3][1], mul_vec[3][2], mul_vec[3][3]]]
+    for i in 0..4 {
+        for j in 0..4 {
+            for x in 0..4 {
+                new_mat[i][j] += a[x][i] * b[j][x];
+            }
+        }
+    }
+
+    new_mat
 }
 
 /// returns a euler angle as a quaternion

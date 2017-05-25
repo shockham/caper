@@ -54,6 +54,8 @@ pub struct Renderer {
     gif_info: Option<GifInfo>,
     /// The lighting system
     pub lighting: Lighting,
+    /// The number items rendered in the last drawn frame
+    pub render_count: usize,
 }
 
 struct GifInfo {
@@ -101,6 +103,7 @@ impl Renderer {
             fps: 0f32,
             gif_info: None,
             lighting: lighting,
+            render_count: 0usize,
         };
 
         renderer.setup();
@@ -204,10 +207,10 @@ impl Renderer {
         // calc frustum places for culling
         let combo_matrix = mul_mat4(projection_matrix, modelview_matrix);
         let frustum_planes = Renderer::get_frustum_planes(combo_matrix);
-        //println!("planes: {:?}", frustum_planes);
 
         // drawing a frame
         let mut target = self.display.draw();
+        let mut render_count = 0usize;
 
         render_post(&self.post_effect,
                     &self.shaders.post_shaders.get(self.post_effect.current_shader).unwrap(),
@@ -216,7 +219,6 @@ impl Renderer {
                         // clear the colour and depth buffers
                         target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
-                        let mut render_count = 0usize;
 
                         // drawing the render items (with more than one instance)
                         for item in render_items.iter().filter(|r| r.active && r.instance_transforms.len() > 0) {
@@ -272,9 +274,9 @@ impl Renderer {
                             &uniforms,
                             &params).unwrap();
                         }
-
-                        println!("count: {}", render_count);
                     });
+
+        self.render_count = render_count;
 
         // drawing the text items
         for text_item in text_items.iter().filter(|r| r.active) {
