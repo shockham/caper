@@ -230,7 +230,7 @@ impl Renderer {
                                 let data = item.instance_transforms.iter().filter(|t| {
                                     t.active &&
                                         Renderer::frustrum_test(t.pos,
-                                                                t.scale.0.max(t.scale.1.max(t.scale.2)) / 2f32,
+                                                                t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
                                                                 frustum_planes.clone())
                                 }).map(|t| {
                                     Attr {
@@ -276,6 +276,7 @@ impl Renderer {
                         }
                     });
 
+        println!("rc:{}", render_count);
         self.render_count = render_count;
 
         // drawing the text items
