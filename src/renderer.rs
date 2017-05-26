@@ -27,9 +27,9 @@ use std::thread;
 
 
 use shader::Shaders;
-use utils::*;
-use posteffect::*;
-use types::*;
+use utils::{ dotp, build_persp_proj_mat, build_fp_view_matrix, mul_mat4 };
+use posteffect::{ PostEffect, render_post };
+use types::{ RenderItem, TextItem, Vector3, Matrix4, CamState, Attr };
 use lighting::Lighting;
 
 
