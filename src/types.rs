@@ -34,6 +34,9 @@ pub struct Transform {
     /// Whether the transform is currently active/should be rendered
     #[builder(default="true")]
     pub active: bool,
+    /// Whether the transform is frustum culled
+    #[builder(default="true")]
+    pub cull: bool,
 }
 
 /// Denotes how the RenderItem acts in the physics engine

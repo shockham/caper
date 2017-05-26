@@ -228,10 +228,11 @@ impl Renderer {
                             // add positions for instances
                             let per_instance = {
                                 let data = item.instance_transforms.iter().filter(|t| {
-                                    t.active &&
+                                    (t.active && !t.cull) ||
+                                    (t.active &&
                                         Renderer::frustrum_test(t.pos,
                                                                 t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
-                                                                frustum_planes.clone())
+                                                                frustum_planes.clone()))
                                 }).map(|t| {
                                     Attr {
                                         world_position: t.pos,
