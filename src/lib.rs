@@ -75,6 +75,7 @@ extern crate bincode;
 extern crate serde;
 extern crate gif;
 extern crate rodio;
+extern crate imgui_glium_renderer;
 
 /// Module for utility functions for textures
 #[macro_use]

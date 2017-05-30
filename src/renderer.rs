@@ -15,7 +15,7 @@ use std::default::Default;
 use fps_counter::FPSCounter;
 
 use imgui::{ ImGui, Ui };
-use imgui::glium_renderer::Renderer as ImGuiRenderer;
+use imgui_glium_renderer::Renderer as ImGuiRenderer;
 
 use image;
 use gif;
