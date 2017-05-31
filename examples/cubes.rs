@@ -2,14 +2,12 @@ extern crate time;
 extern crate caper;
 extern crate imgui;
 
-extern crate noise;
-
 use caper::utils::load_wavefront;
 use caper::types::{ RenderItemBuilder, TransformBuilder };
 use caper::game::Game;
 use caper::input::Key;
 use caper::imgui::Ui;
-use noise::{ perlin2, Seed };
+use caper::mesh::get_pos_perlin;
 
 fn main() {
     // create an instance of Game
@@ -20,7 +18,7 @@ fn main() {
     let transforms = (0 .. 2500)
         .map(|i| {
             let pos = ((i as f32 % map_size) * 2f32, ((i / map_size as i32) * 2) as f32);
-            let size = perlin2(&Seed::new(0), &[pos.0 / 10f32, pos.1 / 10f32]).abs() * 8f32;
+            let size = get_pos_perlin((pos.0, pos.1)) * 2f32;
             TransformBuilder::default()
                 .pos((pos.0 * 5f32, size, pos.1 * 5f32))
                 .scale((4.2f32, size, 4.2f32))

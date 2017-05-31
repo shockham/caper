@@ -294,34 +294,38 @@ pub fn gen_sphere_segments(segs: f32, rings: f32) -> Vec<Vertex> {
     vertices
 }
 
-/// Get a height for a pos p using perlin noise
-pub fn get_pos_perlin(p:(f32, f32), seed: usize) -> f32 {
+/// Set the seed for perlin generation
+pub fn set_perlin_seed(seed: usize) {
     PERLIN.set_seed(seed);
+}
+
+/// Get a height for a pos p using perlin noise
+pub fn get_pos_perlin(p:(f32, f32)) -> f32 {
     PERLIN.get([p.0 / 15f32, p.1 / 15f32]).abs() * 6f32
 }
 
 /// Generates a perlin mesh from pseu_pos with each side of vert length map_size
 pub fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
-    gen_proc_mesh(pseu_pos, map_size, DEF_SEED_BASE, get_pos_perlin)
+    gen_proc_mesh(pseu_pos, map_size, get_pos_perlin)
 }
 
 /// Generates a perlin mesh from pseu_pos with each side of vert length map_size using seed
-pub fn gen_seed_perlin_mesh(pseu_pos: (f32, f32), map_size: f32, seed: usize) -> Vec<Vertex> {
-    gen_proc_mesh(pseu_pos, map_size, seed, get_pos_perlin)
+pub fn gen_seed_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
+    gen_proc_mesh(pseu_pos, map_size, get_pos_perlin)
 }
 
 /// Generate a procedural function used to calculate a vertex
 pub fn gen_proc_mesh(pseu_pos: (f32, f32), map_size: f32,
-                     seed: usize, gen_fn: fn((f32, f32), usize) -> f32) -> Vec<Vertex> {
+                     gen_fn: fn((f32, f32)) -> f32) -> Vec<Vertex> {
     // generate the instance positions
     let mut vertices = Vec::new();
 
     let point_total = (map_size * map_size) as i32;
 
     // get all heights for first chunk
-    let mut size_00 = gen_fn((0f32, 0f32), seed);
+    let mut size_00 = gen_fn((0f32, 0f32));
     let mut size_10;
-    let mut size_01 = gen_fn((0f32, 0f32), seed);
+    let mut size_01 = gen_fn((0f32, 0f32));
     let mut size_11;
 
     for i in 0 .. point_total {
@@ -329,8 +333,8 @@ pub fn gen_proc_mesh(pseu_pos: (f32, f32), map_size: f32,
         let p_pos = (pos.0 + pseu_pos.0, pos.1 + pseu_pos.1);
 
         // get the heights of the next two corners
-        size_10 = gen_fn((p_pos.0 + 1f32, p_pos.1), seed);
-        size_11 = gen_fn((p_pos.0 + 1f32, p_pos.1 + 1f32), seed);
+        size_10 = gen_fn((p_pos.0 + 1f32, p_pos.1));
+        size_11 = gen_fn((p_pos.0 + 1f32, p_pos.1 + 1f32));
 
         // create the two tris for this chunk
         let verts = vec!(

@@ -7,7 +7,7 @@ extern crate imgui;
 
 use caper::utils::create_skydome;
 use caper::types::{ RenderItemBuilder, TextItemBuilder, TransformBuilder, MaterialBuilder };
-use caper::mesh::{ gen_perlin_mesh, gen_sphere, get_pos_perlin, DEF_SEED_BASE };
+use caper::mesh::{ gen_perlin_mesh, gen_sphere, get_pos_perlin };
 use caper::game::Game;
 use caper::input::Key;
 use fps_counter::FPSCounter;
@@ -39,6 +39,7 @@ fn main() {
             .instance_transforms(vec![
                 TransformBuilder::default()
                     .pos((fixed_val, 0.0, fixed_val))
+                    .cull(false)
                     .build()
                     .unwrap()
             ])
@@ -69,8 +70,7 @@ fn main() {
             .unwrap());
 
     game.cam_state.cam_pos.1 = 2.5f32 + get_pos_perlin(((pseu_cam_pos.0 - fixed_val),
-                                                            (pseu_cam_pos.1 - fixed_val)),
-                                                            DEF_SEED_BASE);
+                                                            (pseu_cam_pos.1 - fixed_val)));
     loop {
         // run the engine update
         game.update(|ui:&Ui|{
@@ -127,8 +127,7 @@ fn main() {
         if movement_dirty {
             game.get_render_item(0).vertices = gen_perlin_mesh(pseu_cam_pos, map_size);
             game.cam_state.cam_pos.1 = 2.5f32 + get_pos_perlin(((pseu_cam_pos.0 - fixed_val),
-                                                            (pseu_cam_pos.1 - fixed_val)),
-                                                            DEF_SEED_BASE);
+                                                            (pseu_cam_pos.1 - fixed_val)));
 
             // update the sphere location
             game.get_render_item(2).instance_transforms[0].pos =
