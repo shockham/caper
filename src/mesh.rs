@@ -1,6 +1,6 @@
 use utils::calc_normal;
 use types::Vertex;
-use noise::{ perlin2, Seed };
+use noise::{ Perlin, Seedable, NoiseModule };
 use std::f32::consts::PI;
 
 /// The default normal to give a mesh vertex
@@ -9,7 +9,13 @@ pub const DEF_NORMAL:[f32; 3] = [0f32, 0f32, 0f32];
 pub const DEF_UV:[f32; 2] = [0f32, 0f32];
 const PI2:f32 = PI * 2f32;
 /// The default seed base for creating a perlin mesh
-pub const DEF_SEED_BASE:u32 = 0;
+pub const DEF_SEED_BASE:usize = 0;
+
+lazy_static! {
+    static ref PERLIN:Perlin = {
+        Perlin::new().set_seed(DEF_SEED_BASE)
+    };
+}
 
 /// Generates a quad mesh with each side length 1
 pub fn gen_quad() -> Vec<Vertex> {
@@ -289,23 +295,24 @@ pub fn gen_sphere_segments(segs: f32, rings: f32) -> Vec<Vertex> {
 }
 
 /// Get a height for a pos p using perlin noise
-pub fn get_pos_perlin(p:(f32, f32), seed: &Seed) -> f32 {
-    perlin2(seed, &[p.0 / 15f32, p.1 / 15f32]).abs() * 6f32
+pub fn get_pos_perlin(p:(f32, f32), seed: usize) -> f32 {
+    PERLIN.set_seed(seed);
+    PERLIN.get([p.0 / 15f32, p.1 / 15f32]).abs() * 6f32
 }
 
 /// Generates a perlin mesh from pseu_pos with each side of vert length map_size
 pub fn gen_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> {
-    gen_proc_mesh(pseu_pos, map_size, &Seed::new(DEF_SEED_BASE), get_pos_perlin)
+    gen_proc_mesh(pseu_pos, map_size, DEF_SEED_BASE, get_pos_perlin)
 }
 
 /// Generates a perlin mesh from pseu_pos with each side of vert length map_size using seed
-pub fn gen_seed_perlin_mesh(pseu_pos: (f32, f32), map_size: f32, seed: &Seed) -> Vec<Vertex> {
+pub fn gen_seed_perlin_mesh(pseu_pos: (f32, f32), map_size: f32, seed: usize) -> Vec<Vertex> {
     gen_proc_mesh(pseu_pos, map_size, seed, get_pos_perlin)
 }
 
 /// Generate a procedural function used to calculate a vertex
 pub fn gen_proc_mesh(pseu_pos: (f32, f32), map_size: f32,
-                     seed: &Seed, gen_fn: fn((f32, f32), &Seed) -> f32) -> Vec<Vertex> {
+                     seed: usize, gen_fn: fn((f32, f32), usize) -> f32) -> Vec<Vertex> {
     // generate the instance positions
     let mut vertices = Vec::new();
 

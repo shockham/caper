@@ -15,7 +15,7 @@ glium_text_rusttype = "0.1.0"
 time = "0.1"
 genmesh = "0.4"
 obj = { version = "0.5", features = ["usegenmesh"] }
-noise = "0.2"
+noise = "0.4"
 imgui = "0.0.13"
 fps_counter = "0.2.0"
 bincode = "0.7"
@@ -29,3 +29,4 @@ gif = "0.9"
 derive_builder = { version = "0.4.7", features = ["private_fields"] }
 rodio = "0.5"
 imgui-glium-renderer = "0.0.13"
+lazy_static = "0.2"
