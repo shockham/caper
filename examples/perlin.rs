@@ -1,5 +1,4 @@
 extern crate time;
-extern crate fps_counter;
 extern crate caper;
 
 #[macro_use]
@@ -10,12 +9,10 @@ use caper::types::{ RenderItemBuilder, TextItemBuilder, TransformBuilder, Materi
 use caper::mesh::{ gen_perlin_mesh, gen_sphere, get_pos_perlin };
 use caper::game::Game;
 use caper::input::Key;
-use fps_counter::FPSCounter;
 use imgui::*;
 
 fn main() {
     let mut game = Game::new();
-    let mut fps = FPSCounter::new();
 
     let map_size = 100f32;
     let fixed_val = -(map_size/2f32);
@@ -72,6 +69,7 @@ fn main() {
     game.cam_state.cam_pos.1 = 2.5f32 + get_pos_perlin(((pseu_cam_pos.0 - fixed_val),
                                                             (pseu_cam_pos.1 - fixed_val)));
     loop {
+        let fps = game.renderer.fps;
         // run the engine update
         game.update(|ui:&Ui|{
             if debug_mode {
@@ -86,7 +84,7 @@ fn main() {
                         ui.text(im_str!("mouse_speed: {}", mouse_speed));
                         ui.separator();
                         ui.text(im_str!("pseu_cam_pos: {:?}", pseu_cam_pos));
-                        ui.text(im_str!("fps: {:?}", fps.tick()));
+                        ui.text(im_str!("fps: {:?}", fps));
                         ui.checkbox(im_str!("test_check"), &mut test_check);
                     });
             }
