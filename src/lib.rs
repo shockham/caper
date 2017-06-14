@@ -2,12 +2,12 @@
 
 Small game framework.
 Currently has systems for:
-- Rendering
-- Input
-- Physics (using [nphysics](https://github.com/sebcrozet/nphysics))
+- Rendering ([glium](https://github.com/tomaka/glium))
+- Input ([glutin](https://github.com/tomaka/glutin))
+- Physics ([nphysics](https://github.com/sebcrozet/nphysics))
+- Audio ([rodio](https://github.com/tomaka/rodio))
 
-Still to be added:
-- Audio
+Note: This is being used for/was created with [specific game](https://twitter.com/SHockham/status/821691014863798272) in mind so might not be ideal for use with everything.
 
 [Example](https://github.com/shockham/caper/blob/master/examples/simple.rs) of a basis for a game:
 
