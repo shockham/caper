@@ -39,8 +39,11 @@ pub struct Renderer {
     pub display: Display,
     /// The glium_text system used for rendering TextItem
     pub text_system: TextSystem,
+    /// Fefault font that the text renderer will use
     default_font: FontTexture,
+    /// Main imgui system
     imgui: ImGui,
+    /// The sub renderer for imgui
     imgui_rend: ImGuiRenderer,
     /// Instance of PostEffect used for rendering post processing
     pub post_effect: PostEffect,
@@ -51,6 +54,7 @@ pub struct Renderer {
     fps_counter: FPSCounter,
     /// The current frames per second the Renderer is drawing at
     pub fps: f32,
+    /// Info on the current gif being written to
     gif_info: Option<GifInfo>,
     /// The lighting system
     pub lighting: Lighting,
@@ -59,7 +63,9 @@ pub struct Renderer {
 }
 
 struct GifInfo {
+    /// The encoder for the current gif
     encoder: gif::Encoder<File>,
+    /// The path of the current gif
     path: &'static str,
 }
 
