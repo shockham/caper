@@ -14,7 +14,7 @@ use time;
 use std::default::Default;
 use fps_counter::FPSCounter;
 
-use imgui::{ ImGui, Ui };
+use imgui::*;
 use imgui_glium_renderer::Renderer as ImGuiRenderer;
 
 use image;
@@ -61,6 +61,8 @@ pub struct Renderer {
     pub lighting: Lighting,
     /// The number items rendered in the last drawn frame
     pub render_count: usize,
+    /// Whether to display the engine editor window
+    pub show_editor: bool,
 }
 
 struct GifInfo {
@@ -111,6 +113,7 @@ impl Renderer {
             gif_info: None,
             lighting: lighting,
             render_count: 0usize,
+            show_editor: false,
         };
 
         renderer.setup();
@@ -309,6 +312,40 @@ impl Renderer {
         // imgui elements
         let ui = self.imgui.frame((width, height), (width, height), 0.1);
         f(&ui);
+
+        // create the engine editor
+        if self.show_editor {
+            // create the editor window
+            ui.window(im_str!("caper editor"))
+                .size((300.0, 200.0), ImGuiSetCond_FirstUseEver)
+                .position((0.0, 0.0), ImGuiSetCond_FirstUseEver)
+                .build(|| {
+                    // render items editor
+                    if ui.collapsing_header(im_str!("Render items")).build() {
+                        for render_item in render_items {
+                            ui.tree_node(im_str!("name:{}", render_item.name)).build(|| {
+                                ui.text(im_str!("vert_count:{}", render_item.vertices.len()));
+                                //ui.text(im_str!("material:{:?}", render_item.material));
+                                ui.text(im_str!("active:{}", render_item.active));
+                            });
+                        }
+                    }
+                    // text items editor
+                    if ui.collapsing_header(im_str!("Text items")).build() {
+                        for text_item in text_items {
+                            ui.tree_node(im_str!("name:{}", text_item.name)).build(|| {
+                                ui.text(im_str!("text:{}", text_item.text));
+                                ui.text(im_str!("color:{:?}", text_item.color));
+                                ui.text(im_str!("pos:{:?}", text_item.pos));
+                                ui.text(im_str!("scale:{:?}", text_item.scale));
+                                ui.text(im_str!("active:{}", text_item.active));
+                            });
+                        }
+                    }
+                });
+        }
+
+        // render imgui items
         self.imgui_rend.render(&mut target, ui).unwrap();
 
         match target.finish() {

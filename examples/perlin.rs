@@ -135,6 +135,7 @@ fn main() {
         if game.input.keys_down.contains(&Key::L) { debug_mode = true; }
         if game.input.keys_down.contains(&Key::K) { debug_mode = false; }
         game.input.hide_mouse = !debug_mode;
+        game.renderer.show_editor = debug_mode;
         // quit
         if game.input.keys_down.contains(&Key::Escape) { break; }
     }
