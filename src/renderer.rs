@@ -331,6 +331,8 @@ impl Renderer {
                                     ui.text(im_str!("normal_texture:{:?}", render_item.material.normal_texture_name));
                                 });
                                 ui.text(im_str!("active:{}", render_item.active));
+                                ui.text(im_str!("instance_count:{}", render_item.instance_transforms.len()));
+                                ui.text(im_str!("physics_type:{:?}", render_item.physics_type));
                             });
                         }
                     }

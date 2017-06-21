@@ -40,7 +40,7 @@ pub struct Transform {
 }
 
 /// Denotes how the RenderItem acts in the physics engine
-#[derive(Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]
 pub enum PhysicsType {
     /// Item is Collidable but does not move
     Static,
