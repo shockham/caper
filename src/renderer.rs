@@ -325,7 +325,11 @@ impl Renderer {
                         for render_item in render_items {
                             ui.tree_node(im_str!("name:{}", render_item.name)).build(|| {
                                 ui.text(im_str!("vert_count:{}", render_item.vertices.len()));
-                                //ui.text(im_str!("material:{:?}", render_item.material));
+                                ui.tree_node(im_str!("material")).build(|| {
+                                    ui.text(im_str!("shader:{:?}", render_item.material.shader_name));
+                                    ui.text(im_str!("texture:{:?}", render_item.material.texture_name));
+                                    ui.text(im_str!("normal_texture:{:?}", render_item.material.normal_texture_name));
+                                });
                                 ui.text(im_str!("active:{}", render_item.active));
                             });
                         }
