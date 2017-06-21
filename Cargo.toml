@@ -30,3 +30,4 @@ derive_builder = { version = "0.4.7", features = ["private_fields"] }
 rodio = "0.5"
 imgui-glium-renderer = "0.0.13"
 lazy_static = "0.2"
+rayon = "0.8"

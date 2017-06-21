@@ -20,6 +20,7 @@ use imgui_glium_renderer::Renderer as ImGuiRenderer;
 use image;
 use gif;
 use gif::SetParameter;
+
 use std::path::Path;
 use std::fs::File;
 use std::fs::OpenOptions;
@@ -336,10 +337,13 @@ impl Renderer {
         let image: RawImage2d<u8> = self.display.read_front_buffer();
 
         let (w, h) = (image.width, image.height);
-        let image = image::ImageBuffer::from_raw(w, h, image.data.into_owned()).unwrap();
-        let mut image = image::DynamicImage::ImageRgba8(image).flipv();
-        let image = image.as_mut_rgba8().unwrap();
-        let mut image = image.clone().into_raw();
+
+        let mut image = {
+            let image_buf = image::ImageBuffer::from_raw(w, h, image.data.into_owned()).unwrap();
+            let dy_image = image::DynamicImage::ImageRgba8(image_buf).flipv();
+            let fin_image = dy_image.as_rgba8().unwrap();
+            fin_image.clone().into_raw()
+        };
         let frame = gif::Frame::from_rgba(w as u16, h as u16, image.as_mut_slice());
 
         // if there is no encoder present create one

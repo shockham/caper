@@ -4,6 +4,8 @@ use glium::backend::{ Facade, Context };
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use rayon::prelude::*;
+
 /// Struct containing the data for the lighting system
 pub struct Lighting {
     context: Rc<Context>,
@@ -58,7 +60,7 @@ impl Lighting {
     pub fn regenerate_lighting_tex(&mut self) {
         let mut dir_tex = self.directional_tex.borrow_mut();
 
-        let lights = self.directional_lights.iter()
+        let lights = self.directional_lights.par_iter()
             .filter(|d| d.active)
             .map(|d| d.dir)
             .collect::<Vec<Vector3>>();
