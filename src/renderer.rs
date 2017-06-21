@@ -320,6 +320,11 @@ impl Renderer {
                 .size((300.0, 200.0), ImGuiSetCond_FirstUseEver)
                 .position((0.0, 0.0), ImGuiSetCond_FirstUseEver)
                 .build(|| {
+                    // camera state editor
+                    if ui.collapsing_header(im_str!("Camera")).build() {
+                        ui.text(im_str!("camera_position:{:?}", cam_state.cam_pos));
+                        ui.text(im_str!("camera_rotation:{:?}", cam_state.cam_rot));
+                    }
                     // render items editor
                     if ui.collapsing_header(im_str!("Render items")).build() {
                         for render_item in render_items {
