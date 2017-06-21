@@ -188,9 +188,9 @@ impl Renderer {
 
     /// Draws a frame
     pub fn draw<F: FnMut(&Ui)>(&mut self,
-                               cam_state: &CamState,
-                               render_items: &Vec<RenderItem>,
-                               text_items: &Vec<TextItem>,
+                               cam_state: &mut CamState,
+                               render_items: &mut Vec<RenderItem>,
+                               text_items: &mut Vec<TextItem>,
                                mut f: F) {
         // get display dimensions
         let (width, height) = self.display.get_framebuffer_dimensions();
@@ -322,8 +322,34 @@ impl Renderer {
                 .build(|| {
                     // camera state editor
                     if ui.collapsing_header(im_str!("Camera")).build() {
-                        ui.text(im_str!("camera_position:{:?}", cam_state.cam_pos));
-                        ui.text(im_str!("camera_rotation:{:?}", cam_state.cam_rot));
+                        if ui.collapsing_header(im_str!("position")).build() {
+                            ui.input_float(im_str!("x"), &mut cam_state.cam_pos.0)
+                                .step(0.01)
+                                .step_fast(1.0)
+                                .build();
+                            ui.input_float(im_str!("y"), &mut cam_state.cam_pos.1)
+                                .step(0.01)
+                                .step_fast(1.0)
+                                .build();
+                            ui.input_float(im_str!("z"), &mut cam_state.cam_pos.2)
+                                .step(0.01)
+                                .step_fast(1.0)
+                                .build();
+                        }
+                        if ui.collapsing_header(im_str!("rotation")).build() {
+                            ui.input_float(im_str!("x"), &mut cam_state.cam_rot.0)
+                                .step(0.01)
+                                .step_fast(1.0)
+                                .build();
+                            ui.input_float(im_str!("y"), &mut cam_state.cam_rot.1)
+                                .step(0.01)
+                                .step_fast(1.0)
+                                .build();
+                            ui.input_float(im_str!("z"), &mut cam_state.cam_rot.2)
+                                .step(0.01)
+                                .step_fast(1.0)
+                                .build();
+                        }
                     }
                     // render items editor
                     if ui.collapsing_header(im_str!("Render items")).build() {
@@ -335,7 +361,7 @@ impl Renderer {
                                     ui.text(im_str!("texture:{:?}", render_item.material.texture_name));
                                     ui.text(im_str!("normal_texture:{:?}", render_item.material.normal_texture_name));
                                 });
-                                ui.text(im_str!("active:{}", render_item.active));
+                                ui.checkbox(im_str!("active"), &mut render_item.active);
                                 ui.text(im_str!("instance_count:{}", render_item.instance_transforms.len()));
                                 ui.text(im_str!("physics_type:{:?}", render_item.physics_type));
                             });
@@ -349,7 +375,7 @@ impl Renderer {
                                 ui.text(im_str!("color:{:?}", text_item.color));
                                 ui.text(im_str!("pos:{:?}", text_item.pos));
                                 ui.text(im_str!("scale:{:?}", text_item.scale));
-                                ui.text(im_str!("active:{}", text_item.active));
+                                ui.checkbox(im_str!("active"), &mut text_item.active);
                             });
                         }
                     }

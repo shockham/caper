@@ -236,7 +236,7 @@ impl Game {
 
         // render the frame
         {
-            self.renderer.draw(&self.cam_state, &self.render_items, &self.text_items, &mut render_imgui);
+            self.renderer.draw(&mut self.cam_state, &mut self.render_items, &mut self.text_items, &mut render_imgui);
         }
 
         self.delta = 0.000000001f32 * frame_start.elapsed().subsec_nanos() as f32;
