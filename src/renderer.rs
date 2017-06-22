@@ -315,7 +315,7 @@ impl Renderer {
 
         // create the engine editor
         if self.show_editor {
-            // available textures and shaders TODO tidy this up
+            // available shaders TODO tidy this up, chk_ currently needed for assign
             let chk_shader_list = self.shaders.shaders.keys()
                 .map(|s| s.to_string())
                 .collect::<Vec<String>>();
@@ -323,7 +323,11 @@ impl Renderer {
                 .map(|s| im_str!("{}", s))
                 .collect::<Vec<ImStr>>();
             let shader_list = shader_list.as_slice();
-            let texture_list = self.shaders.textures.keys()
+            // available texture TODO tidy this up, chk_ currently needed for assign
+            let chk_texture_list = self.shaders.textures.keys()
+                .map(|s| s.to_string())
+                .collect::<Vec<String>>();
+            let texture_list = chk_texture_list.iter()
                 .map(|s| im_str!("{}", s))
                 .collect::<Vec<ImStr>>();
             let texture_list = texture_list.as_slice();
@@ -373,8 +377,9 @@ impl Renderer {
                                 ui.text(im_str!("vert_count:{}", render_item.vertices.len()));
                                 ui.tree_node(im_str!("material")).build(|| {
                                     // shader name
-                                    let mut shader_index = if let Ok(i) = chk_shader_list.binary_search(
-                                        &render_item.material.shader_name) {
+                                    let mut shader_index =
+                                        if let Ok(i) =
+                                            chk_shader_list.binary_search(&render_item.material.shader_name) {
                                         i as i32
                                     } else {
                                         0i32
@@ -382,11 +387,28 @@ impl Renderer {
                                     ui.combo(im_str!("shader"), &mut shader_index, &shader_list, -1);
                                     render_item.material.shader_name = chk_shader_list[shader_index as usize].clone();
                                     // texture
-                                    let mut tex_index = 0;
+                                    let tex_name =
+                                        render_item.material.texture_name.clone().unwrap_or("".to_string());
+                                    let mut tex_index = if let Ok(i) = chk_texture_list.binary_search(&tex_name) {
+                                        i as i32
+                                    } else {
+                                        0i32
+                                    };
                                     ui.combo(im_str!("texture"), &mut tex_index, &texture_list, -1);
+                                    render_item.material.texture_name =
+                                        Some(chk_texture_list[tex_index as usize].clone());
                                     // normal texture
-                                    let mut norm_tex_index = 0;
+                                    let n_tex_name =
+                                        render_item.material.normal_texture_name.clone().unwrap_or("".to_string());
+                                    let mut norm_tex_index =
+                                        if let Ok(i) = chk_texture_list.binary_search(&n_tex_name) {
+                                        i as i32
+                                    } else {
+                                        0i32
+                                    };
                                     ui.combo(im_str!("normal_texture"), &mut norm_tex_index, &texture_list, -1);
+                                    render_item.material.normal_texture_name =
+                                        Some(chk_texture_list[norm_tex_index as usize].clone());
                                 });
                                 ui.checkbox(im_str!("active"), &mut render_item.active);
                                 ui.text(im_str!("instance_count:{}", render_item.instance_transforms.len()));
