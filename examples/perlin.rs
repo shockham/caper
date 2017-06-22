@@ -45,6 +45,7 @@ fn main() {
     game.add_render_item(create_skydome("height"));
     game.add_render_item(
         RenderItemBuilder::default()
+            .name("sphere".to_string())
             .vertices(gen_sphere())
             .material(MaterialBuilder::default()
                 .shader_name("line".to_string())
