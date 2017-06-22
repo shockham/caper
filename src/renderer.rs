@@ -322,31 +322,33 @@ impl Renderer {
                 .build(|| {
                     // camera state editor
                     if ui.collapsing_header(im_str!("Camera")).build() {
+                        // camera position
                         if ui.collapsing_header(im_str!("position")).build() {
                             ui.input_float(im_str!("x"), &mut cam_state.cam_pos.0)
-                                .step(0.01)
+                                .step(0.1)
                                 .step_fast(1.0)
                                 .build();
                             ui.input_float(im_str!("y"), &mut cam_state.cam_pos.1)
-                                .step(0.01)
+                                .step(0.1)
                                 .step_fast(1.0)
                                 .build();
                             ui.input_float(im_str!("z"), &mut cam_state.cam_pos.2)
-                                .step(0.01)
+                                .step(0.1)
                                 .step_fast(1.0)
                                 .build();
                         }
+                        // camera rotation
                         if ui.collapsing_header(im_str!("rotation")).build() {
                             ui.input_float(im_str!("x"), &mut cam_state.cam_rot.0)
-                                .step(0.01)
+                                .step(0.1)
                                 .step_fast(1.0)
                                 .build();
                             ui.input_float(im_str!("y"), &mut cam_state.cam_rot.1)
-                                .step(0.01)
+                                .step(0.1)
                                 .step_fast(1.0)
                                 .build();
                             ui.input_float(im_str!("z"), &mut cam_state.cam_rot.2)
-                                .step(0.01)
+                                .step(0.1)
                                 .step_fast(1.0)
                                 .build();
                         }
@@ -373,7 +375,21 @@ impl Renderer {
                             ui.tree_node(im_str!("name:{}", text_item.name)).build(|| {
                                 ui.text(im_str!("text:{}", text_item.text));
                                 ui.text(im_str!("color:{:?}", text_item.color));
-                                ui.text(im_str!("pos:{:?}", text_item.pos));
+                                // text item position
+                                if ui.collapsing_header(im_str!("position")).build() {
+                                    ui.input_float(im_str!("x"), &mut text_item.pos.0)
+                                        .step(0.01)
+                                        .step_fast(1.0)
+                                        .build();
+                                    ui.input_float(im_str!("y"), &mut text_item.pos.1)
+                                        .step(0.01)
+                                        .step_fast(1.0)
+                                        .build();
+                                    ui.input_float(im_str!("z"), &mut text_item.pos.2)
+                                        .step(0.01)
+                                        .step_fast(1.0)
+                                        .build();
+                                }
                                 ui.text(im_str!("scale:{:?}", text_item.scale));
                                 ui.checkbox(im_str!("active"), &mut text_item.active);
                             });
