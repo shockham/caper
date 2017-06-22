@@ -374,7 +374,25 @@ impl Renderer {
                         for text_item in text_items {
                             ui.tree_node(im_str!("name:{}", text_item.name)).build(|| {
                                 ui.text(im_str!("text:{}", text_item.text));
-                                ui.text(im_str!("color:{:?}", text_item.color));
+                                // text item color
+                                if ui.collapsing_header(im_str!("color")).build() {
+                                    ui.input_float(im_str!("r"), &mut text_item.color.0)
+                                        .step(0.01)
+                                        .step_fast(1.0)
+                                        .build();
+                                    ui.input_float(im_str!("g"), &mut text_item.color.1)
+                                        .step(0.01)
+                                        .step_fast(1.0)
+                                        .build();
+                                    ui.input_float(im_str!("b"), &mut text_item.color.2)
+                                        .step(0.01)
+                                        .step_fast(1.0)
+                                        .build();
+                                    ui.input_float(im_str!("a"), &mut text_item.color.3)
+                                        .step(0.01)
+                                        .step_fast(1.0)
+                                        .build();
+                                }
                                 // text item position
                                 if ui.collapsing_header(im_str!("position")).build() {
                                     ui.input_float(im_str!("x"), &mut text_item.pos.0)
