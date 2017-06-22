@@ -408,7 +408,21 @@ impl Renderer {
                                         .step_fast(1.0)
                                         .build();
                                 }
-                                ui.text(im_str!("scale:{:?}", text_item.scale));
+                                // text item scale
+                                if ui.collapsing_header(im_str!("scale")).build() {
+                                    ui.input_float(im_str!("x"), &mut text_item.scale.0)
+                                        .step(0.01)
+                                        .step_fast(1.0)
+                                        .build();
+                                    ui.input_float(im_str!("y"), &mut text_item.scale.1)
+                                        .step(0.01)
+                                        .step_fast(1.0)
+                                        .build();
+                                    ui.input_float(im_str!("z"), &mut text_item.scale.2)
+                                        .step(0.01)
+                                        .step_fast(1.0)
+                                        .build();
+                                }
                                 ui.checkbox(im_str!("active"), &mut text_item.active);
                             });
                         }
