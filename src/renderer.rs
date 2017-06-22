@@ -30,7 +30,7 @@ use std::thread;
 use shader::Shaders;
 use utils::{ dotp, build_persp_proj_mat, build_fp_view_matrix, mul_mat4 };
 use posteffect::{ PostEffect, render_post };
-use types::{ RenderItem, TextItem, Vector3, Matrix4, CamState, Attr };
+use types::{ RenderItem, TextItem, Vector3, Matrix4, CamState, Attr, PhysicsType };
 use lighting::Lighting;
 
 
@@ -410,9 +410,21 @@ impl Renderer {
                                         Some(chk_texture_list[norm_tex_index as usize].clone());
                                 });
                                 ui.checkbox(im_str!("active"), &mut render_item.active);
+                                // physics type
+                                let mut physics_type = match render_item.physics_type {
+                                    PhysicsType::Static => 0,
+                                    PhysicsType::Dynamic => 1,
+                                    PhysicsType::None => 2,
+                                };
+                                ui.combo(im_str!("physics"), &mut physics_type,
+                                         &[im_str!("Static"), im_str!("Dynamic"), im_str!("None")], -1);
+                                render_item.physics_type = match physics_type {
+                                    0 => PhysicsType::Static,
+                                    1 => PhysicsType::Dynamic,
+                                    _ => PhysicsType::None,
+                                };
                                 // TODO add mutability for these items
                                 ui.text(im_str!("instance_count:{}", render_item.instance_transforms.len()));
-                                ui.text(im_str!("physics_type:{:?}", render_item.physics_type));
                                 ui.text(im_str!("vert_count:{}", render_item.vertices.len()));
                             });
                         }
