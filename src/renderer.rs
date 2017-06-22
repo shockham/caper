@@ -374,7 +374,6 @@ impl Renderer {
                         // create node for each item
                         for render_item in render_items {
                             ui.tree_node(im_str!("name:{}", render_item.name)).build(|| {
-                                ui.text(im_str!("vert_count:{}", render_item.vertices.len()));
                                 ui.tree_node(im_str!("material")).build(|| {
                                     // shader name
                                     let mut shader_index =
@@ -411,8 +410,10 @@ impl Renderer {
                                         Some(chk_texture_list[norm_tex_index as usize].clone());
                                 });
                                 ui.checkbox(im_str!("active"), &mut render_item.active);
+                                // TODO add mutability for these items
                                 ui.text(im_str!("instance_count:{}", render_item.instance_transforms.len()));
                                 ui.text(im_str!("physics_type:{:?}", render_item.physics_type));
+                                ui.text(im_str!("vert_count:{}", render_item.vertices.len()));
                             });
                         }
                     }
@@ -420,6 +421,7 @@ impl Renderer {
                     if ui.collapsing_header(im_str!("Text items")).build() {
                         for text_item in text_items {
                             ui.tree_node(im_str!("name:{}", text_item.name)).build(|| {
+                                // TODO add mutability
                                 ui.text(im_str!("text:{}", text_item.text));
                                 // text item color
                                 if ui.collapsing_header(im_str!("color")).build() {
