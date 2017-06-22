@@ -315,8 +315,11 @@ impl Renderer {
 
         // create the engine editor
         if self.show_editor {
-            // available textures and shaders
-            let shader_list = self.shaders.shaders.keys()
+            // available textures and shaders TODO tidy this up
+            let chk_shader_list = self.shaders.shaders.keys()
+                .map(|s| s.to_string())
+                .collect::<Vec<String>>();
+            let shader_list = chk_shader_list.iter()
                 .map(|s| im_str!("{}", s))
                 .collect::<Vec<ImStr>>();
             let shader_list = shader_list.as_slice();
@@ -369,12 +372,21 @@ impl Renderer {
                             ui.tree_node(im_str!("name:{}", render_item.name)).build(|| {
                                 ui.text(im_str!("vert_count:{}", render_item.vertices.len()));
                                 ui.tree_node(im_str!("material")).build(|| {
-                                    let mut shader_index = 0;
+                                    // shader name
+                                    let mut shader_index = if let Ok(i) = chk_shader_list.binary_search(
+                                        &render_item.material.shader_name) {
+                                        i as i32
+                                    } else {
+                                        0i32
+                                    };
                                     ui.combo(im_str!("shader"), &mut shader_index, &shader_list, -1);
-                                    let mut mat_index = 0;
-                                    ui.combo(im_str!("texture"), &mut mat_index, &texture_list, -1);
-                                    let mut norm_mat_index = 0;
-                                    ui.combo(im_str!("normal_texture"), &mut norm_mat_index, &texture_list, -1);
+                                    render_item.material.shader_name = chk_shader_list[shader_index as usize].clone();
+                                    // texture
+                                    let mut tex_index = 0;
+                                    ui.combo(im_str!("texture"), &mut tex_index, &texture_list, -1);
+                                    // normal texture
+                                    let mut norm_tex_index = 0;
+                                    ui.combo(im_str!("normal_texture"), &mut norm_tex_index, &texture_list, -1);
                                 });
                                 ui.checkbox(im_str!("active"), &mut render_item.active);
                                 ui.text(im_str!("instance_count:{}", render_item.instance_transforms.len()));
