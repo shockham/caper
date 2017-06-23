@@ -2,7 +2,7 @@ use glium::Display;
 pub use glium::glutin::VirtualKeyCode as Key;
 pub use glium::glutin::MouseButton as MouseButton;
 use glium::glutin::MouseScrollDelta;
-use glium::glutin::Event::{ KeyboardInput, MouseMoved, MouseInput, MouseWheel };
+use glium::glutin::Event::{ KeyboardInput, MouseMoved, MouseInput, MouseWheel, ReceivedCharacter };
 use glium::glutin::ElementState::{ Pressed, Released };
 use glium::glutin::CursorState::{ Normal, Hide };
 
@@ -28,6 +28,8 @@ pub struct Input {
     pub keys_pressed: Vec<Key>,
     /// The keys that have been released on this frame
     pub keys_released: Vec<Key>,
+    /// Characters received that are pressed down
+    pub characters_down: Vec<char>,
     /// The mouse buttons that are currently pressed down
     pub mouse_btns_down: Vec<MouseButton>,
     /// The mouse buttons that have been pressed down on this frame
@@ -49,6 +51,7 @@ impl Input {
             keys_down : Vec::new(),
             keys_pressed: Vec::new(),
             keys_released: Vec::new(),
+            characters_down: Vec::new(),
             mouse_btns_down: Vec::new(),
             mouse_btns_pressed: Vec::new(),
             mouse_btns_released: Vec::new(),
@@ -72,6 +75,7 @@ impl Input {
         self.keys_released.clear();
         self.mouse_btns_pressed.clear();
         self.mouse_btns_released.clear();
+        self.characters_down.clear();
 
         // polling and handling the events received by the display
         for event in display.poll_events() {
@@ -105,6 +109,7 @@ impl Input {
                         MouseScrollDelta::PixelDelta(x, y) => (x, y),
                     };
                 },
+                ReceivedCharacter(c) => self.characters_down.push(c),
                 _ => ()
             }
         }

@@ -1,7 +1,7 @@
 use renderer::Renderer;
 use audio::Audio;
 use types::{ RenderItem, TextItem, CamState, PhysicsType };
-use input::{ Input, MouseButton };
+use input::Input;
 use imgui::Ui;
 use nalgebra::Vector3 as nVector3;
 use nalgebra::Translation3;
@@ -175,9 +175,7 @@ impl Game {
             self.input.update_inputs(&self.renderer.display);
 
             // update the inputs for imgui
-            self.renderer.update_imgui_input(self.input.mouse_pos,
-                                             (self.input.mouse_btns_down.contains(
-                                                     &MouseButton::Left), false, false));
+            self.renderer.update_imgui_input(&self.input);
         }
 
         // update the new positions back to rb

@@ -32,6 +32,7 @@ use utils::{ dotp, build_persp_proj_mat, build_fp_view_matrix, mul_mat4 };
 use posteffect::{ PostEffect, render_post };
 use types::{ RenderItem, TextItem, Vector3, Matrix4, CamState, Attr, PhysicsType };
 use lighting::Lighting;
+use input::{ Input, MouseButton };
 
 
 /// struct for abstracting the render state
@@ -129,10 +130,15 @@ impl Renderer {
     }
 
     /// Update imgui's interal input state
-    pub fn update_imgui_input(&mut self, pos: (i32, i32), btns: (bool, bool, bool)) {
-        self.imgui.set_mouse_pos(pos.0 as f32, pos.1 as f32);
-        self.imgui.set_mouse_down(&[btns.0, btns.1, btns.2, false, false]);
-        //self.imgui.set_mouse_wheel(self.mouse_wheel);
+    pub fn update_imgui_input(&mut self, input: &Input) {
+        self.imgui.set_mouse_pos(input.mouse_pos.0 as f32, input.mouse_pos.1 as f32);
+        self.imgui.set_mouse_down(&[input.mouse_btns_down.contains(&MouseButton::Left),
+                                  input.mouse_btns_down.contains(&MouseButton::Right),
+                                  input.mouse_btns_down.contains(&MouseButton::Middle),
+                                  false, false]);
+        for i in 0..input.characters_down.len() {
+            self.imgui.add_input_character(input.characters_down[i])
+        }
     }
 
     /// Test whether an object is in the view frustrum
