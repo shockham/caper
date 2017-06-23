@@ -410,7 +410,7 @@ impl Renderer {
                                         Some(chk_texture_list[norm_tex_index as usize].clone());
                                 });
                                 ui.checkbox(im_str!("active"), &mut render_item.active);
-                                // physics type
+                                // physics type TODO make sure this is propagated
                                 let mut physics_type = match render_item.physics_type {
                                     PhysicsType::Static => 0,
                                     PhysicsType::Dynamic => 1,
@@ -434,7 +434,7 @@ impl Renderer {
                         for text_item in text_items {
                             ui.tree_node(im_str!("name:{}", text_item.name)).build(|| {
                                 // TODO add mutability
-                                ui.text(im_str!("text:{}", text_item.text));
+                                ui.input_text(im_str!("text"), &mut text_item.text).build();
                                 // text item color
                                 if ui.collapsing_header(im_str!("color")).build() {
                                     ui.input_float(im_str!("r"), &mut text_item.color.0)
