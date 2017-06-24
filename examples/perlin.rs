@@ -133,8 +133,10 @@ fn main() {
                 (sphere_pos.0 - pseu_cam_pos.0, 3.0, sphere_pos.1 - pseu_cam_pos.1);
         }
 
-        if game.input.keys_down.contains(&Key::L) { debug_mode = true; }
-        if game.input.keys_down.contains(&Key::K) { debug_mode = false; }
+        if game.input.keys_down.contains(&Key::LShift) {
+            if game.input.keys_down.contains(&Key::L) { debug_mode = true; }
+            if game.input.keys_down.contains(&Key::K) { debug_mode = false; }
+        }
         game.input.hide_mouse = !debug_mode;
         game.renderer.show_editor = debug_mode;
         // quit
