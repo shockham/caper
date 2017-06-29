@@ -142,7 +142,7 @@ impl Renderer {
     }
 
     /// Test whether an object is in the view frustrum
-    fn frustrum_test(pos: Vector3, radius: f32, frustrum_planes: Vec<(f32, f32, f32, f32)>) -> bool {
+    fn frustrum_test(pos: &Vector3, radius: f32, frustrum_planes: &Vec<(f32, f32, f32, f32)>) -> bool {
         for plane in frustrum_planes {
             if dotp(&[pos.0, pos.1, pos.2], &[plane.0, plane.1, plane.2]) + plane.3 <= -radius {
                 // sphere not in frustrum
@@ -154,7 +154,7 @@ impl Renderer {
     }
 
     /// Helper function that converts viewing matrix into frustum planes
-    fn get_frustum_planes(matrix: Matrix4) -> Vec<(f32, f32, f32, f32)> {
+    fn get_frustum_planes(matrix: &Matrix4) -> Vec<(f32, f32, f32, f32)> {
         let mut planes = Vec::new();
 
         // column-major
@@ -222,7 +222,7 @@ impl Renderer {
 
         // calc frustum places for culling
         let combo_matrix = mul_mat4(projection_matrix, modelview_matrix);
-        let frustum_planes = Renderer::get_frustum_planes(combo_matrix);
+        let frustum_planes = Renderer::get_frustum_planes(&combo_matrix);
 
         // drawing a frame
         let mut target = self.display.draw();
@@ -246,9 +246,9 @@ impl Renderer {
                                 let data = item.instance_transforms.iter().filter(|t| {
                                     (t.active && !t.cull) ||
                                     (t.active &&
-                                        Renderer::frustrum_test(t.pos,
+                                        Renderer::frustrum_test(&t.pos,
                                                                 t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
-                                                                frustum_planes.clone()))
+                                                                &frustum_planes))
                                 }).map(|t| {
                                     Attr {
                                         world_position: t.pos,
