@@ -38,6 +38,7 @@ pub struct Input {
     pub mouse_btns_released: Vec<MouseButton>,
     /// Whether to show or hide the mouse
     pub hide_mouse: bool,
+    /// Internal field to track if the cursor is grabbed
     cursor_grabbed: bool,
 }
 
