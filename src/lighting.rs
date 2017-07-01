@@ -8,7 +8,9 @@ use rayon::prelude::*;
 
 /// Struct containing the data for the lighting system
 pub struct Lighting {
+    /// Ref to the render context
     context: Rc<Context>,
+    /// Collection of the directional lights
     directional_lights: Vec<DirectionalLight>,
     /// Texture representing the positions of the directional lights
     pub directional_tex: RefCell<Texture1d>,
