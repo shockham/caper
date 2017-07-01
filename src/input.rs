@@ -11,6 +11,7 @@ use std::f32::consts::PI;
 use types::CamState;
 use utils::build_fp_view_matrix;
 
+/// Double pi
 const TWO_PI:f32 = PI * 2f32;
 
 
