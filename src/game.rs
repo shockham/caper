@@ -13,8 +13,9 @@ use ncollide::shape::Cuboid;
 use std::boxed::Box;
 use std::time::Instant;
 
-// some physics constants
+/// The divisor for the physics space to align with render space
 const PHYSICS_DIVISOR:f32 = 2f32;
+/// global restitution for physics objects
 const GLOBAL_REST:f32 = 0.05f32;
 
 /// Struct for creating an instance of a game with all systems and items contained
