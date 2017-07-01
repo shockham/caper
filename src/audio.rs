@@ -5,15 +5,21 @@ use std::collections::HashMap;
 use std::io::{ BufReader, SeekFrom, Seek, Cursor };
 use std::fs::File;
 
+/// Enum to denote how the audio is stored
 enum AudioType {
+    /// The Audio is packed into the binary
     Packed(Vec<u8>),
+    /// The Audio is loose on the filesystem
     Loose(File),
 }
 
 /// Struct representing the Audio system
 pub struct Audio {
+    /// The endpoint to play the audio from
     endpoint: Endpoint,
+    /// HashMap of available audio clips
     audio: HashMap<&'static str, AudioType>,
+    /// HashMap of the playback channels that are associated with audio clips
     channels: HashMap<&'static str, Sink>,
 }
 
