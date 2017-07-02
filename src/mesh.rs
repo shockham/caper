@@ -12,6 +12,7 @@ const PI2:f32 = PI * 2f32;
 pub const DEF_SEED_BASE:usize = 0;
 
 lazy_static! {
+    /// static ref to generate perlin noise from
     static ref PERLIN:Perlin = {
         Perlin::new().set_seed(DEF_SEED_BASE)
     };

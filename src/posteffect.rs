@@ -14,13 +14,19 @@ use time;
 
 /// struct representing a post effect
 pub struct PostEffect {
+    /// Ref to the rendering context
     context: Rc<Context>,
+    /// The vertex buffer to render
     vertex_buffer: VertexBuffer<Vertex>,
+    /// The index buffer to render
     index_buffer: IndexBuffer<u16>,
+    /// Wrapped color texture
     target_color: RefCell<Option<Texture2d>>,
+    /// Wrapped depth texture
     target_depth: RefCell<Option<DepthTexture2d>>,
     /// The current shader being used for post processing
     pub current_shader: &'static str,
+    /// The time the post effect was initialised
     start_time: f32,
     /// The scale factor that the scene will be rendered in relation to to the full window resolution
     pub downscale_factor: f32,

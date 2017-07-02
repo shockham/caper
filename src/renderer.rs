@@ -53,6 +53,7 @@ pub struct Renderer {
     pub start_time: f64,
     /// The shaders that can be used for rendering
     pub shaders: Shaders,
+    /// stuct to track the fps
     fps_counter: FPSCounter,
     /// The current frames per second the Renderer is drawing at
     pub fps: f32,

@@ -43,19 +43,19 @@ pub fn load<T: Deserialize>(key: &'static str) -> Result<T, String> {
     Ok(decoded)
 }
 
-#[derive(Serialize, Deserialize, PartialEq)]
-struct Entity {
-    x: f32,
-    y: f32,
-}
-
-#[derive(Serialize, Deserialize, PartialEq)]
-struct World {
-    entities: Vec<Entity>
-}
-
 #[test]
 fn save_load_test() {
+    #[derive(Serialize, Deserialize, PartialEq)]
+    struct Entity {
+        x: f32,
+        y: f32,
+    }
+
+    #[derive(Serialize, Deserialize, PartialEq)]
+    struct World {
+        entities: Vec<Entity>
+    }
+
     let world = World {
         entities: vec![Entity {x: 0.0, y: 4.0}, Entity {x: 10.0, y: 20.5}]
     };
