@@ -45,6 +45,9 @@ pub mod gl330 {
         // color grading/offset
         uniform vec4 color_offset;
 
+        // greyscale
+        uniform bool greyscale;
+
         in vec2 v_tex_coords;
 
         out vec4 frag_output;
@@ -96,7 +99,15 @@ pub mod gl330 {
                 color = mix(color, vec4(blur_color, 1.0), blur_amt);
             }
 
-            frag_output = color * color_offset;
+            // color grading
+            vec4 graded = color  * color_offset;
+
+            // greyscale or not
+            if (greyscale) {
+                frag_output = vec4(vec3((graded.r + graded.g + graded.b) / 3.0), graded.a);
+            } else {
+                frag_output = graded;
+            }
         }
     ";
 }

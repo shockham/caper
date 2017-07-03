@@ -109,6 +109,9 @@ pub struct PostShaderOptions {
     /// Colour grading
     #[builder(default="(1f32, 1f32, 1f32, 1f32)")]
     pub color_offset: (f32, f32, f32, f32),
+    /// Greyscale
+    #[builder(default="false")]
+    pub greyscale: bool,
 }
 
 /// Renders the post effect on to the scene rendered in the draw FnMut
@@ -170,6 +173,7 @@ pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut 
             bokeh_focal_depth: system.post_shader_options.bokeh_focal_depth,
             bokeh_focal_width: system.post_shader_options.bokeh_focal_width,
             color_offset: system.post_shader_options.color_offset,
+            greyscale: system.post_shader_options.greyscale,
         };
 
         // second pass draw the post effect
