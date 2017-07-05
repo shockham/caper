@@ -26,7 +26,7 @@ nalgebra = "0.11"
 ncollide = "0.11"
 image = "0.13"
 gif = "0.9"
-derive_builder = { version = "0.4.7", features = ["private_fields"] }
+derive_builder = "0.5"
 rodio = "0.5"
 imgui-glium-renderer = "0.0.13"
 lazy_static = "0.2"
