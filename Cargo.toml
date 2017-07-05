@@ -13,8 +13,8 @@ description = "Small game framework"
 glium = "0.16"
 glium_text_rusttype = "0.1.0"
 time = "0.1"
-genmesh = "0.4"
-obj = { version = "0.5", features = ["usegenmesh"] }
+genmesh = "0.5"
+obj = { version = "0.7", features = ["genmesh"] }
 noise = "0.4"
 imgui = "0.0.13"
 fps_counter = "0.2.0"
