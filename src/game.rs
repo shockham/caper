@@ -93,7 +93,6 @@ impl Game {
 
         // setup the physics for the item
         self.add_physics(i);
-
     }
 
     /// Initalise physics depending on PhysicsType

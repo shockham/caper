@@ -29,7 +29,7 @@ pub fn save<T: Serialize>(to_save: &T, key: &'static str) {
 }
 
 /// Load a decodable type from persistence using the key
-pub fn load<T: Deserialize>(key: &'static str) -> Result<T, String> {
+pub fn load<T: for<'a> Deserialize<'a>>(key: &'static str) -> Result<T, String> {
     let mut f = match File::open(format!("{}{}", PERSIST_BASE_PATH, key)) {
         Ok(f) => f,
         Err(e) => return Err(format!("{}", e)),
