@@ -91,6 +91,13 @@ impl Game {
         // the index of the newly added item
         let i = self.render_items.len() - 1;
 
+        // setup the physics for the item
+        self.add_physics(i);
+
+    }
+
+    /// Initalise physics depending on PhysicsType
+    pub fn add_physics(&mut self, i: usize) {
         // add the rigid body if needed
         match self.render_items[i].physics_type {
             PhysicsType::Static => {
