@@ -13,3 +13,6 @@ addons:
 os:
     - linux
     - osx
+env:
+    global:
+        - GLIUM_HEADLESS_TESTS=1
