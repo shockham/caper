@@ -11,7 +11,7 @@ Note: This is being used for/was created with [specific game](https://twitter.co
 
 [Example](https://github.com/shockham/caper/blob/master/examples/simple.rs) of a basis for a game:
 
-```
+```no_run
 extern crate caper;
 
 use caper::types::{ RenderItemBuilder, TransformBuilder };
