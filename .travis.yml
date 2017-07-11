@@ -10,6 +10,8 @@ addons:
     apt:
         packages:
             - libasound2-dev
+            - libxxf86vm-dev
+            - libosmesa6-dev
 os:
     - linux
     - osx
