@@ -6,3 +6,10 @@ rust:
 matrix:
     allow_failures:
         - rust: nightly
+addons:
+    apt:
+        packages:
+            - libasound2-dev
+os:
+    - linux
+    - osx
