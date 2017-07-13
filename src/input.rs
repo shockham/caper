@@ -3,7 +3,9 @@ pub use glium::glutin::VirtualKeyCode as Key;
 pub use glium::glutin::MouseButton as MouseButton;
 use glium::glutin::MouseScrollDelta;
 use glium::glutin::KeyboardInput;
+use glium::glutin::EventsLoop;
 use glium::glutin::WindowEvent::{ MouseMoved, MouseInput, MouseWheel, ReceivedCharacter };
+use glium::glutin::WindowEvent::KeyboardInput as WKeyboardInput;
 use glium::glutin::ElementState::{ Pressed, Released };
 use glium::glutin::CursorState::{ Normal, Hide };
 
@@ -42,6 +44,8 @@ pub struct Input {
     pub hide_mouse: bool,
     /// Internal field to track if the cursor is grabbed
     cursor_grabbed: bool,
+    /// Event loop for the window
+    event_loop: EventsLoop,
 }
 
 impl Input {
@@ -60,6 +64,7 @@ impl Input {
             mouse_btns_released: Vec::new(),
             hide_mouse: true,
             cursor_grabbed: false,
+            event_loop: EventsLoop::new(),
         }
     }
 
@@ -69,7 +74,7 @@ impl Input {
         let (width, height) = window.get_inner_size().unwrap_or((800, 600));
         let hidpi_factor = window.hidpi_factor();
 
-        // reset the delta incase the mouse does not move
+        // reset the delta in case the mouse does not move
         self.mouse_delta = (0f32, 0f32);
         self.mouse_wheel_delta = (0f32, 0f32);
 
@@ -81,32 +86,36 @@ impl Input {
         self.characters_down.clear();
 
         // polling and handling the events received by the display
-        for event in display.poll_events() {
+        self.event_loop.poll_events(|event| {
             match event {
-                KeyboardInput(Pressed, _, vkey) => {
+                WKeyboardInput {
+                    input: KeyboardInput { state: Pressed, vitual_keycode: vkey } 
+                } => {
                     self.keys_down.push(vkey.unwrap());
                     self.keys_pressed.push(vkey.unwrap());
                 },
-                KeyboardInput(Released, _, vkey) => {
+                WKeyboardInput {
+                    input: KeyboardInput { state: Released, virtual_keycode: vkey } 
+                } => {
                     self.keys_down.retain(|&k| k != vkey.unwrap());
                     self.keys_released.push(vkey.unwrap());
                 },
-                MouseMoved(x, y) => {
+                MouseMoved { position: (x, y) } => {
                     let mouse_diff = ((width / 2) as i32 - (x as f32 / hidpi_factor) as i32,
                                       (height / 2) as i32 - (y as f32 / hidpi_factor) as i32);
                     self.mouse_delta.0 = (mouse_diff.0 as f32)/(width as f32);
                     self.mouse_delta.1 = (mouse_diff.1 as f32)/(height as f32);
                     self.mouse_pos = (x, y);
                 },
-                MouseInput(Pressed, btn) => {
+                MouseInput { state: Pressed, button: btn } => {
                     self.mouse_btns_down.push(btn);
                     self.mouse_btns_pressed.push(btn);
                 },
-                MouseInput(Released, btn) => {
+                MouseInput { state: Released, button: btn } => {
                     self.mouse_btns_down.retain(|&mb| mb != btn);
                     self.mouse_btns_released.push(btn);
                 },
-                MouseWheel(delta, _) => {
+                MouseWheel { detla: delta } => {
                     self.mouse_wheel_delta = match delta {
                         MouseScrollDelta::LineDelta(x, y) => (x, y),
                         MouseScrollDelta::PixelDelta(x, y) => (x, y),
@@ -115,7 +124,7 @@ impl Input {
                 ReceivedCharacter(c) => self.characters_down.push(c),
                 _ => ()
             }
-        }
+        });
 
         if self.hide_mouse {
             // set the mouse to the centre of the screen
