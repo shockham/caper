@@ -2,7 +2,8 @@ use glium::Display;
 pub use glium::glutin::VirtualKeyCode as Key;
 pub use glium::glutin::MouseButton as MouseButton;
 use glium::glutin::MouseScrollDelta;
-use glium::glutin::Event::{ KeyboardInput, MouseMoved, MouseInput, MouseWheel, ReceivedCharacter };
+use glium::glutin::KeyboardInput;
+use glium::glutin::WindowEvent::{ MouseMoved, MouseInput, MouseWheel, ReceivedCharacter };
 use glium::glutin::ElementState::{ Pressed, Released };
 use glium::glutin::CursorState::{ Normal, Hide };
 
@@ -21,7 +22,7 @@ pub struct Input {
     pub mouse_pos: (i32, i32),
     /// The difference in mouse position from the last frame
     pub mouse_delta: (f32, f32),
-    /// The difference in position of the mouse wheen from the previous frame
+    /// The difference in position of the mouse when from the previous frame
     pub mouse_wheel_delta: (f32, f32),
     /// The keys that are currently pressed down
     pub keys_down: Vec<Key>,

@@ -10,7 +10,7 @@ documentation = "https://docs.rs/caper/*/caper/"
 description = "Small game framework"
 
 [dependencies]
-glium = "0.16"
+glium = "0.17"
 glium_text_rusttype = "0.1.0"
 time = "0.1"
 genmesh = "0.5"

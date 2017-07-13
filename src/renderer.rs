@@ -1,4 +1,4 @@
-use glium::{ Display, DrawParameters, DisplayBuild, Surface, Depth, Blend };
+use glium::{ Display, DrawParameters, Surface, Depth, Blend };
 use glium::index::{ NoIndices, PrimitiveType };
 use glium::DepthTest::IfLess;
 use glium::vertex::VertexBuffer;
