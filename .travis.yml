@@ -18,3 +18,6 @@ os:
 env:
     global:
         - GLIUM_HEADLESS_TESTS=1
+script:
+    - cargo build --verbose
+    - cargo test --verbose -j 1

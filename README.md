@@ -2,6 +2,7 @@ Caper
 ========
 [![crates.io version](https://img.shields.io/crates/v/caper.svg)](https://crates.io/crates/caper)
 [![Build status](https://travis-ci.org/shockham/caper.svg?branch=master)](https://travis-ci.org/shockham/caper)
+[![Documentation](https://docs.rs/caper/badge.svg)](https://docs.rs/caper)
 
 Small game framework using [rust](https://www.rust-lang.org/).
 Currently has systems for:
