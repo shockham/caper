@@ -7,10 +7,10 @@ macro_rules! load_texture (
         use $crate::glium;
         use $crate::image;
 
-        let image = image::load(Cursor::new(&include_bytes!($file)[..]), 
+        let image = image::load(Cursor::new(&include_bytes!($file)[..]),
                                 image::PNG).unwrap().to_rgba();
         let image_dimensions = image.dimensions();
-        let image = glium::texture::RawImage2d::from_raw_rgba_reversed(image.into_raw(), image_dimensions);
+        let image = glium::texture::RawImage2d::from_raw_rgba_reversed(image.into_raw().as_slice(), image_dimensions);
 
         CompressedSrgbTexture2d::new($display, image).unwrap()
     }};

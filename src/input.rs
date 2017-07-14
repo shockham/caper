@@ -6,6 +6,7 @@ use glium::glutin::KeyboardInput;
 use glium::glutin::EventsLoop;
 use glium::glutin::WindowEvent::{ MouseMoved, MouseInput, MouseWheel, ReceivedCharacter };
 use glium::glutin::WindowEvent::KeyboardInput as WKeyboardInput;
+use glium::glutin::Event::WindowEvent;
 use glium::glutin::ElementState::{ Pressed, Released };
 use glium::glutin::CursorState::{ Normal, Hide };
 
@@ -70,7 +71,7 @@ impl Input {
 
     /// This method updates the state of the inputs
     pub fn update_inputs(&mut self, display: &Display) {
-        let window = display.get_window().unwrap();
+        let window = display.gl_window();
         let (width, height) = window.get_inner_size().unwrap_or((800, 600));
         let hidpi_factor = window.hidpi_factor();
 
@@ -87,42 +88,46 @@ impl Input {
 
         // polling and handling the events received by the display
         self.event_loop.poll_events(|event| {
-            match event {
-                WKeyboardInput {
-                    input: KeyboardInput { state: Pressed, vitual_keycode: vkey } 
-                } => {
-                    self.keys_down.push(vkey.unwrap());
-                    self.keys_pressed.push(vkey.unwrap());
-                },
-                WKeyboardInput {
-                    input: KeyboardInput { state: Released, virtual_keycode: vkey } 
-                } => {
-                    self.keys_down.retain(|&k| k != vkey.unwrap());
-                    self.keys_released.push(vkey.unwrap());
-                },
-                MouseMoved { position: (x, y) } => {
-                    let mouse_diff = ((width / 2) as i32 - (x as f32 / hidpi_factor) as i32,
-                                      (height / 2) as i32 - (y as f32 / hidpi_factor) as i32);
-                    self.mouse_delta.0 = (mouse_diff.0 as f32)/(width as f32);
-                    self.mouse_delta.1 = (mouse_diff.1 as f32)/(height as f32);
-                    self.mouse_pos = (x, y);
-                },
-                MouseInput { state: Pressed, button: btn } => {
-                    self.mouse_btns_down.push(btn);
-                    self.mouse_btns_pressed.push(btn);
-                },
-                MouseInput { state: Released, button: btn } => {
-                    self.mouse_btns_down.retain(|&mb| mb != btn);
-                    self.mouse_btns_released.push(btn);
-                },
-                MouseWheel { detla: delta } => {
-                    self.mouse_wheel_delta = match delta {
-                        MouseScrollDelta::LineDelta(x, y) => (x, y),
-                        MouseScrollDelta::PixelDelta(x, y) => (x, y),
-                    };
-                },
-                ReceivedCharacter(c) => self.characters_down.push(c),
-                _ => ()
+            if let WindowEvent { event, .. } = event {
+                match event {
+                    WKeyboardInput {
+                        input: KeyboardInput { state: Pressed, virtual_keycode: vkey, .. },
+                        ..
+                    } => {
+                        self.keys_down.push(vkey.unwrap());
+                        self.keys_pressed.push(vkey.unwrap());
+                    },
+                    WKeyboardInput {
+                        input: KeyboardInput { state: Released, virtual_keycode: vkey, .. },
+                        ..
+                    } => {
+                        self.keys_down.retain(|&k| k != vkey.unwrap());
+                        self.keys_released.push(vkey.unwrap());
+                    },
+                    MouseMoved { position: (x, y), .. } => {
+                        let mouse_diff = ((width / 2) as i32 - (x as f32 / hidpi_factor) as i32,
+                                          (height / 2) as i32 - (y as f32 / hidpi_factor) as i32);
+                        self.mouse_delta.0 = (mouse_diff.0 as f32)/(width as f32);
+                        self.mouse_delta.1 = (mouse_diff.1 as f32)/(height as f32);
+                        self.mouse_pos = (x as i32, y as i32);
+                    },
+                    MouseInput { state: Pressed, button: btn, .. } => {
+                        self.mouse_btns_down.push(btn);
+                        self.mouse_btns_pressed.push(btn);
+                    },
+                    MouseInput { state: Released, button: btn, .. } => {
+                        self.mouse_btns_down.retain(|&mb| mb != btn);
+                        self.mouse_btns_released.push(btn);
+                    },
+                    MouseWheel { delta: delta, .. } => {
+                        self.mouse_wheel_delta = match delta {
+                            MouseScrollDelta::LineDelta(x, y) => (x, y),
+                            MouseScrollDelta::PixelDelta(x, y) => (x, y),
+                        };
+                    },
+                    ReceivedCharacter(c) => self.characters_down.push(c),
+                    _ => ()
+                }
             }
         });
 

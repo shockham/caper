@@ -2,7 +2,7 @@ use glium::{ Display, DrawParameters, Surface, Depth, Blend };
 use glium::index::{ NoIndices, PrimitiveType };
 use glium::DepthTest::IfLess;
 use glium::vertex::VertexBuffer;
-use glium::glutin::{ WindowBuilder, get_primary_monitor, GlRequest, Api };
+use glium::glutin::{ WindowBuilder, ContextBuilder, EventsLoop, get_primary_monitor, GlRequest, Api };
 use glium::glutin::CursorState::Hide;//{ Grab, Hide };
 use glium::draw_parameters::{ DepthClamp, BackfaceCullingMode };
 use glium::texture::RawImage2d;
@@ -77,15 +77,17 @@ struct GifInfo {
 impl Renderer {
     /// Creates new Renderer instance
     pub fn new(title:String) -> Renderer {
-        // create a diplay instance
-        let display = WindowBuilder::new()
-            .with_depth_buffer(24)
+        let events_loop = EventsLoop::new();
+        let window = WindowBuilder::new()
             .with_title(title)
-            .with_vsync()
-            .with_gl(GlRequest::Specific(Api::OpenGl, (4, 0)))
-            .with_fullscreen(get_primary_monitor())
-            .build_glium()
-            .unwrap();
+            .with_fullscreen(get_primary_monitor());
+            //.build_glium()
+            //.unwrap();
+        let context = ContextBuilder::new()
+            .with_depth_buffer(24)
+            .with_vsync(true)
+            .with_gl(GlRequest::Specific(Api::OpenGl, (4, 0)));
+        let display = Display::new(window, context, &events_loop).unwrap();
 
         // create a text system instance and font
         let text_system = TextSystem::new(&display);
@@ -126,7 +128,7 @@ impl Renderer {
     /// Sets up the render window
     pub fn setup(&self) {
         // get the window for various values
-        let window = self.display.get_window().unwrap();
+        let window = self.display.gl_window();
         window.set_cursor_state(Hide).ok();
     }
 
