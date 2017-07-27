@@ -68,6 +68,7 @@ pub extern crate ncollide;
 pub extern crate nphysics3d;
 pub extern crate nalgebra;
 pub extern crate image;
+pub extern crate volition as input;
 
 extern crate glium_text_rusttype as glium_text;
 extern crate noise;
@@ -87,8 +88,6 @@ pub mod texture;
 pub mod renderer;
 /// Utility functions and macros
 pub mod utils;
-/// Module for input handing
-pub mod input;
 /// Module for dealing with shaders
 pub mod shader;
 /// Module for procedurally generated meshes

@@ -179,7 +179,7 @@ impl Game {
         // update the inputs
         {
             // updating and handling the inputs
-            self.input.update_inputs(&self.renderer.display);
+            self.input.update_inputs();
 
             // update the inputs for imgui
             self.renderer.update_imgui_input(&self.input);
