@@ -19,6 +19,7 @@ use caper::game::Game;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;
 use caper::input::Key;
+use caper::utils::handle_fp_inputs;
 
 fn main() {
     // crate an instance of the game struct
@@ -42,7 +43,7 @@ fn main() {
         game.update(|_:&Ui|{ });
 
         // update the first person inputs
-        game.input.handle_fp_inputs(&mut game.cam_state);
+        handle_fp_inputs(&mut game.input, &mut game.cam_state);
 
         // quit
         if game.input.keys_down.contains(&Key::Escape) { break; }
@@ -68,6 +69,7 @@ pub extern crate ncollide;
 pub extern crate nphysics3d;
 pub extern crate nalgebra;
 pub extern crate image;
+pub extern crate volition as input;
 
 extern crate glium_text_rusttype as glium_text;
 extern crate noise;
@@ -87,8 +89,6 @@ pub mod texture;
 pub mod renderer;
 /// Utility functions and macros
 pub mod utils;
-/// Module for input handing
-pub mod input;
 /// Module for dealing with shaders
 pub mod shader;
 /// Module for procedurally generated meshes

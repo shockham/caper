@@ -51,9 +51,11 @@ impl Game {
             cam_rot: (0.0f32, 0.0, 0.0)
         };
 
+        let (renderer, events_loop) = Renderer::new("caper window".to_string());
+
         Game {
-            input: Input::new(),
-            renderer: Renderer::new("caper window".to_string()),
+            input: Input::from_existing(events_loop),
+            renderer: renderer,
             physics: world,
             audio: Audio::new(),
             cam_state: cam_state,
@@ -179,8 +181,11 @@ impl Game {
         // update the inputs
         {
             // updating and handling the inputs
-            self.input.update_inputs(&self.renderer.display);
-
+            let gl_window = self.renderer.display.gl_window();
+            let window = gl_window.window();
+            self.input.update_inputs(window);
+        }
+        {
             // update the inputs for imgui
             self.renderer.update_imgui_input(&self.input);
         }
