@@ -1,12 +1,16 @@
 extern crate genmesh;
 extern crate obj;
 
-use std::ops::{Add, Mul};
+use std::ops::{ Add, Mul };
 use std::iter::Sum;
 use std::f32::consts::PI;
 
 use types::{ RenderItem, RenderItemBuilder, TransformBuilder };
 use types::{ Vertex, Quaternion, Vector3, Matrix4, CamState, MaterialBuilder };
+
+use input::{ Key, Input };
+
+const TWO_PI:f32 = PI * 2f32;
 
 
 /// Returns a Vec<Vertex> that should be converted to buffer and rendered as `TrianglesList`.
@@ -178,4 +182,54 @@ pub fn build_fp_view_matrix(cam_state: &CamState) -> Matrix4 {
     [ xaxis[1], yaxis[1], zaxis[1], 0.0],
     [ xaxis[2], yaxis[2], zaxis[2], 0.0],
     [ -dotp(&xaxis, &cam_arr), -dotp(&yaxis, &cam_arr), -dotp(&zaxis, &cam_arr), 1.0f32]]
+}
+
+
+/// This method is where data transforms take place due to inputs
+/// for a first person camera
+pub fn handle_fp_inputs(input: &mut Input, cam_state: &mut CamState) {
+    // some static vals to use the fp inputs
+    const MOVE_SPEED: f32 = 0.2f32;
+    const MOUSE_SPEED: f32 = 10f32;
+
+    let mv_matrix = build_fp_view_matrix(cam_state);
+
+    if input.keys_down.contains(&Key::S) {
+        cam_state.cam_pos.0 += mv_matrix[0][2] * MOVE_SPEED;
+        cam_state.cam_pos.1 += mv_matrix[1][2] * MOVE_SPEED;
+        cam_state.cam_pos.2 += mv_matrix[2][2] * MOVE_SPEED;
+    }
+
+    if input.keys_down.contains(&Key::W) {
+        cam_state.cam_pos.0 -= mv_matrix[0][2] * MOVE_SPEED;
+        cam_state.cam_pos.1 -= mv_matrix[1][2] * MOVE_SPEED;
+        cam_state.cam_pos.2 -= mv_matrix[2][2] * MOVE_SPEED;
+    }
+
+    if input.keys_down.contains(&Key::D) {
+        cam_state.cam_pos.0 += mv_matrix[0][0] * MOVE_SPEED;
+        cam_state.cam_pos.1 += mv_matrix[1][0] * MOVE_SPEED;
+        cam_state.cam_pos.2 += mv_matrix[2][0] * MOVE_SPEED;
+    }
+
+    if input.keys_down.contains(&Key::A) {
+        cam_state.cam_pos.0 -= mv_matrix[0][0] * MOVE_SPEED;
+        cam_state.cam_pos.1 -= mv_matrix[1][0] * MOVE_SPEED;
+        cam_state.cam_pos.2 -= mv_matrix[2][0] * MOVE_SPEED;
+    }
+
+    cam_state.cam_rot.0 += input.mouse_delta.1 * MOUSE_SPEED;
+    cam_state.cam_rot.1 += input.mouse_delta.0 * MOUSE_SPEED;
+
+    cam_state.cam_rot.0 = fix_rot(cam_state.cam_rot.0);
+    cam_state.cam_rot.1 = fix_rot(cam_state.cam_rot.1);
+
+    // make sure cam_rot always between 0 and 2PI
+    fn fix_rot (num:f32) -> f32 {
+        if num < 0f32 {
+            return TWO_PI - num;
+        }
+
+        num % TWO_PI
+    }
 }

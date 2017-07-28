@@ -8,6 +8,7 @@ use caper::mesh::{ gen_quad, gen_sphere, gen_cube };
 use caper::game::Game;
 use caper::imgui::Ui;
 use caper::input::Key;
+use caper::utils::handle_fp_inputs;
 
 fn main() {
     let mut game = Game::new();
@@ -120,7 +121,7 @@ fn main() {
         game.update(|_:&Ui|{ });
 
         // first person input
-        game.input.handle_fp_inputs(&mut game.cam_state);
+        handle_fp_inputs(&mut game.input, &mut game.cam_state);
 
         // temporary fix after removal of update_fn
         sin_y(&mut game.get_render_item_by_name("sphere".to_string()).unwrap().instance_transforms[0]);

@@ -104,7 +104,6 @@ fn main() {
                 });
         });
 
-        //game.input.handle_fp_inputs(&mut game.cam_state);
 
         if game.input.keys_down.contains(&Key::W) {
             game.get_render_item(1).instance_transforms[0].pos.2 -= 0.1f32;

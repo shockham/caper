@@ -76,18 +76,16 @@ struct GifInfo {
 
 impl Renderer {
     /// Creates new Renderer instance
-    pub fn new(title:String) -> Renderer {
+    pub fn new(title:String) -> (Renderer, EventsLoop) {
         let events_loop = EventsLoop::new();
-        let window = WindowBuilder::new()
+        let window_builder = WindowBuilder::new()
             .with_title(title)
             .with_fullscreen(get_primary_monitor());
-            //.build_glium()
-            //.unwrap();
         let context = ContextBuilder::new()
             .with_depth_buffer(24)
             .with_vsync(true)
             .with_gl(GlRequest::Specific(Api::OpenGl, (4, 0)));
-        let display = Display::new(window, context, &events_loop).unwrap();
+        let display = Display::new(window_builder, context, &events_loop).unwrap();
 
         // create a text system instance and font
         let text_system = TextSystem::new(&display);
@@ -122,7 +120,7 @@ impl Renderer {
 
         renderer.setup();
 
-        renderer
+        (renderer, events_loop)
     }
 
     /// Sets up the render window
@@ -325,7 +323,7 @@ impl Renderer {
         // create the engine editor
         if self.show_editor {
             // available shaders TODO tidy this up, chk_ currently needed for assign
-            let chk_shader_list = self.shaders.shaders.keys()
+            /*let chk_shader_list = self.shaders.shaders.keys()
                 .map(|s| s.to_string())
                 .collect::<Vec<String>>();
             let shader_list = chk_shader_list.iter()
@@ -339,7 +337,7 @@ impl Renderer {
             let texture_list = chk_texture_list.iter()
                 .map(|s| im_str!("{}", s))
                 .collect::<Vec<ImStr>>();
-            let texture_list = texture_list.as_slice();
+            let texture_list = texture_list.as_slice();*/
             // create the editor window
             ui.window(im_str!("caper editor"))
                 .size((300.0, 200.0), ImGuiSetCond_FirstUseEver)
@@ -383,7 +381,7 @@ impl Renderer {
                         // create node for each item
                         for render_item in render_items {
                             ui.tree_node(im_str!("name:{}", render_item.name)).build(|| {
-                                ui.tree_node(im_str!("material")).build(|| {
+                                /*ui.tree_node(im_str!("material")).build(|| {
                                     // shader name
                                     let mut shader_index =
                                         if let Ok(i) =
@@ -417,7 +415,7 @@ impl Renderer {
                                     ui.combo(im_str!("normal_texture"), &mut norm_tex_index, &texture_list, -1);
                                     render_item.material.normal_texture_name =
                                         Some(chk_texture_list[norm_tex_index as usize].clone());
-                                });
+                                });*/
                                 ui.checkbox(im_str!("active"), &mut render_item.active);
                                 // physics type TODO make sure this is propagated
                                 let mut physics_type = match render_item.physics_type {
@@ -443,7 +441,7 @@ impl Renderer {
                         for text_item in text_items {
                             ui.tree_node(im_str!("name:{}", text_item.name)).build(|| {
                                 // TODO add mutability
-                                ui.input_text(im_str!("text"), &mut text_item.text).build();
+                                //ui.input_text(im_str!("text"), &mut text_item.text).build();
                                 // text item color
                                 if ui.collapsing_header(im_str!("color")).build() {
                                     ui.input_float(im_str!("r"), &mut text_item.color.0)

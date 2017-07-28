@@ -24,6 +24,7 @@ use caper::game::Game;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;
 use caper::input::Key;
+use caper::utils::handle_fp_inputs;
 
 fn main() {
     // crate an instance of the game struct
@@ -47,7 +48,7 @@ fn main() {
         game.update(|_:&Ui|{ });
 
         // update the first person inputs
-        game.input.handle_fp_inputs(&mut game.cam_state);
+        handle_fp_inputs(&mut game.input, &mut game.cam_state);
 
         // quit
         if game.input.keys_down.contains(&Key::Escape) { break; }
