@@ -7,7 +7,7 @@ Caper
 Small game framework using [rust](https://www.rust-lang.org/).
 Currently has systems for:
 - Rendering ([glium](https://github.com/tomaka/glium))
-- Input ([glutin](https://github.com/tomaka/glutin))
+- Input ([winit](https://github.com/tomaka/winit) via [volition](https://github.com/shockham/volition))
 - Physics ([nphysics](https://github.com/sebcrozet/nphysics))
 - Audio ([rodio](https://github.com/tomaka/rodio))
 
