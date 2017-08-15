@@ -1,5 +1,4 @@
-Caper
-========
+# Caper
 [![crates.io version](https://img.shields.io/crates/v/caper.svg)](https://crates.io/crates/caper)
 [![Build status](https://travis-ci.org/shockham/caper.svg?branch=master)](https://travis-ci.org/shockham/caper)
 [![Documentation](https://docs.rs/caper/badge.svg)](https://docs.rs/caper)
@@ -9,7 +8,7 @@ Currently has systems for:
 - Rendering ([glium](https://github.com/tomaka/glium))
 - Input ([winit](https://github.com/tomaka/winit) via [volition](https://github.com/shockham/volition))
 - Physics ([nphysics](https://github.com/sebcrozet/nphysics))
-- Audio ([rodio](https://github.com/tomaka/rodio))
+- Audio ([rodio](https://github.com/tomaka/rodio) via [impose](https://github.com/shockham/impose))
 
 [**Documentation**](https://shockham.github.io/caper/caper/)
 
