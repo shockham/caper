@@ -70,6 +70,7 @@ pub extern crate nphysics3d;
 pub extern crate nalgebra;
 pub extern crate image;
 pub extern crate volition as input;
+pub extern crate impose as audio;
 
 extern crate glium_text_rusttype as glium_text;
 extern crate noise;
@@ -78,7 +79,6 @@ extern crate fps_counter;
 extern crate bincode;
 extern crate serde;
 extern crate gif;
-extern crate rodio;
 extern crate imgui_glium_renderer;
 extern crate rayon;
 
@@ -105,5 +105,3 @@ pub mod persist;
 pub mod game;
 /// Module for the lighting system
 pub mod lighting;
-/// Module for the audio system
-pub mod audio;
