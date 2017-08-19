@@ -1,8 +1,7 @@
 /// OpenGL 3.3 default shaders
 pub mod gl330 {
     /// Default vertex shader
-    pub const VERT: &'static str =
-        "
+    pub const VERT: &'static str = "
         #version 330
 
         layout(location = 0) in vec3 position;
@@ -31,8 +30,7 @@ pub mod gl330 {
     ";
 
     /// Default geometry shader
-    pub const GEOM: &'static str =
-        "
+    pub const GEOM: &'static str = "
         #version 330
 
         layout(triangles) in;
@@ -59,8 +57,7 @@ pub mod gl330 {
     ";
 
     /// Default tessellation control shader
-    pub const TESS_CONTROL: &'static str =
-        "
+    pub const TESS_CONTROL: &'static str = "
         #version 400
 
         layout(vertices = 3) out;
@@ -86,8 +83,7 @@ pub mod gl330 {
     ";
 
     /// Default tessellation evaluation shader
-    pub const TESS_EVAL: &'static str =
-        "
+    pub const TESS_EVAL: &'static str = "
         #version 400
 
         uniform mat4 projection_matrix;

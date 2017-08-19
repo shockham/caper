@@ -23,19 +23,19 @@ implement_vertex!(Vertex, position, normal, texture);
 #[derive(Builder, Copy, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Transform {
     /// The position of the transform
-    #[builder(default="(0f32, 0f32, 0f32)")]
+    #[builder(default = "(0f32, 0f32, 0f32)")]
     pub pos: Vector3,
     /// The rotation of the transform
-    #[builder(default="(0f32, 0f32, 0f32, 1f32)")]
+    #[builder(default = "(0f32, 0f32, 0f32, 1f32)")]
     pub rot: Quaternion,
     /// The scale of the transform
-    #[builder(default="(1f32, 1f32, 1f32)")]
+    #[builder(default = "(1f32, 1f32, 1f32)")]
     pub scale: Vector3,
     /// Whether the transform is currently active/should be rendered
-    #[builder(default="true")]
+    #[builder(default = "true")]
     pub active: bool,
     /// Whether the transform is frustum culled
-    #[builder(default="true")]
+    #[builder(default = "true")]
     pub cull: bool,
 }
 
@@ -54,22 +54,22 @@ pub enum PhysicsType {
 #[derive(Builder, Clone, Serialize, Deserialize, PartialEq)]
 pub struct RenderItem {
     /// The vertices representing this items mesh
-    #[builder(default="Vec::new()")]
+    #[builder(default = "Vec::new()")]
     pub vertices: Vec<Vertex>,
     /// The material that will be used for rendering the Item
-    #[builder(default="MaterialBuilder::default().build().unwrap()")]
+    #[builder(default = "MaterialBuilder::default().build().unwrap()")]
     pub material: Material,
     /// The instances of this item
-    #[builder(default="Vec::new()")]
+    #[builder(default = "Vec::new()")]
     pub instance_transforms: Vec<Transform>,
     /// Whether the item is active/should be rendered
-    #[builder(default="true")]
+    #[builder(default = "true")]
     pub active: bool,
     /// How this item acts in the physics engine
-    #[builder(default="PhysicsType::None")]
+    #[builder(default = "PhysicsType::None")]
     pub physics_type: PhysicsType,
     /// The name of the RenderItem for lookup
-    #[builder(default="\"ri\".to_string()")]
+    #[builder(default = "\"ri\".to_string()")]
     pub name: String,
 }
 
@@ -77,13 +77,13 @@ pub struct RenderItem {
 #[derive(Builder, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Material {
     /// The shader that will used to render this item
-    #[builder(default="\"dist\".to_string()")]
+    #[builder(default = "\"dist\".to_string()")]
     pub shader_name: String,
     /// The texture that will be used
-    #[builder(default="None")]
+    #[builder(default = "None")]
     pub texture_name: Option<String>,
     /// The normal texture that will be used
-    #[builder(default="None")]
+    #[builder(default = "None")]
     pub normal_texture_name: Option<String>,
 }
 
@@ -91,22 +91,22 @@ pub struct Material {
 #[derive(Builder, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TextItem {
     /// The text that the item displays
-    #[builder(default="\"\".to_string()")]
+    #[builder(default = "\"\".to_string()")]
     pub text: String,
     /// The color the text is displayed in
-    #[builder(default="(0f32, 0f32, 0f32, 1f32)")]
+    #[builder(default = "(0f32, 0f32, 0f32, 1f32)")]
     pub color: (f32, f32, f32, f32),
     /// The position to display this text
-    #[builder(default="(0f32, 0f32, 0f32)")]
+    #[builder(default = "(0f32, 0f32, 0f32)")]
     pub pos: Vector3,
     /// The scale/size the text is displayed at
-    #[builder(default="(1f32, 1f32, 1f32)")]
+    #[builder(default = "(1f32, 1f32, 1f32)")]
     pub scale: Vector3,
     /// Whether this item is active/should be rendered
-    #[builder(default="true")]
+    #[builder(default = "true")]
     pub active: bool,
     /// The name of the RenderItem for lookup
-    #[builder(default="\"ti\".to_string()")]
+    #[builder(default = "\"ti\".to_string()")]
     pub name: String,
 }
 
@@ -114,10 +114,10 @@ pub struct TextItem {
 #[derive(Builder, Copy, Clone, Serialize, Deserialize, PartialEq)]
 pub struct CamState {
     /// The position of the camera in 3d space
-    #[builder(default="(0f32, 0f32, 0f32)")]
+    #[builder(default = "(0f32, 0f32, 0f32)")]
     pub cam_pos: Vector3,
     /// The euler rotation of the camera
-    #[builder(default="(0f32, 0f32, 0f32)")]
+    #[builder(default = "(0f32, 0f32, 0f32)")]
     pub cam_rot: Vector3,
 }
 

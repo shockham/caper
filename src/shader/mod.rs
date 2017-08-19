@@ -11,7 +11,7 @@ pub mod texture;
 /// Default post effect shader
 pub mod post;
 
-use glium::{ Program, Display };
+use glium::{Program, Display};
 use glium::texture::compressed_srgb_texture2d::CompressedSrgbTexture2d;
 use std::collections::HashMap;
 use std::error::Error;
@@ -34,32 +34,41 @@ impl Shaders {
         let mut shader_map = HashMap::new();
 
         // the shader programs
-        shader_map.insert("dist", program!(display,
+        shader_map.insert(
+            "dist",
+            program!(display,
                                            330 => {
                                                vertex: default::gl330::VERT,
                                                fragment: dist::gl330::FRAG,
                                                geometry: default::gl330::GEOM,
                                                tessellation_control: default::gl330::TESS_CONTROL,
                                                tessellation_evaluation: default::gl330::TESS_EVAL
-                                           }).unwrap());
+                                           }).unwrap(),
+        );
 
-        shader_map.insert("height", program!(display,
+        shader_map.insert(
+            "height",
+            program!(display,
                                              330 => {
                                                  vertex: default::gl330::VERT,
                                                  fragment: height::gl330::FRAG,
                                                  geometry: default::gl330::GEOM,
                                                  tessellation_control: default::gl330::TESS_CONTROL,
                                                  tessellation_evaluation: default::gl330::TESS_EVAL
-                                             }).unwrap());
+                                             }).unwrap(),
+        );
 
-        shader_map.insert("line", program!(display,
+        shader_map.insert(
+            "line",
+            program!(display,
                                            330 => {
                                                vertex: default::gl330::VERT,
                                                fragment: line::gl330::FRAG,
                                                geometry: line::gl330::GEOM,
                                                tessellation_control: default::gl330::TESS_CONTROL,
                                                tessellation_evaluation: default::gl330::TESS_EVAL
-                                           }).unwrap());
+                                           }).unwrap(),
+        );
 
         // the shader programs
         shader_map.insert("texture", program!(display,
@@ -73,16 +82,22 @@ impl Shaders {
 
         let mut post_shader_map = HashMap::new();
 
-        post_shader_map.insert("default", program!(display,
+        post_shader_map.insert(
+            "default",
+            program!(display,
                                                    330 => {
                                                        vertex: post::gl330::VERT,
                                                        fragment: post::gl330::FRAG,
-                                                   }).unwrap());
+                                                   }).unwrap(),
+        );
 
         let mut textures = HashMap::new();
 
         textures.insert("default", load_texture!("../resources/caper.png", display));
-        textures.insert("default_normal", load_texture!("../resources/normal.png", display));
+        textures.insert(
+            "default_normal",
+            load_texture!("../resources/normal.png", display),
+        );
 
         Shaders {
             shaders: shader_map,
@@ -92,10 +107,16 @@ impl Shaders {
     }
 
     /// Add a new shader to the map that can used for rendering the RenderItems
-    pub fn add_shader(&mut self, display: &Display,
-                      name: &'static str, vert: &'static str,
-                      frag: &'static str, geom: &'static str,
-                      tess_cont: &'static str, tess_eval: &'static str) -> Result<&str, &str> {
+    pub fn add_shader(
+        &mut self,
+        display: &Display,
+        name: &'static str,
+        vert: &'static str,
+        frag: &'static str,
+        geom: &'static str,
+        tess_cont: &'static str,
+        tess_eval: &'static str,
+    ) -> Result<&str, &str> {
 
         let shader_prog = match program!(display,
                                          330 => {
@@ -110,7 +131,7 @@ impl Shaders {
             Err(e) => {
                 println!("{}", e.cause().unwrap());
                 return Err("Could not create shader");
-            },
+            }
         };
 
         self.shaders.insert(name, shader_prog);
@@ -119,9 +140,13 @@ impl Shaders {
     }
 
     /// Add a new shader to the post_shaders map that can be used for rendering post processing
-    pub fn add_post_shader(&mut self, display: &Display,
-                           name: &'static str, vert: &'static str,
-                           frag: &'static str) -> Result<&str, &str> {
+    pub fn add_post_shader(
+        &mut self,
+        display: &Display,
+        name: &'static str,
+        vert: &'static str,
+        frag: &'static str,
+    ) -> Result<&str, &str> {
 
         let post_shader_prog = match program!(display,
                                               330 => {
@@ -132,7 +157,7 @@ impl Shaders {
             Err(e) => {
                 println!("{}", e.cause().unwrap());
                 return Err("Could not create post shader");
-            },
+            }
         };
 
         self.post_shaders.insert(name, post_shader_prog);

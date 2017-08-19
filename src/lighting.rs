@@ -1,6 +1,6 @@
 use types::Vector3;
 use glium::texture::Texture1d;
-use glium::backend::{ Facade, Context };
+use glium::backend::{Facade, Context};
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -20,21 +20,24 @@ pub struct Lighting {
 #[derive(Builder, Clone, Serialize, Deserialize, PartialEq)]
 pub struct DirectionalLight {
     /// The name of the directional light
-    #[builder(default="\"light\".to_string()")]
+    #[builder(default = "\"light\".to_string()")]
     pub name: String,
     /// The direction the light is facing
-    #[builder(default="(1f32, 1f32, 1f32)")]
+    #[builder(default = "(1f32, 1f32, 1f32)")]
     pub dir: Vector3,
     /// Whether the light is active
-    #[builder(default="true")]
+    #[builder(default = "true")]
     pub active: bool,
 }
 
 impl Lighting {
     /// Create a new lighting system
-    pub fn new<F>(facade: &F) -> Lighting where F: Facade + Clone {
+    pub fn new<F>(facade: &F) -> Lighting
+    where
+        F: Facade + Clone,
+    {
         let context = facade.get_context().clone();
-        let dir_lights:Vec<Vector3> = Vec::new();
+        let dir_lights: Vec<Vector3> = Vec::new();
         let dir_tex = Texture1d::new(&context, dir_lights.as_slice()).unwrap();
 
         Lighting {
@@ -48,10 +51,10 @@ impl Lighting {
     /// Add a direction light with direction dir to the lighting system
     pub fn add_directional_light(&mut self, name: String, dir: Vector3) {
         let light = DirectionalLightBuilder::default()
-                .name(name)
-                .dir(dir)
-                .build()
-                .unwrap();
+            .name(name)
+            .dir(dir)
+            .build()
+            .unwrap();
         self.directional_lights.push(light);
         self.regenerate_lighting_tex();
     }
@@ -62,7 +65,8 @@ impl Lighting {
     pub fn regenerate_lighting_tex(&mut self) {
         let mut dir_tex = self.directional_tex.borrow_mut();
 
-        let lights = self.directional_lights.par_iter()
+        let lights = self.directional_lights
+            .par_iter()
             .filter(|d| d.active)
             .map(|d| d.dir)
             .collect::<Vec<Vector3>>();
@@ -78,7 +82,7 @@ impl Lighting {
 
     /// Get a ref to a directional light from its name, returning the first found
     pub fn get_directional_light_by_name(&mut self, name: String) -> Option<&mut DirectionalLight> {
-        for i in 0 .. self.directional_lights.len() {
+        for i in 0..self.directional_lights.len() {
             if self.directional_lights[i].name == name {
                 return Some(&mut self.directional_lights[i]);
             }

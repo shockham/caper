@@ -1,7 +1,7 @@
 extern crate caper;
 
 use caper::utils::load_wavefront;
-use caper::types::{ RenderItemBuilder, TransformBuilder };
+use caper::types::{RenderItemBuilder, TransformBuilder};
 use caper::game::Game;
 use caper::input::Key;
 use caper::imgui::Ui;
@@ -14,9 +14,12 @@ fn main() {
 
     // generate the instance positions
     let map_size = 50f32;
-    let transforms = (0 .. 2500)
+    let transforms = (0..2500)
         .map(|i| {
-            let pos = ((i as f32 % map_size) * 2f32, ((i / map_size as i32) * 2) as f32);
+            let pos = (
+                (i as f32 % map_size) * 2f32,
+                ((i / map_size as i32) * 2) as f32,
+            );
             let size = get_pos_perlin((pos.0, pos.1)) * 2f32;
             TransformBuilder::default()
                 .pos((pos.0 * 5f32, size, pos.1 * 5f32))
@@ -24,7 +27,7 @@ fn main() {
                 .build()
                 .unwrap()
         })
-    .collect::<Vec<_>>();
+        .collect::<Vec<_>>();
 
     // add a render item to the game
     game.add_render_item(
@@ -32,16 +35,19 @@ fn main() {
             .vertices(load_wavefront(include_bytes!("assets/cube.obj")))
             .instance_transforms(transforms)
             .build()
-            .unwrap());
+            .unwrap(),
+    );
 
     loop {
         // run the engine update
-        game.update(|_:&Ui|{ });
+        game.update(|_: &Ui| {});
 
         // update the first person inputs
         handle_fp_inputs(&mut game.input, &mut game.cam_state);
 
         // quit
-        if game.input.keys_down.contains(&Key::Escape) { break; }
+        if game.input.keys_down.contains(&Key::Escape) {
+            break;
+        }
     }
 }

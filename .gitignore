@@ -2,6 +2,7 @@ main
 TODO
 **/.DS_Store
 **/*.swp
+*.bk
 target
 persist
 Cargo.lock

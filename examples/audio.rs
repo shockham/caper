@@ -1,6 +1,6 @@
 extern crate caper;
 
-use caper::types::{ RenderItemBuilder, TransformBuilder };
+use caper::types::{RenderItemBuilder, TransformBuilder};
 use caper::game::Game;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;
@@ -19,21 +19,25 @@ fn main() {
                 TransformBuilder::default()
                     .pos((-0.5, 0.0, -5.0))
                     .build()
-                    .unwrap()
+                    .unwrap(),
             ])
             .build()
-            .unwrap());
+            .unwrap(),
+    );
 
     // add some audio
     game.audio.add_audio("test", "./examples/assets/test.ogg");
-    game.audio.add_packed_audio("test_packed", include_bytes!("./assets/test.ogg").to_vec());
+    game.audio.add_packed_audio(
+        "test_packed",
+        include_bytes!("./assets/test.ogg").to_vec(),
+    );
 
     // play the audio on start
     //game.audio.play("test");
 
     loop {
         // run the engine update
-        game.update(|_:&Ui|{ });
+        game.update(|_: &Ui| {});
 
         // update the first person inputs
         handle_fp_inputs(&mut game.input, &mut game.cam_state);
@@ -49,6 +53,8 @@ fn main() {
         }
 
         // quit
-        if game.input.keys_down.contains(&Key::Escape) { break; }
+        if game.input.keys_down.contains(&Key::Escape) {
+            break;
+        }
     }
 }

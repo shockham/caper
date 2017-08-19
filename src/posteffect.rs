@@ -1,9 +1,9 @@
-use glium::{ Surface, Program };
-use glium::index::{ PrimitiveType, IndexBuffer };
+use glium::{Surface, Program};
+use glium::index::{PrimitiveType, IndexBuffer};
 use glium::vertex::VertexBuffer;
-use glium::backend::{ Facade, Context };
+use glium::backend::{Facade, Context};
 use glium::framebuffer::SimpleFrameBuffer;
-use glium::texture::{ Texture2d, DepthTexture2d, DepthFormat, MipmapsOption };
+use glium::texture::{Texture2d, DepthTexture2d, DepthFormat, MipmapsOption};
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -36,28 +36,31 @@ pub struct PostEffect {
 
 impl PostEffect {
     /// creates a new instance of a post effect
-    pub fn new<F>(facade: &F) -> PostEffect where F: Facade + Clone {
+    pub fn new<F>(facade: &F) -> PostEffect
+    where
+        F: Facade + Clone,
+    {
         let vert_arr = [
             Vertex {
                 position: [-1.0, -1.0, 0.0],
                 normal: [0.0, 0.0, 0.0],
-                texture: [0.0, 0.0]
+                texture: [0.0, 0.0],
             },
             Vertex {
-                position: [-1.0,  1.0, 0.0],
+                position: [-1.0, 1.0, 0.0],
                 normal: [0.0, 0.0, 0.0],
-                texture: [0.0, 1.0]
+                texture: [0.0, 1.0],
             },
             Vertex {
-                position: [ 1.0,  1.0, 0.0],
+                position: [1.0, 1.0, 0.0],
                 normal: [0.0, 0.0, 0.0],
-                texture: [1.0, 1.0]
+                texture: [1.0, 1.0],
             },
             Vertex {
-                position: [ 1.0, -1.0, 0.0],
+                position: [1.0, -1.0, 0.0],
                 normal: [0.0, 0.0, 0.0],
-                texture: [1.0, 0.0]
-            }
+                texture: [1.0, 0.0],
+            },
         ];
 
         let ind_arr = [1 as u16, 2, 0, 3];
@@ -80,82 +83,89 @@ impl PostEffect {
 #[derive(Builder, Clone, PartialEq)]
 pub struct PostShaderOptions {
     /// The offset for the chromatic aberration
-    #[builder(default="0.003f32")]
+    #[builder(default = "0.003f32")]
     pub chrom_offset: f32,
     /// The mix amount for the chromatic aberration, if this is at 0.0 chromatic aberration is off
-    #[builder(default="0.0f32")]
+    #[builder(default = "0.0f32")]
     pub chrom_amt: f32,
     /// Whether blur is on
-    #[builder(default="false")]
+    #[builder(default = "false")]
     pub blur: bool,
     /// The amount of blur
-    #[builder(default="1.0f32")]
+    #[builder(default = "1.0f32")]
     pub blur_amt: f32,
     /// The radius of the blur
-    #[builder(default="1.0f32")]
+    #[builder(default = "1.0f32")]
     pub blur_radius: f32,
     /// The weight of the blur
-    #[builder(default="1.0f32")]
+    #[builder(default = "1.0f32")]
     pub blur_weight: f32,
     /// Whether bokeh is on
-    #[builder(default="false")]
+    #[builder(default = "false")]
     pub bokeh: bool,
     /// Bokeh focal depth
-    #[builder(default="0.2f32")]
+    #[builder(default = "0.2f32")]
     pub bokeh_focal_depth: f32,
     /// Bokeh focal width
-    #[builder(default="0.2f32")]
+    #[builder(default = "0.2f32")]
     pub bokeh_focal_width: f32,
     /// Colour grading
-    #[builder(default="(1f32, 1f32, 1f32, 1f32)")]
+    #[builder(default = "(1f32, 1f32, 1f32, 1f32)")]
     pub color_offset: (f32, f32, f32, f32),
     /// Greyscale
-    #[builder(default="false")]
+    #[builder(default = "false")]
     pub greyscale: bool,
 }
 
 /// Renders the post effect on to the scene rendered in the draw FnMut
-pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut T, mut draw: F)
-    -> R where T: Surface, F: FnMut(&mut SimpleFrameBuffer) -> R {
+pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut T, mut draw: F) -> R
+where
+    T: Surface,
+    F: FnMut(&mut SimpleFrameBuffer) -> R,
+{
 
-        let target_dimensions = target.get_dimensions();
+    let target_dimensions = target.get_dimensions();
 
-        let mut target_color = system.target_color.borrow_mut();
-        let mut target_depth = system.target_depth.borrow_mut();
+    let mut target_color = system.target_color.borrow_mut();
+    let mut target_depth = system.target_depth.borrow_mut();
 
-        // check whether the colour buffer needs clearing due to window size change
-        let clear = if let &Some(ref tex) = &*target_color {
-            tex.get_width() != target_dimensions.0 ||
-                tex.get_height().unwrap() != target_dimensions.1
-        } else {
-            false
-        };
+    // check whether the colour buffer needs clearing due to window size change
+    let clear = if let &Some(ref tex) = &*target_color {
+        tex.get_width() != target_dimensions.0 || tex.get_height().unwrap() != target_dimensions.1
+    } else {
+        false
+    };
 
-        if clear || target_color.is_none() {
-            let col_tex = Texture2d::empty(
-                &system.context,
-                (target_dimensions.0 as f32 * system.downscale_factor) as u32,
-                (target_dimensions.1 as f32 * system.downscale_factor) as u32).unwrap();
-            *target_color = Some(col_tex);
+    if clear || target_color.is_none() {
+        let col_tex = Texture2d::empty(
+            &system.context,
+            (target_dimensions.0 as f32 * system.downscale_factor) as u32,
+            (target_dimensions.1 as f32 * system.downscale_factor) as u32,
+        ).unwrap();
+        *target_color = Some(col_tex);
 
-            let dep_tex = DepthTexture2d::empty_with_format(
-                &system.context,
-                DepthFormat::F32,
-                MipmapsOption::NoMipmap,
-                (target_dimensions.0 as f32 * system.downscale_factor) as u32,
-                (target_dimensions.1 as f32 * system.downscale_factor) as u32).unwrap();
-            *target_depth = Some(dep_tex);
-        }
+        let dep_tex = DepthTexture2d::empty_with_format(
+            &system.context,
+            DepthFormat::F32,
+            MipmapsOption::NoMipmap,
+            (target_dimensions.0 as f32 * system.downscale_factor) as u32,
+            (target_dimensions.1 as f32 * system.downscale_factor) as u32,
+        ).unwrap();
+        *target_depth = Some(dep_tex);
+    }
 
-        let target_color = target_color.as_ref().unwrap();
-        let target_depth = target_depth.as_ref().unwrap();
+    let target_color = target_color.as_ref().unwrap();
+    let target_depth = target_depth.as_ref().unwrap();
 
-        // first pass draw the scene into a buffer
-        let output = draw(&mut SimpleFrameBuffer::with_depth_buffer(&system.context,
-                                                                    target_color,
-                                                                    target_depth).unwrap());
+    // first pass draw the scene into a buffer
+    let output = draw(&mut SimpleFrameBuffer::with_depth_buffer(
+        &system.context,
+        target_color,
+        target_depth,
+    ).unwrap());
 
-        let uniforms = uniform! {
+    let uniforms =
+        uniform! {
             // general uniforms
             tex: &*target_color,
             depth_buf: &*target_depth,
@@ -176,12 +186,16 @@ pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut 
             greyscale: system.post_shader_options.greyscale,
         };
 
-        // second pass draw the post effect
-        target.draw(&system.vertex_buffer,
-                    &system.index_buffer,
-                    shader,
-                    &uniforms,
-                    &Default::default()).unwrap();
+    // second pass draw the post effect
+    target
+        .draw(
+            &system.vertex_buffer,
+            &system.index_buffer,
+            shader,
+            &uniforms,
+            &Default::default(),
+        )
+        .unwrap();
 
-        output
-    }
+    output
+}

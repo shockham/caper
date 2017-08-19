@@ -1,28 +1,37 @@
 extern crate genmesh;
 extern crate obj;
 
-use std::ops::{ Add, Mul };
+use std::ops::{Add, Mul};
 use std::iter::Sum;
 use std::f32::consts::PI;
 
-use types::{ RenderItem, RenderItemBuilder, TransformBuilder };
-use types::{ Vertex, Quaternion, Vector3, Matrix4, CamState, MaterialBuilder };
+use types::{RenderItem, RenderItemBuilder, TransformBuilder};
+use types::{Vertex, Quaternion, Vector3, Matrix4, CamState, MaterialBuilder};
 
-use input::{ Key, Input };
+use input::{Key, Input};
 
-const TWO_PI:f32 = PI * 2f32;
+const TWO_PI: f32 = PI * 2f32;
 
 
 /// Returns a Vec<Vertex> that should be converted to buffer and rendered as `TrianglesList`.
-pub fn load_wavefront( data: &[u8]) -> Vec<Vertex> {
+pub fn load_wavefront(data: &[u8]) -> Vec<Vertex> {
     let mut data = ::std::io::BufReader::new(data);
     let data = obj::Obj::load(&mut data);
 
     let mut vertex_data = Vec::new();
 
-    for shape in data.objects.iter().next().unwrap().groups.iter().flat_map(|g| g.indices.iter()) {
+    for shape in data.objects.iter().next().unwrap().groups.iter().flat_map(
+        |g| {
+            g.indices.iter()
+        },
+    )
+    {
         match shape {
-            &genmesh::Polygon::PolyTri(genmesh::Triangle { x: v1, y: v2, z: v3 }) => {
+            &genmesh::Polygon::PolyTri(genmesh::Triangle {
+                                           x: v1,
+                                           y: v2,
+                                           z: v3,
+                                       }) => {
                 for v in [v1, v2, v3].iter() {
                     let position = data.position[v.0];
                     let texture = v.1.map(|index| data.texture[index]);
@@ -37,8 +46,8 @@ pub fn load_wavefront( data: &[u8]) -> Vec<Vertex> {
                         texture: texture,
                     })
                 }
-            },
-            _ => unimplemented!()
+            }
+            _ => unimplemented!(),
         }
     }
 
@@ -51,32 +60,39 @@ pub fn create_skydome(shader_name: &'static str) -> RenderItem {
     RenderItemBuilder::default()
         .name("skydome".to_string())
         .vertices(load_wavefront(include_bytes!("./resources/skydome.obj")))
-        .material(MaterialBuilder::default()
-                  .shader_name(shader_name.to_string())
-                  .build()
-                  .unwrap())
+        .material(
+            MaterialBuilder::default()
+                .shader_name(shader_name.to_string())
+                .build()
+                .unwrap(),
+        )
         .instance_transforms(vec![
-                             TransformBuilder::default()
-                             .scale((300f32, 300f32, 300f32))
-                             .build()
-                             .unwrap()
+            TransformBuilder::default()
+                .scale((300f32, 300f32, 300f32))
+                .build()
+                .unwrap(),
         ])
         .build()
         .unwrap()
 }
 
 /// Returns the dot product of two vectors
-pub fn dotp<T>(this: &[T], other: &[T]) -> T where T:Add<T, Output=T> + Mul<T, Output=T> + Sum + Copy {
+pub fn dotp<T>(this: &[T], other: &[T]) -> T
+where
+    T: Add<T, Output = T> + Mul<T, Output = T> + Sum + Copy,
+{
     assert!(this.len() == other.len(), "The dimensions must be equal");
 
-    this.iter().zip(other.iter())
-        .map(|(&a, &b)| a * b)
-        .sum()
+    this.iter().zip(other.iter()).map(|(&a, &b)| a * b).sum()
 }
 
 /// returns the cross product of two vectors
 pub fn crossp(a: [f32; 3], b: [f32; 3]) -> [f32; 3] {
-    [(a[1] * b[2]) - (a[2] * b[1]), (a[2] * b[0]) - (a[0] * b[2]), (a[0] * b[1]) - (a[1] * b[0])]
+    [
+        (a[1] * b[2]) - (a[2] * b[1]),
+        (a[2] * b[0]) - (a[0] * b[2]),
+        (a[0] * b[1]) - (a[1] * b[0]),
+    ]
 }
 
 /// returns the resultant vector of a - b
@@ -109,8 +125,16 @@ pub fn mul_mat4(a: Matrix4, b: Matrix4) -> Matrix4 {
 
 /// returns a euler angle as a quaternion
 pub fn to_quaternion(angle: Vector3) -> Quaternion {
-    let (c3, c1, c2) = ((angle.0 / 2f32).cos(), (angle.1 / 2f32).cos(), (angle.2 / 2f32).cos());
-    let (s3, s1, s2) = ((angle.0 / 2f32).sin(), (angle.1 / 2f32).sin(), (angle.2 / 2f32).sin());
+    let (c3, c1, c2) = (
+        (angle.0 / 2f32).cos(),
+        (angle.1 / 2f32).cos(),
+        (angle.2 / 2f32).cos(),
+    );
+    let (s3, s1, s2) = (
+        (angle.0 / 2f32).sin(),
+        (angle.1 / 2f32).sin(),
+        (angle.2 / 2f32).sin(),
+    );
 
     let c1c2 = c1 * c2;
     let s1s2 = s1 * s2;
@@ -142,8 +166,8 @@ pub fn to_euler(angle: Quaternion) -> Vector3 {
 }
 
 /// Returns perspective projection matrix given fov, aspect ratio, z near and far
-pub fn build_persp_proj_mat(fov:f32,aspect:f32,znear:f32,zfar:f32) -> Matrix4 {
-    let ymax = znear * (fov * (PI/360.0)).tan();
+pub fn build_persp_proj_mat(fov: f32, aspect: f32, znear: f32, zfar: f32) -> Matrix4 {
+    let ymax = znear * (fov * (PI / 360.0)).tan();
     let ymin = -ymax;
     let xmax = ymax * aspect;
     let xmin = ymin * aspect;
@@ -158,10 +182,12 @@ pub fn build_persp_proj_mat(fov:f32,aspect:f32,znear:f32,zfar:f32) -> Matrix4 {
     let w = 2.0 * znear / width;
     let h = 2.0 * znear / height;
 
-    [[w, 0.0f32, 0.0f32, 0.0f32],
-    [0.0f32, h, 0.0f32, 0.0f32],
-    [0.0f32, 0.0f32, q, -1.0f32],
-    [0.0f32, 0.0f32, qn, 0.0f32]]
+    [
+        [w, 0.0f32, 0.0f32, 0.0f32],
+        [0.0f32, h, 0.0f32, 0.0f32],
+        [0.0f32, 0.0f32, q, -1.0f32],
+        [0.0f32, 0.0f32, qn, 0.0f32],
+    ]
 }
 
 /// Returns the model view matrix for a first person view given cam position and rotation
@@ -171,17 +197,29 @@ pub fn build_fp_view_matrix(cam_state: &CamState) -> Matrix4 {
         cam_state.cam_rot.1.sin(),
         cam_state.cam_rot.1.cos(),
         cam_state.cam_rot.0.sin(),
-        cam_state.cam_rot.0.cos());
+        cam_state.cam_rot.0.cos(),
+    );
     let xaxis = [cos_yaw, 0.0, -sin_yaw];
     let yaxis = [sin_yaw * sin_pitch, cos_pitch, cos_yaw * sin_pitch];
     let zaxis = [sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw];
 
-    let cam_arr = [cam_state.cam_pos.0, cam_state.cam_pos.1, cam_state.cam_pos.2];
+    let cam_arr = [
+        cam_state.cam_pos.0,
+        cam_state.cam_pos.1,
+        cam_state.cam_pos.2,
+    ];
 
-    [[ xaxis[0], yaxis[0], zaxis[0], 0.0],
-    [ xaxis[1], yaxis[1], zaxis[1], 0.0],
-    [ xaxis[2], yaxis[2], zaxis[2], 0.0],
-    [ -dotp(&xaxis, &cam_arr), -dotp(&yaxis, &cam_arr), -dotp(&zaxis, &cam_arr), 1.0f32]]
+    [
+        [xaxis[0], yaxis[0], zaxis[0], 0.0],
+        [xaxis[1], yaxis[1], zaxis[1], 0.0],
+        [xaxis[2], yaxis[2], zaxis[2], 0.0],
+        [
+            -dotp(&xaxis, &cam_arr),
+            -dotp(&yaxis, &cam_arr),
+            -dotp(&zaxis, &cam_arr),
+            1.0f32,
+        ],
+    ]
 }
 
 
@@ -225,7 +263,7 @@ pub fn handle_fp_inputs(input: &mut Input, cam_state: &mut CamState) {
     cam_state.cam_rot.1 = fix_rot(cam_state.cam_rot.1);
 
     // make sure cam_rot always between 0 and 2PI
-    fn fix_rot (num:f32) -> f32 {
+    fn fix_rot(num: f32) -> f32 {
         if num < 0f32 {
             return TWO_PI - num;
         }

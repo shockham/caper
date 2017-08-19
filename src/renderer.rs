@@ -1,14 +1,14 @@
-use glium::{ Display, DrawParameters, Surface, Depth, Blend };
-use glium::index::{ NoIndices, PrimitiveType };
+use glium::{Display, DrawParameters, Surface, Depth, Blend};
+use glium::index::{NoIndices, PrimitiveType};
 use glium::DepthTest::IfLess;
 use glium::vertex::VertexBuffer;
-use glium::glutin::{ WindowBuilder, ContextBuilder, EventsLoop, get_primary_monitor, GlRequest, Api };
-use glium::glutin::CursorState::Hide;//{ Grab, Hide };
-use glium::draw_parameters::{ DepthClamp, BackfaceCullingMode };
+use glium::glutin::{WindowBuilder, ContextBuilder, EventsLoop, get_primary_monitor, GlRequest, Api};
+use glium::glutin::CursorState::Hide; //{ Grab, Hide };
+use glium::draw_parameters::{DepthClamp, BackfaceCullingMode};
 use glium::texture::RawImage2d;
 
 use glium_text;
-use glium_text::{ TextSystem, FontTexture, TextDisplay };
+use glium_text::{TextSystem, FontTexture, TextDisplay};
 
 use time;
 use std::default::Default;
@@ -28,11 +28,11 @@ use std::thread;
 
 
 use shader::Shaders;
-use utils::{ dotp, build_persp_proj_mat, build_fp_view_matrix, mul_mat4 };
-use posteffect::{ PostEffect, render_post };
-use types::{ RenderItem, TextItem, Vector3, Matrix4, CamState, Attr, PhysicsType };
+use utils::{dotp, build_persp_proj_mat, build_fp_view_matrix, mul_mat4};
+use posteffect::{PostEffect, render_post};
+use types::{RenderItem, TextItem, Vector3, Matrix4, CamState, Attr, PhysicsType};
 use lighting::Lighting;
-use input::{ Input, MouseButton };
+use input::{Input, MouseButton};
 
 
 /// struct for abstracting the render state
@@ -76,11 +76,11 @@ struct GifInfo {
 
 impl Renderer {
     /// Creates new Renderer instance
-    pub fn new(title:String) -> (Renderer, EventsLoop) {
+    pub fn new(title: String) -> (Renderer, EventsLoop) {
         let events_loop = EventsLoop::new();
-        let window_builder = WindowBuilder::new()
-            .with_title(title)
-            .with_fullscreen(get_primary_monitor());
+        let window_builder = WindowBuilder::new().with_title(title).with_fullscreen(
+            get_primary_monitor(),
+        );
         let context = ContextBuilder::new()
             .with_depth_buffer(24)
             .with_vsync(true)
@@ -89,8 +89,12 @@ impl Renderer {
 
         // create a text system instance and font
         let text_system = TextSystem::new(&display);
-        let font = FontTexture::new(&display, &include_bytes!("./resources/font.ttf")[..],
-        100, glium_text::FontTexture::ascii_character_list()).unwrap();
+        let font = FontTexture::new(
+            &display,
+            &include_bytes!("./resources/font.ttf")[..],
+            100,
+            glium_text::FontTexture::ascii_character_list(),
+        ).unwrap();
 
         let mut imgui = ImGui::init();
         let imgui_rend = ImGuiRenderer::init(&mut imgui, &display).unwrap();
@@ -132,18 +136,30 @@ impl Renderer {
 
     /// Update imgui's interal input state
     pub fn update_imgui_input(&mut self, input: &Input) {
-        self.imgui.set_mouse_pos(input.mouse_pos.0 as f32, input.mouse_pos.1 as f32);
-        self.imgui.set_mouse_down(&[input.mouse_btns_down.contains(&MouseButton::Left),
-                                  input.mouse_btns_down.contains(&MouseButton::Right),
-                                  input.mouse_btns_down.contains(&MouseButton::Middle),
-                                  false, false]);
+        self.imgui.set_mouse_pos(
+            input.mouse_pos.0 as f32,
+            input.mouse_pos.1 as f32,
+        );
+        self.imgui.set_mouse_down(
+            &[
+                input.mouse_btns_down.contains(&MouseButton::Left),
+                input.mouse_btns_down.contains(&MouseButton::Right),
+                input.mouse_btns_down.contains(&MouseButton::Middle),
+                false,
+                false,
+            ],
+        );
         for i in 0..input.characters_down.len() {
             self.imgui.add_input_character(input.characters_down[i])
         }
     }
 
     /// Test whether an object is in the view frustrum
-    fn frustrum_test(pos: &Vector3, radius: f32, frustrum_planes: &Vec<(f32, f32, f32, f32)>) -> bool {
+    fn frustrum_test(
+        pos: &Vector3,
+        radius: f32,
+        frustrum_planes: &Vec<(f32, f32, f32, f32)>,
+    ) -> bool {
         for plane in frustrum_planes {
             if dotp(&[pos.0, pos.1, pos.2], &[plane.0, plane.1, plane.2]) + plane.3 <= -radius {
                 // sphere not in frustrum
@@ -160,45 +176,59 @@ impl Renderer {
 
         // column-major
         // Left clipping plane
-        planes.push((matrix[3][0] + matrix[0][0],
-                     matrix[3][1] + matrix[0][1],
-                     matrix[3][2] + matrix[0][2],
-                     matrix[3][3] + matrix[0][3]));
+        planes.push((
+            matrix[3][0] + matrix[0][0],
+            matrix[3][1] + matrix[0][1],
+            matrix[3][2] + matrix[0][2],
+            matrix[3][3] + matrix[0][3],
+        ));
         // Right clipping plane
-        planes.push((matrix[3][0] - matrix[0][0],
-                     matrix[3][1] - matrix[0][1],
-                     matrix[3][2] - matrix[0][2],
-                     matrix[3][3] - matrix[0][3]));
+        planes.push((
+            matrix[3][0] - matrix[0][0],
+            matrix[3][1] - matrix[0][1],
+            matrix[3][2] - matrix[0][2],
+            matrix[3][3] - matrix[0][3],
+        ));
         // Top clipping plane
-        planes.push((matrix[3][0] - matrix[1][0],
-                     matrix[3][1] - matrix[1][1],
-                     matrix[3][2] - matrix[1][2],
-                     matrix[3][3] - matrix[1][3]));
+        planes.push((
+            matrix[3][0] - matrix[1][0],
+            matrix[3][1] - matrix[1][1],
+            matrix[3][2] - matrix[1][2],
+            matrix[3][3] - matrix[1][3],
+        ));
         // Bottom clipping plane
-        planes.push((matrix[3][0] + matrix[1][0],
-                     matrix[3][1] + matrix[1][1],
-                     matrix[3][2] + matrix[1][2],
-                     matrix[3][3] + matrix[1][3]));
+        planes.push((
+            matrix[3][0] + matrix[1][0],
+            matrix[3][1] + matrix[1][1],
+            matrix[3][2] + matrix[1][2],
+            matrix[3][3] + matrix[1][3],
+        ));
         // Near clipping plane
-        planes.push((matrix[3][0] + matrix[2][0],
-                     matrix[3][1] + matrix[2][1],
-                     matrix[3][2] + matrix[2][2],
-                     matrix[3][3] + matrix[2][3]));
+        planes.push((
+            matrix[3][0] + matrix[2][0],
+            matrix[3][1] + matrix[2][1],
+            matrix[3][2] + matrix[2][2],
+            matrix[3][3] + matrix[2][3],
+        ));
         // Far clipping plane
-        planes.push((matrix[3][0] - matrix[2][0],
-                     matrix[3][1] - matrix[2][1],
-                     matrix[3][2] - matrix[2][2],
-                     matrix[3][3] - matrix[2][3]));
+        planes.push((
+            matrix[3][0] - matrix[2][0],
+            matrix[3][1] - matrix[2][1],
+            matrix[3][2] - matrix[2][2],
+            matrix[3][3] - matrix[2][3],
+        ));
 
         planes
     }
 
     /// Draws a frame
-    pub fn draw<F: FnMut(&Ui)>(&mut self,
-                               cam_state: &mut CamState,
-                               render_items: &mut Vec<RenderItem>,
-                               text_items: &mut Vec<TextItem>,
-                               mut f: F) {
+    pub fn draw<F: FnMut(&Ui)>(
+        &mut self,
+        cam_state: &mut CamState,
+        render_items: &mut Vec<RenderItem>,
+        text_items: &mut Vec<TextItem>,
+        mut f: F,
+    ) {
         // get display dimensions
         let (width, height) = self.display.get_framebuffer_dimensions();
 
@@ -208,15 +238,16 @@ impl Renderer {
                 test: IfLess,
                 write: true,
                 clamp: DepthClamp::Clamp,
-                .. Default::default()
+                ..Default::default()
             },
             blend: Blend::alpha_blending(),
             backface_culling: BackfaceCullingMode::CullClockwise,
-            .. Default::default()
+            ..Default::default()
         };
 
         // uniforms passed to the shaders
-        let projection_matrix = build_persp_proj_mat(60f32, width as f32/height as f32, 0.01f32, 1000f32);
+        let projection_matrix =
+            build_persp_proj_mat(60f32, width as f32 / height as f32, 0.01f32, 1000f32);
         let modelview_matrix = build_fp_view_matrix(cam_state);
         let cam_pos = cam_state.cam_pos;
         let time = (time::precise_time_s() - self.start_time) as f32;
@@ -229,54 +260,70 @@ impl Renderer {
         let mut target = self.display.draw();
         let mut render_count = 0usize;
 
-        render_post(&self.post_effect,
-                    &self.shaders.post_shaders.get(self.post_effect.current_shader).unwrap(),
-                    &mut target,
-                    |target| {
-                        // clear the colour and depth buffers
-                        target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
+        render_post(
+            &self.post_effect,
+            &self.shaders
+                .post_shaders
+                .get(self.post_effect.current_shader)
+                .unwrap(),
+            &mut target,
+            |target| {
+                // clear the colour and depth buffers
+                target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
 
-                        // drawing the render items (with more than one instance)
-                        for item in render_items.iter().filter(|r| r.active && r.instance_transforms.len() > 0) {
-                            // building the vertex and index buffers
-                            let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices).unwrap();
+                // drawing the render items (with more than one instance)
+                for item in render_items.iter().filter(|r| {
+                    r.active && r.instance_transforms.len() > 0
+                })
+                {
+                    // building the vertex and index buffers
+                    let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices).unwrap();
 
-                            // add positions for instances
-                            let per_instance = {
-                                let data = item.instance_transforms.iter().filter(|t| {
-                                    (t.active && !t.cull) ||
+                    // add positions for instances
+                    let per_instance = {
+                        let data = item.instance_transforms
+                            .iter()
+                            .filter(|t| {
+                                (t.active && !t.cull) ||
                                     (t.active &&
-                                        Renderer::frustrum_test(&t.pos,
-                                                                t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
-                                                                &frustum_planes))
-                                }).map(|t| {
-                                    Attr {
-                                        world_position: t.pos,
-                                        world_rotation: t.rot,
-                                        world_scale: t.scale
-                                    }
-                                }).collect::<Vec<_>>();
-
-                                // if there are no active transforms skip ri
-                                if data.len() <= 0 {
-                                    continue;
+                                         Renderer::frustrum_test(
+                                            &t.pos,
+                                            t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
+                                            &frustum_planes,
+                                        ))
+                            })
+                            .map(|t| {
+                                Attr {
+                                    world_position: t.pos,
+                                    world_rotation: t.rot,
+                                    world_scale: t.scale,
                                 }
+                            })
+                            .collect::<Vec<_>>();
 
-                                // add instances to render_count
-                                render_count += data.len();
+                        // if there are no active transforms skip ri
+                        if data.len() <= 0 {
+                            continue;
+                        }
 
-                                VertexBuffer::dynamic(&self.display, &data).unwrap()
-                            };
+                        // add instances to render_count
+                        render_count += data.len();
 
-                            let tex_name = item.material.texture_name.clone().unwrap_or("default".to_string());
-                            let normal_tex_name = item.material.normal_texture_name
-                                .clone()
-                                .unwrap_or("default_normal".to_string());
+                        VertexBuffer::dynamic(&self.display, &data).unwrap()
+                    };
 
-                            let dir_lights = self.lighting.directional_tex.borrow();
+                    let tex_name = item.material.texture_name.clone().unwrap_or(
+                        "default".to_string(),
+                    );
+                    let normal_tex_name = item.material.normal_texture_name.clone().unwrap_or(
+                        "default_normal"
+                            .to_string(),
+                    );
 
-                            let uniforms = uniform! {
+                    let dir_lights = self.lighting.directional_tex.borrow();
+
+                    let uniforms = uniform! {
                                 projection_matrix: projection_matrix,
                                 modelview_matrix: modelview_matrix,
                                 cam_pos: cam_pos,
@@ -286,34 +333,54 @@ impl Renderer {
                                 dir_lights: &*dir_lights,
                             };
 
-                            target.draw((&vertex_buffer, per_instance.per_instance().unwrap()),
+                    target
+                        .draw(
+                            (&vertex_buffer, per_instance.per_instance().unwrap()),
                             &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
-                            &self.shaders.shaders.get(item.material.shader_name.as_str()).unwrap(),
+                            &self.shaders
+                                .shaders
+                                .get(item.material.shader_name.as_str())
+                                .unwrap(),
                             &uniforms,
-                            &params).unwrap();
-                        }
-                    });
+                            &params,
+                        )
+                        .unwrap();
+                }
+            },
+        );
 
         self.render_count = render_count;
 
         // drawing the text items
         for text_item in text_items.iter().filter(|r| r.active) {
             // create the matrix for the text
-            let matrix = [[0.02 * text_item.scale.0, 0.0, 0.0, 0.0],
-            [0.0, 0.02 * text_item.scale.1 * (width as f32) / (height as f32), 0.0, 0.0],
-            [0.0, 0.0, 0.02 * text_item.scale.2, 0.0],
-            [text_item.pos.0, text_item.pos.1, text_item.pos.2, 1.0f32]];
+            let matrix = [
+                [0.02 * text_item.scale.0, 0.0, 0.0, 0.0],
+                [
+                    0.0,
+                    0.02 * text_item.scale.1 * (width as f32) / (height as f32),
+                    0.0,
+                    0.0,
+                ],
+                [0.0, 0.0, 0.02 * text_item.scale.2, 0.0],
+                [text_item.pos.0, text_item.pos.1, text_item.pos.2, 1.0f32],
+            ];
 
             // create TextDisplay for item, TODO change this to not be done every frame
-            let text = TextDisplay::new(&self.text_system, &self.default_font,
-                                        text_item.text.as_str());
+            let text = TextDisplay::new(
+                &self.text_system,
+                &self.default_font,
+                text_item.text.as_str(),
+            );
 
             // draw the text
-            let _ = glium_text::draw(&text,
-                                     &self.text_system,
-                                     &mut target,
-                                     matrix,
-                                     text_item.color);
+            let _ = glium_text::draw(
+                &text,
+                &self.text_system,
+                &mut target,
+                matrix,
+                text_item.color,
+            );
         }
 
         // imgui elements
@@ -502,7 +569,9 @@ impl Renderer {
         self.imgui_rend.render(&mut target, ui).unwrap();
 
         match target.finish() {
-            Ok(_) => { self.fps = self.fps_counter.tick() as f32; },
+            Ok(_) => {
+                self.fps = self.fps_counter.tick() as f32;
+            }
             Err(e) => println!("{:?}", e),
         };
     }
@@ -513,16 +582,20 @@ impl Renderer {
         let image: RawImage2d<u8> = self.display.read_front_buffer();
 
         thread::spawn(move || {
-            let image = image::ImageBuffer::from_raw(image.width, image.height, image.data.into_owned()).unwrap();
+            let image =
+                image::ImageBuffer::from_raw(image.width, image.height, image.data.into_owned())
+                    .unwrap();
             let image = image::DynamicImage::ImageRgba8(image).flipv();
-            let mut output = File::create(&Path::new(format!("./screenshot_{}.png",
-                                                             time::precise_time_s()).as_str())).unwrap();
+            let mut output = File::create(&Path::new(
+                format!("./screenshot_{}.png", time::precise_time_s())
+                    .as_str(),
+            )).unwrap();
             image.save(&mut output, image::ImageFormat::PNG).unwrap();
         });
     }
 
     /// When called with the same path adds a frame to a gif at the path
-    pub fn save_add_to_gif(&mut self, path:&'static str) {
+    pub fn save_add_to_gif(&mut self, path: &'static str) {
         // reading the front buffer into a gif frame
         let image: RawImage2d<u8> = self.display.read_front_buffer();
 
@@ -544,7 +617,11 @@ impl Renderer {
             }
         };
         if self.gif_info.is_none() || new_file {
-            let output = OpenOptions::new().write(true).create(true).open(path).unwrap();
+            let output = OpenOptions::new()
+                .write(true)
+                .create(true)
+                .open(path)
+                .unwrap();
             let mut encoder = gif::Encoder::new(output, w as u16, h as u16, &[]).unwrap();
             encoder.set(gif::Repeat::Infinite).unwrap();
 

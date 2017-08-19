@@ -1,6 +1,6 @@
 extern crate caper;
 
-use caper::types::{ RenderItemBuilder, TransformBuilder };
+use caper::types::{RenderItemBuilder, TransformBuilder};
 use caper::game::Game;
 use caper::imgui::Ui;
 use caper::input::Key;
@@ -21,19 +21,22 @@ fn main() {
                 TransformBuilder::default()
                     .pos((-0.5, 0.0, -5.0))
                     .build()
-                    .unwrap()
+                    .unwrap(),
             ])
             .build()
-            .unwrap());
+            .unwrap(),
+    );
 
     loop {
         // run the engine update
-        game.update(|_:&Ui|{ });
+        game.update(|_: &Ui| {});
 
         // update the first person inputs
         handle_fp_inputs(&mut game.input, &mut game.cam_state);
 
         // quit
-        if game.input.keys_down.contains(&Key::Escape) { break; }
+        if game.input.keys_down.contains(&Key::Escape) {
+            break;
+        }
     }
 }

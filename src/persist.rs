@@ -2,12 +2,12 @@ use bincode::{serialize, deserialize, Infinite};
 use serde::ser::Serialize;
 use serde::de::Deserialize;
 
-use std::fs::{File, create_dir };
+use std::fs::{File, create_dir};
 use std::thread;
-use std::io::{ Read, Write };
+use std::io::{Read, Write};
 
 /// The base path the persistent items will be placed
-const PERSIST_BASE_PATH:&'static str = "./persist/";
+const PERSIST_BASE_PATH: &'static str = "./persist/";
 
 /// Save and encodable type to persistence at the key
 pub fn save<T: Serialize>(to_save: &T, key: &'static str) {
@@ -53,12 +53,10 @@ fn save_load_test() {
 
     #[derive(Serialize, Deserialize, PartialEq)]
     struct World {
-        entities: Vec<Entity>
+        entities: Vec<Entity>,
     }
 
-    let world = World {
-        entities: vec![Entity {x: 0.0, y: 4.0}, Entity {x: 10.0, y: 20.5}]
-    };
+    let world = World { entities: vec![Entity { x: 0.0, y: 4.0 }, Entity { x: 10.0, y: 20.5 }] };
 
     save(&world, "test");
     let _ = load::<Entity>("test");
