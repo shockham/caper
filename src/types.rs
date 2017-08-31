@@ -71,6 +71,9 @@ pub struct RenderItem {
     /// The name of the RenderItem for lookup
     #[builder(default = "\"ri\".to_string()")]
     pub name: String,
+    /// Tag for grouping similar items
+    #[builder(default = "\"default\".to_string()")]
+    pub tag: String,
 }
 
 /// Struct for containing material information
