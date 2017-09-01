@@ -28,7 +28,8 @@ pub struct PostEffect {
     pub current_shader: &'static str,
     /// The time the post effect was initialised
     start_time: f32,
-    /// The scale factor that the scene will be rendered in relation to to the full window resolution
+    /// The scale factor that the scene will be rendered
+    /// in relation to to the full window resolution
     pub downscale_factor: f32,
     /// Options for the default post shader
     pub post_shader_options: PostShaderOptions,

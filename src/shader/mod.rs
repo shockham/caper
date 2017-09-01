@@ -71,14 +71,19 @@ impl Shaders {
         );
 
         // the shader programs
-        shader_map.insert("texture", program!(display,
+        shader_map.insert(
+            "texture",
+            program!(display,
                                               330 => {
                                                   vertex: default::gl330::VERT,
                                                   fragment: texture::gl330::FRAG,
                                                   geometry: default::gl330::GEOM,
-                                                  tessellation_control: default::gl330::TESS_CONTROL,
-                                                  tessellation_evaluation: default::gl330::TESS_EVAL
-                                              }).unwrap());
+                                                  tessellation_control:
+                                                      default::gl330::TESS_CONTROL,
+                                                  tessellation_evaluation:
+                                                      default::gl330::TESS_EVAL
+                                              }).unwrap(),
+        );
 
         let mut post_shader_map = HashMap::new();
 

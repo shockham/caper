@@ -3,11 +3,14 @@
 Small game framework.
 Currently has systems for:
 - Rendering ([glium](https://github.com/tomaka/glium))
-- Input ([winit](https://github.com/tomaka/winit) via [volition](https://github.com/shockham/volition))
+- Input ([winit](https://github.com/tomaka/winit)
+    via [volition](https://github.com/shockham/volition))
 - Physics ([nphysics](https://github.com/sebcrozet/nphysics))
 - Audio ([rodio](https://github.com/tomaka/rodio))
 
-Note: This is being used for/was created with [specific game](https://twitter.com/SHockham/status/821691014863798272) in mind so might not be ideal for use with everything.
+Note: This is being used for/was created with
+[specific game](https://twitter.com/SHockham/status/821691014863798272) in mind so might not
+be ideal for use with everything.
 
 [Example](https://github.com/shockham/caper/blob/master/examples/simple.rs) of a basis for a game:
 

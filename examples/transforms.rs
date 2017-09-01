@@ -1,6 +1,5 @@
 extern crate time;
 extern crate caper;
-extern crate imgui;
 
 use caper::utils::load_wavefront;
 use caper::types::{RenderItemBuilder, TransformBuilder, Transform, MaterialBuilder};

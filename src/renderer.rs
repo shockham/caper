@@ -323,13 +323,15 @@ impl Renderer {
 
                     let dir_lights = self.lighting.directional_tex.borrow();
 
-                    let uniforms = uniform! {
+                    let uniforms =
+                        uniform! {
                                 projection_matrix: projection_matrix,
                                 modelview_matrix: modelview_matrix,
                                 cam_pos: cam_pos,
                                 time: time,
                                 tex: self.shaders.textures.get(tex_name.as_str()).unwrap(),
-                                normal_tex: self.shaders.textures.get(normal_tex_name.as_str()).unwrap(),
+                                normal_tex:
+                                    self.shaders.textures.get(normal_tex_name.as_str()).unwrap(),
                                 dir_lights: &*dir_lights,
                             };
 
@@ -447,22 +449,28 @@ impl Renderer {
                     if ui.collapsing_header(im_str!("Render items")).build() {
                         // create node for each item
                         for render_item in render_items {
-                            ui.tree_node(im_str!("name:{}", render_item.name)).build(|| {
-                                /*ui.tree_node(im_str!("material")).build(|| {
+                            ui.tree_node(im_str!("name:{}", render_item.name)).build(
+                                || {
+                                    /*ui.tree_node(im_str!("material")).build(|| {
                                     // shader name
                                     let mut shader_index =
                                         if let Ok(i) =
-                                            chk_shader_list.binary_search(&render_item.material.shader_name) {
+                                            chk_shader_list.binary_search(
+                                                &render_item.material.shader_name) {
                                         i as i32
                                     } else {
                                         0i32
                                     };
-                                    ui.combo(im_str!("shader"), &mut shader_index, &shader_list, -1);
-                                    render_item.material.shader_name = chk_shader_list[shader_index as usize].clone();
+                                    ui.combo(im_str!("shader"), &mut shader_index,
+                                             &shader_list, -1);
+                                    render_item.material.shader_name =
+                                        chk_shader_list[shader_index as usize].clone();
                                     // texture
                                     let tex_name =
-                                        render_item.material.texture_name.clone().unwrap_or("".to_string());
-                                    let mut tex_index = if let Ok(i) = chk_texture_list.binary_search(&tex_name) {
+                                        render_item.material.texture_name
+                                            .clone().unwrap_or("".to_string());
+                                    let mut tex_index = if let Ok(i) =
+                                        chk_texture_list.binary_search(&tex_name) {
                                         i as i32
                                     } else {
                                         0i32
@@ -472,35 +480,45 @@ impl Renderer {
                                         Some(chk_texture_list[tex_index as usize].clone());
                                     // normal texture
                                     let n_tex_name =
-                                        render_item.material.normal_texture_name.clone().unwrap_or("".to_string());
+                                        render_item.material.normal_texture_name
+                                            .clone().unwrap_or("".to_string());
                                     let mut norm_tex_index =
                                         if let Ok(i) = chk_texture_list.binary_search(&n_tex_name) {
                                         i as i32
                                     } else {
                                         0i32
                                     };
-                                    ui.combo(im_str!("normal_texture"), &mut norm_tex_index, &texture_list, -1);
+                                    ui.combo(im_str!("normal_texture"), &mut norm_tex_index,
+                                                     &texture_list, -1);
                                     render_item.material.normal_texture_name =
                                         Some(chk_texture_list[norm_tex_index as usize].clone());
                                 });*/
-                                ui.checkbox(im_str!("active"), &mut render_item.active);
-                                // physics type TODO make sure this is propagated
-                                let mut physics_type = match render_item.physics_type {
-                                    PhysicsType::Static => 0,
-                                    PhysicsType::Dynamic => 1,
-                                    PhysicsType::None => 2,
-                                };
-                                ui.combo(im_str!("physics"), &mut physics_type,
-                                         &[im_str!("Static"), im_str!("Dynamic"), im_str!("None")], -1);
-                                render_item.physics_type = match physics_type {
-                                    0 => PhysicsType::Static,
-                                    1 => PhysicsType::Dynamic,
-                                    _ => PhysicsType::None,
-                                };
-                                // TODO add mutability for these items
-                                ui.text(im_str!("instance_count:{}", render_item.instance_transforms.len()));
-                                ui.text(im_str!("vert_count:{}", render_item.vertices.len()));
-                            });
+                                    ui.checkbox(im_str!("active"), &mut render_item.active);
+                                    // physics type TODO make sure this is propagated
+                                    let mut physics_type = match render_item.physics_type {
+                                        PhysicsType::Static => 0,
+                                        PhysicsType::Dynamic => 1,
+                                        PhysicsType::None => 2,
+                                    };
+                                    ui.combo(
+                                        im_str!("physics"),
+                                        &mut physics_type,
+                                        &[im_str!("Static"), im_str!("Dynamic"), im_str!("None")],
+                                        -1,
+                                    );
+                                    render_item.physics_type = match physics_type {
+                                        0 => PhysicsType::Static,
+                                        1 => PhysicsType::Dynamic,
+                                        _ => PhysicsType::None,
+                                    };
+                                    // TODO add mutability for these items
+                                    ui.text(im_str!(
+                                        "instance_count:{}",
+                                        render_item.instance_transforms.len()
+                                    ));
+                                    ui.text(im_str!("vert_count:{}", render_item.vertices.len()));
+                                },
+                            );
                         }
                     }
                     // text items editor
