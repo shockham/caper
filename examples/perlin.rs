@@ -1,4 +1,3 @@
-extern crate time;
 extern crate caper;
 
 #[macro_use]
@@ -78,6 +77,8 @@ fn main() {
         get_pos_perlin(((pseu_cam_pos.0 - fixed_val), (pseu_cam_pos.1 - fixed_val)));
     loop {
         let fps = game.renderer.fps;
+        let mouse_pos = game.input.mouse_pos;
+        let mouse_delta = game.input.mouse_delta;
         // run the engine update
         game.update(|ui: &Ui| if debug_mode {
             ui.window(im_str!("debug"))
@@ -89,6 +90,8 @@ fn main() {
                     ui.separator();
                     ui.text(im_str!("move_speed: {}", move_speed));
                     ui.text(im_str!("mouse_speed: {}", mouse_speed));
+                    ui.text(im_str!("mouse_pos: {:?}", mouse_pos));
+                    ui.text(im_str!("mouse_delta: {:?}", mouse_delta));
                     ui.separator();
                     ui.text(im_str!("pseu_cam_pos: {:?}", pseu_cam_pos));
                     ui.text(im_str!("fps: {:?}", fps));
@@ -148,8 +151,8 @@ fn main() {
             if game.input.keys_down.contains(&Key::K) {
                 debug_mode = false;
             }
+            game.input.hide_mouse = !game.input.keys_down.contains(&Key::M);
         }
-        game.input.hide_mouse = !debug_mode;
         game.renderer.show_editor = debug_mode;
         // quit
         if game.input.keys_down.contains(&Key::Escape) {
