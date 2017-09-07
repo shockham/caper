@@ -137,8 +137,8 @@ impl Renderer {
     /// Update imgui's interal input state
     pub fn update_imgui_input(&mut self, input: &Input) {
         self.imgui.set_mouse_pos(
-            input.mouse_pos.0 as f32,
-            input.mouse_pos.1 as f32,
+            input.mouse_pos.0,
+            input.mouse_pos.1,
         );
         self.imgui.set_mouse_down(
             &[
