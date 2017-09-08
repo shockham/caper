@@ -73,7 +73,7 @@ fn main() {
             .unwrap(),
     );
 
-    game.cam_state.cam_pos.1 = 2.5f32 +
+    game.cam_state.pos.1 = 2.5f32 +
         get_pos_perlin(((pseu_cam_pos.0 - fixed_val), (pseu_cam_pos.1 - fixed_val)));
     loop {
         let fps = game.renderer.fps;
@@ -126,14 +126,14 @@ fn main() {
                 movement_dirty = true;
             }
 
-            game.cam_state.cam_rot.0 += game.input.mouse_delta.1 * mouse_speed;
-            game.cam_state.cam_rot.1 += game.input.mouse_delta.0 * mouse_speed;
+            game.cam_state.euler_rot.0 += game.input.mouse_delta.1 * mouse_speed;
+            game.cam_state.euler_rot.1 += game.input.mouse_delta.0 * mouse_speed;
         }
 
         // only regenerate the mesh if movement
         if movement_dirty {
             game.get_render_item(0).vertices = gen_perlin_mesh(pseu_cam_pos, map_size);
-            game.cam_state.cam_pos.1 = 2.5f32 +
+            game.cam_state.pos.1 = 2.5f32 +
                 get_pos_perlin(((pseu_cam_pos.0 - fixed_val), (pseu_cam_pos.1 - fixed_val)));
 
             // update the sphere location

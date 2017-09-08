@@ -47,8 +47,8 @@ impl Game {
 
         //cam state
         let cam_state = CamState {
-            cam_pos: (0.0f32, 0.0, 0.0),
-            cam_rot: (0.0f32, 0.0, 0.0),
+            pos: (0.0f32, 0.0, 0.0),
+            euler_rot: (0.0f32, 0.0, 0.0),
         };
 
         let (renderer, events_loop) = Renderer::new("caper window".to_string());

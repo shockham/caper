@@ -194,19 +194,19 @@ pub fn build_persp_proj_mat(fov: f32, aspect: f32, znear: f32, zfar: f32) -> Mat
 pub fn build_fp_view_matrix(cam_state: &CamState) -> Matrix4 {
 
     let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (
-        cam_state.cam_rot.1.sin(),
-        cam_state.cam_rot.1.cos(),
-        cam_state.cam_rot.0.sin(),
-        cam_state.cam_rot.0.cos(),
+        cam_state.euler_rot.1.sin(),
+        cam_state.euler_rot.1.cos(),
+        cam_state.euler_rot.0.sin(),
+        cam_state.euler_rot.0.cos(),
     );
     let xaxis = [cos_yaw, 0.0, -sin_yaw];
     let yaxis = [sin_yaw * sin_pitch, cos_pitch, cos_yaw * sin_pitch];
     let zaxis = [sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw];
 
     let cam_arr = [
-        cam_state.cam_pos.0,
-        cam_state.cam_pos.1,
-        cam_state.cam_pos.2,
+        cam_state.pos.0,
+        cam_state.pos.1,
+        cam_state.pos.2,
     ];
 
     [
@@ -233,36 +233,36 @@ pub fn handle_fp_inputs(input: &mut Input, cam_state: &mut CamState) {
     let mv_matrix = build_fp_view_matrix(cam_state);
 
     if input.keys_down.contains(&Key::S) {
-        cam_state.cam_pos.0 += mv_matrix[0][2] * MOVE_SPEED;
-        cam_state.cam_pos.1 += mv_matrix[1][2] * MOVE_SPEED;
-        cam_state.cam_pos.2 += mv_matrix[2][2] * MOVE_SPEED;
+        cam_state.pos.0 += mv_matrix[0][2] * MOVE_SPEED;
+        cam_state.pos.1 += mv_matrix[1][2] * MOVE_SPEED;
+        cam_state.pos.2 += mv_matrix[2][2] * MOVE_SPEED;
     }
 
     if input.keys_down.contains(&Key::W) {
-        cam_state.cam_pos.0 -= mv_matrix[0][2] * MOVE_SPEED;
-        cam_state.cam_pos.1 -= mv_matrix[1][2] * MOVE_SPEED;
-        cam_state.cam_pos.2 -= mv_matrix[2][2] * MOVE_SPEED;
+        cam_state.pos.0 -= mv_matrix[0][2] * MOVE_SPEED;
+        cam_state.pos.1 -= mv_matrix[1][2] * MOVE_SPEED;
+        cam_state.pos.2 -= mv_matrix[2][2] * MOVE_SPEED;
     }
 
     if input.keys_down.contains(&Key::D) {
-        cam_state.cam_pos.0 += mv_matrix[0][0] * MOVE_SPEED;
-        cam_state.cam_pos.1 += mv_matrix[1][0] * MOVE_SPEED;
-        cam_state.cam_pos.2 += mv_matrix[2][0] * MOVE_SPEED;
+        cam_state.pos.0 += mv_matrix[0][0] * MOVE_SPEED;
+        cam_state.pos.1 += mv_matrix[1][0] * MOVE_SPEED;
+        cam_state.pos.2 += mv_matrix[2][0] * MOVE_SPEED;
     }
 
     if input.keys_down.contains(&Key::A) {
-        cam_state.cam_pos.0 -= mv_matrix[0][0] * MOVE_SPEED;
-        cam_state.cam_pos.1 -= mv_matrix[1][0] * MOVE_SPEED;
-        cam_state.cam_pos.2 -= mv_matrix[2][0] * MOVE_SPEED;
+        cam_state.pos.0 -= mv_matrix[0][0] * MOVE_SPEED;
+        cam_state.pos.1 -= mv_matrix[1][0] * MOVE_SPEED;
+        cam_state.pos.2 -= mv_matrix[2][0] * MOVE_SPEED;
     }
 
-    cam_state.cam_rot.0 += input.mouse_delta.1 * MOUSE_SPEED;
-    cam_state.cam_rot.1 += input.mouse_delta.0 * MOUSE_SPEED;
+    cam_state.euler_rot.0 += input.mouse_delta.1 * MOUSE_SPEED;
+    cam_state.euler_rot.1 += input.mouse_delta.0 * MOUSE_SPEED;
 
-    cam_state.cam_rot.0 = fix_rot(cam_state.cam_rot.0);
-    cam_state.cam_rot.1 = fix_rot(cam_state.cam_rot.1);
+    cam_state.euler_rot.0 = fix_rot(cam_state.euler_rot.0);
+    cam_state.euler_rot.1 = fix_rot(cam_state.euler_rot.1);
 
-    // make sure cam_rot always between 0 and 2PI
+    // make sure euler_rot always between 0 and 2PI
     fn fix_rot(num: f32) -> f32 {
         if num < 0f32 {
             return TWO_PI - num;

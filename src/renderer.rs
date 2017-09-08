@@ -249,7 +249,7 @@ impl Renderer {
         let projection_matrix =
             build_persp_proj_mat(60f32, width as f32 / height as f32, 0.01f32, 1000f32);
         let modelview_matrix = build_fp_view_matrix(cam_state);
-        let cam_pos = cam_state.cam_pos;
+        let cam_pos = cam_state.pos;
         let time = (time::precise_time_s() - self.start_time) as f32;
 
         // calc frustum places for culling
@@ -416,30 +416,30 @@ impl Renderer {
                     if ui.collapsing_header(im_str!("Camera")).build() {
                         // camera position
                         if ui.collapsing_header(im_str!("position")).build() {
-                            ui.input_float(im_str!("x"), &mut cam_state.cam_pos.0)
+                            ui.input_float(im_str!("x"), &mut cam_state.pos.0)
                                 .step(0.1)
                                 .step_fast(1.0)
                                 .build();
-                            ui.input_float(im_str!("y"), &mut cam_state.cam_pos.1)
+                            ui.input_float(im_str!("y"), &mut cam_state.pos.1)
                                 .step(0.1)
                                 .step_fast(1.0)
                                 .build();
-                            ui.input_float(im_str!("z"), &mut cam_state.cam_pos.2)
+                            ui.input_float(im_str!("z"), &mut cam_state.pos.2)
                                 .step(0.1)
                                 .step_fast(1.0)
                                 .build();
                         }
                         // camera rotation
                         if ui.collapsing_header(im_str!("rotation")).build() {
-                            ui.input_float(im_str!("x"), &mut cam_state.cam_rot.0)
+                            ui.input_float(im_str!("x"), &mut cam_state.euler_rot.0)
                                 .step(0.1)
                                 .step_fast(1.0)
                                 .build();
-                            ui.input_float(im_str!("y"), &mut cam_state.cam_rot.1)
+                            ui.input_float(im_str!("y"), &mut cam_state.euler_rot.1)
                                 .step(0.1)
                                 .step_fast(1.0)
                                 .build();
-                            ui.input_float(im_str!("z"), &mut cam_state.cam_rot.2)
+                            ui.input_float(im_str!("z"), &mut cam_state.euler_rot.2)
                                 .step(0.1)
                                 .step_fast(1.0)
                                 .build();

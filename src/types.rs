@@ -118,10 +118,10 @@ pub struct TextItem {
 pub struct CamState {
     /// The position of the camera in 3d space
     #[builder(default = "(0f32, 0f32, 0f32)")]
-    pub cam_pos: Vector3,
+    pub pos: Vector3,
     /// The euler rotation of the camera
     #[builder(default = "(0f32, 0f32, 0f32)")]
-    pub cam_rot: Vector3,
+    pub euler_rot: Vector3,
 }
 
 /// struct for shader attributes
