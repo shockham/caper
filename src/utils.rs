@@ -6,7 +6,7 @@ use std::iter::Sum;
 use std::f32::consts::PI;
 
 use types::{RenderItem, RenderItemBuilder, TransformBuilder};
-use types::{Vertex, Quaternion, Vector3, Matrix4, CamState, MaterialBuilder};
+use types::{Vertex, Quaternion, Vector3, Matrix4, Camera, MaterialBuilder};
 
 use input::{Key, Input};
 
@@ -191,7 +191,7 @@ pub fn build_persp_proj_mat(fov: f32, aspect: f32, znear: f32, zfar: f32) -> Mat
 }
 
 /// Returns the model view matrix for a first person view given cam position and rotation
-pub fn build_fp_view_matrix(cam_state: &CamState) -> Matrix4 {
+pub fn build_fp_view_matrix(cam_state: &Camera) -> Matrix4 {
 
     let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (
         cam_state.euler_rot.1.sin(),
@@ -203,11 +203,7 @@ pub fn build_fp_view_matrix(cam_state: &CamState) -> Matrix4 {
     let yaxis = [sin_yaw * sin_pitch, cos_pitch, cos_yaw * sin_pitch];
     let zaxis = [sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw];
 
-    let cam_arr = [
-        cam_state.pos.0,
-        cam_state.pos.1,
-        cam_state.pos.2,
-    ];
+    let cam_arr = [cam_state.pos.0, cam_state.pos.1, cam_state.pos.2];
 
     [
         [xaxis[0], yaxis[0], zaxis[0], 0.0],
@@ -225,7 +221,7 @@ pub fn build_fp_view_matrix(cam_state: &CamState) -> Matrix4 {
 
 /// This method is where data transforms take place due to inputs
 /// for a first person camera
-pub fn handle_fp_inputs(input: &mut Input, cam_state: &mut CamState) {
+pub fn handle_fp_inputs(input: &mut Input, cam_state: &mut Camera) {
     // some static vals to use the fp inputs
     const MOVE_SPEED: f32 = 0.2f32;
     const MOUSE_SPEED: f32 = 10f32;

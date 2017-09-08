@@ -115,7 +115,7 @@ pub struct TextItem {
 
 /// struct for abstracting the camera state
 #[derive(Builder, Copy, Clone, Serialize, Deserialize, PartialEq)]
-pub struct CamState {
+pub struct Camera {
     /// The position of the camera in 3d space
     #[builder(default = "(0f32, 0f32, 0f32)")]
     pub pos: Vector3,

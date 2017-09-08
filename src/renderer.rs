@@ -30,7 +30,7 @@ use std::thread;
 use shader::Shaders;
 use utils::{dotp, build_persp_proj_mat, build_fp_view_matrix, mul_mat4};
 use posteffect::{PostEffect, render_post};
-use types::{RenderItem, TextItem, Vector3, Matrix4, CamState, Attr, PhysicsType};
+use types::{RenderItem, TextItem, Vector3, Matrix4, Camera, Attr, PhysicsType};
 use lighting::Lighting;
 use input::{Input, MouseButton};
 
@@ -224,7 +224,7 @@ impl Renderer {
     /// Draws a frame
     pub fn draw<F: FnMut(&Ui)>(
         &mut self,
-        cam_state: &mut CamState,
+        cam_state: &mut Camera,
         render_items: &mut Vec<RenderItem>,
         text_items: &mut Vec<TextItem>,
         mut f: F,

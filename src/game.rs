@@ -1,6 +1,6 @@
 use renderer::Renderer;
 use audio::Audio;
-use types::{RenderItem, TextItem, CamState, PhysicsType};
+use types::{RenderItem, TextItem, Camera, PhysicsType};
 use input::Input;
 use imgui::Ui;
 use nalgebra::Vector3 as nVector3;
@@ -29,7 +29,7 @@ pub struct Game {
     /// The audio system
     pub audio: Audio,
     /// Simple struct for camera data
-    pub cam_state: CamState,
+    pub cam_state: Camera,
     /// All of the mesh items to be rendered in the game
     render_items: Vec<RenderItem>,
     /// All the text items to be rendered in the game
@@ -46,7 +46,7 @@ impl Game {
         world.set_gravity(nVector3::new(0.0, -9.81, 0.0));
 
         //cam state
-        let cam_state = CamState {
+        let cam_state = Camera {
             pos: (0.0f32, 0.0, 0.0),
             euler_rot: (0.0f32, 0.0, 0.0),
         };
