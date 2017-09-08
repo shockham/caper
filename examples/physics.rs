@@ -131,7 +131,7 @@ fn main() {
         }
 
         let player_pos = game.get_render_item(1).instance_transforms[0].pos;
-        game.cam_state.pos = (player_pos.0, player_pos.1 + 1.5f32, player_pos.2 + 8f32);
+        game.cam.pos = (player_pos.0, player_pos.1 + 1.5f32, player_pos.2 + 8f32);
 
         // quit
         if game.input.keys_down.contains(&Key::Escape) {

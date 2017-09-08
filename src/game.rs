@@ -29,7 +29,7 @@ pub struct Game {
     /// The audio system
     pub audio: Audio,
     /// Simple struct for camera data
-    pub cam_state: Camera,
+    pub cam: Camera,
     /// All of the mesh items to be rendered in the game
     render_items: Vec<RenderItem>,
     /// All the text items to be rendered in the game
@@ -46,7 +46,7 @@ impl Game {
         world.set_gravity(nVector3::new(0.0, -9.81, 0.0));
 
         //cam state
-        let cam_state = Camera {
+        let cam = Camera {
             pos: (0.0f32, 0.0, 0.0),
             euler_rot: (0.0f32, 0.0, 0.0),
         };
@@ -58,7 +58,7 @@ impl Game {
             renderer: renderer,
             physics: world,
             audio: Audio::new(),
-            cam_state: cam_state,
+            cam: cam,
             render_items: Vec::new(),
             text_items: Vec::new(),
             delta: 0.016666667f32,
@@ -266,7 +266,7 @@ impl Game {
         // render the frame
         {
             self.renderer.draw(
-                &mut self.cam_state,
+                &mut self.cam,
                 &mut self.render_items,
                 &mut self.text_items,
                 &mut render_imgui,

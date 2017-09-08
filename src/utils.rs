@@ -191,19 +191,19 @@ pub fn build_persp_proj_mat(fov: f32, aspect: f32, znear: f32, zfar: f32) -> Mat
 }
 
 /// Returns the model view matrix for a first person view given cam position and rotation
-pub fn build_fp_view_matrix(cam_state: &Camera) -> Matrix4 {
+pub fn build_fp_view_matrix(cam: &Camera) -> Matrix4 {
 
     let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (
-        cam_state.euler_rot.1.sin(),
-        cam_state.euler_rot.1.cos(),
-        cam_state.euler_rot.0.sin(),
-        cam_state.euler_rot.0.cos(),
+        cam.euler_rot.1.sin(),
+        cam.euler_rot.1.cos(),
+        cam.euler_rot.0.sin(),
+        cam.euler_rot.0.cos(),
     );
     let xaxis = [cos_yaw, 0.0, -sin_yaw];
     let yaxis = [sin_yaw * sin_pitch, cos_pitch, cos_yaw * sin_pitch];
     let zaxis = [sin_yaw * cos_pitch, -sin_pitch, cos_pitch * cos_yaw];
 
-    let cam_arr = [cam_state.pos.0, cam_state.pos.1, cam_state.pos.2];
+    let cam_arr = [cam.pos.0, cam.pos.1, cam.pos.2];
 
     [
         [xaxis[0], yaxis[0], zaxis[0], 0.0],
@@ -221,42 +221,42 @@ pub fn build_fp_view_matrix(cam_state: &Camera) -> Matrix4 {
 
 /// This method is where data transforms take place due to inputs
 /// for a first person camera
-pub fn handle_fp_inputs(input: &mut Input, cam_state: &mut Camera) {
+pub fn handle_fp_inputs(input: &mut Input, cam: &mut Camera) {
     // some static vals to use the fp inputs
     const MOVE_SPEED: f32 = 0.2f32;
     const MOUSE_SPEED: f32 = 10f32;
 
-    let mv_matrix = build_fp_view_matrix(cam_state);
+    let mv_matrix = build_fp_view_matrix(cam);
 
     if input.keys_down.contains(&Key::S) {
-        cam_state.pos.0 += mv_matrix[0][2] * MOVE_SPEED;
-        cam_state.pos.1 += mv_matrix[1][2] * MOVE_SPEED;
-        cam_state.pos.2 += mv_matrix[2][2] * MOVE_SPEED;
+        cam.pos.0 += mv_matrix[0][2] * MOVE_SPEED;
+        cam.pos.1 += mv_matrix[1][2] * MOVE_SPEED;
+        cam.pos.2 += mv_matrix[2][2] * MOVE_SPEED;
     }
 
     if input.keys_down.contains(&Key::W) {
-        cam_state.pos.0 -= mv_matrix[0][2] * MOVE_SPEED;
-        cam_state.pos.1 -= mv_matrix[1][2] * MOVE_SPEED;
-        cam_state.pos.2 -= mv_matrix[2][2] * MOVE_SPEED;
+        cam.pos.0 -= mv_matrix[0][2] * MOVE_SPEED;
+        cam.pos.1 -= mv_matrix[1][2] * MOVE_SPEED;
+        cam.pos.2 -= mv_matrix[2][2] * MOVE_SPEED;
     }
 
     if input.keys_down.contains(&Key::D) {
-        cam_state.pos.0 += mv_matrix[0][0] * MOVE_SPEED;
-        cam_state.pos.1 += mv_matrix[1][0] * MOVE_SPEED;
-        cam_state.pos.2 += mv_matrix[2][0] * MOVE_SPEED;
+        cam.pos.0 += mv_matrix[0][0] * MOVE_SPEED;
+        cam.pos.1 += mv_matrix[1][0] * MOVE_SPEED;
+        cam.pos.2 += mv_matrix[2][0] * MOVE_SPEED;
     }
 
     if input.keys_down.contains(&Key::A) {
-        cam_state.pos.0 -= mv_matrix[0][0] * MOVE_SPEED;
-        cam_state.pos.1 -= mv_matrix[1][0] * MOVE_SPEED;
-        cam_state.pos.2 -= mv_matrix[2][0] * MOVE_SPEED;
+        cam.pos.0 -= mv_matrix[0][0] * MOVE_SPEED;
+        cam.pos.1 -= mv_matrix[1][0] * MOVE_SPEED;
+        cam.pos.2 -= mv_matrix[2][0] * MOVE_SPEED;
     }
 
-    cam_state.euler_rot.0 += input.mouse_delta.1 * MOUSE_SPEED;
-    cam_state.euler_rot.1 += input.mouse_delta.0 * MOUSE_SPEED;
+    cam.euler_rot.0 += input.mouse_delta.1 * MOUSE_SPEED;
+    cam.euler_rot.1 += input.mouse_delta.0 * MOUSE_SPEED;
 
-    cam_state.euler_rot.0 = fix_rot(cam_state.euler_rot.0);
-    cam_state.euler_rot.1 = fix_rot(cam_state.euler_rot.1);
+    cam.euler_rot.0 = fix_rot(cam.euler_rot.0);
+    cam.euler_rot.1 = fix_rot(cam.euler_rot.1);
 
     // make sure euler_rot always between 0 and 2PI
     fn fix_rot(num: f32) -> f32 {

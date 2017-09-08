@@ -48,7 +48,7 @@ fn main() {
         game.update(|_: &Ui| {});
 
         // update the first person inputs
-        handle_fp_inputs(&mut game.input, &mut game.cam_state);
+        handle_fp_inputs(&mut game.input, &mut game.cam);
 
         // update some items
         let update_time = time::precise_time_s();
