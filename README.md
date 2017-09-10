@@ -3,7 +3,7 @@
 [![Build status](https://travis-ci.org/shockham/caper.svg?branch=master)](https://travis-ci.org/shockham/caper)
 [![Documentation](https://docs.rs/caper/badge.svg)](https://docs.rs/caper)
 
-Small game framework using [rust](https://www.rust-lang.org/).
+Minimalist game framework using [rust](https://www.rust-lang.org/).
 Currently has systems for:
 - Rendering ([glium](https://github.com/tomaka/glium))
 - Input ([winit](https://github.com/tomaka/winit) via [volition](https://github.com/shockham/volition))
@@ -11,8 +11,6 @@ Currently has systems for:
 - Audio ([rodio](https://github.com/tomaka/rodio) via [impose](https://github.com/shockham/impose))
 
 [**Documentation**](https://shockham.github.io/caper/caper/)
-
-Note: This is being used for/was created with [specific game](https://twitter.com/SHockham/status/821691014863798272) in mind so might not be ideal for use with everything.
 
 [Example](https://github.com/shockham/caper/blob/master/examples/simple.rs) of a basis for a game:
 ```rust
