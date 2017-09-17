@@ -30,7 +30,7 @@ use std::thread;
 use shader::Shaders;
 use utils::{dotp, build_persp_proj_mat, build_fp_view_matrix, mul_mat4};
 use posteffect::{PostEffect, render_post};
-use types::{RenderItem, TextItem, Vector3, Matrix4, Camera, Attr, PhysicsType};
+use types::{RenderItem, TextItem, Vector3, Matrix4, Camera, ShaderIn, PhysicsType};
 use lighting::Lighting;
 use input::{Input, MouseButton};
 
@@ -294,7 +294,7 @@ impl Renderer {
                                         ))
                             })
                             .map(|t| {
-                                Attr {
+                                ShaderIn {
                                     world_position: t.pos,
                                     world_rotation: t.rot,
                                     world_scale: t.scale,

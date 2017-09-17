@@ -126,7 +126,7 @@ pub struct Camera {
 
 /// struct for shader attributes
 #[derive(Copy, Clone, Serialize, Deserialize, PartialEq)]
-pub struct Attr {
+pub struct ShaderIn {
     /// The world position to be passed to the shader
     pub world_position: Vector3,
     /// The world rotation to be passed to the shader
@@ -134,4 +134,4 @@ pub struct Attr {
     /// The world scale to be passed to the shader
     pub world_scale: Vector3,
 }
-implement_vertex!(Attr, world_position, world_rotation, world_scale);
+implement_vertex!(ShaderIn, world_position, world_rotation, world_scale);

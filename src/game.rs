@@ -5,7 +5,6 @@ use input::Input;
 use imgui::Ui;
 use nalgebra::Vector3 as nVector3;
 use nalgebra::Translation3;
-use nalgebra::core::storage::Owned;
 use nphysics3d::world::World;
 use nphysics3d::object::{RigidBody, WorldObject};
 use ncollide::shape::Cuboid;
