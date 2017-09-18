@@ -26,7 +26,6 @@ use std::fs::File;
 use std::fs::OpenOptions;
 use std::thread;
 
-
 use shader::Shaders;
 use utils::{dotp, build_persp_proj_mat, build_fp_view_matrix, mul_mat4};
 use posteffect::{PostEffect, render_post};
