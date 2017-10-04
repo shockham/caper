@@ -16,13 +16,13 @@ const TWO_PI: f32 = PI * 2f32;
 /// Returns a Vec<Vertex> that should be converted to buffer and rendered as `TrianglesList`.
 pub fn load_wavefront(data: &[u8]) -> Vec<Vertex> {
     let mut data = ::std::io::BufReader::new(data);
-    let data = obj::Obj::load(&mut data);
+    let data = obj::Obj::load_buf(&mut data).unwrap();
 
     let mut vertex_data = Vec::new();
 
     for shape in data.objects.iter().next().unwrap().groups.iter().flat_map(
         |g| {
-            g.indices.iter()
+            g.polys.iter()
         },
     )
     {
