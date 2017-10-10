@@ -327,6 +327,7 @@ impl Renderer {
                                 projection_matrix: projection_matrix,
                                 modelview_matrix: modelview_matrix,
                                 cam_pos: cam_pos,
+                                viewport: (width as f32, height as f32),
                                 time: time,
                                 tex: self.shaders.textures.get(tex_name.as_str()).unwrap(),
                                 normal_tex:
