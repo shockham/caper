@@ -1,11 +1,10 @@
-use glium::{Surface, Program};
+use glium::Surface;
 use glium::index::{PrimitiveType, IndexBuffer};
 use glium::vertex::VertexBuffer;
 use glium::backend::{Facade, Context};
 use glium::framebuffer::SimpleFrameBuffer;
 use glium::texture::{Texture2d, DepthTexture2d, DepthFormat, MipmapsOption};
 
-use std::cell::RefCell;
 use std::rc::Rc;
 
 use types::Vertex;
@@ -17,17 +16,13 @@ pub struct PostEffect {
     /// Ref to the rendering context
     context: Rc<Context>,
     /// The vertex buffer to render
-    vertex_buffer: VertexBuffer<Vertex>,
+    pub vertex_buffer: VertexBuffer<Vertex>,
     /// The index buffer to render
-    index_buffer: IndexBuffer<u16>,
-    /// Wrapped color texture
-    target_color: RefCell<Option<Texture2d>>,
-    /// Wrapped depth texture
-    target_depth: RefCell<Option<DepthTexture2d>>,
+    pub index_buffer: IndexBuffer<u16>,
     /// The current shader being used for post processing
     pub current_shader: &'static str,
     /// The time the post effect was initialised
-    start_time: f32,
+    pub start_time: f32,
     /// The scale factor that the scene will be rendered
     /// in relation to to the full window resolution
     pub downscale_factor: f32,
@@ -70,8 +65,6 @@ impl PostEffect {
             context: facade.get_context().clone(),
             vertex_buffer: VertexBuffer::new(facade, &vert_arr).unwrap(),
             index_buffer: IndexBuffer::new(facade, PrimitiveType::TriangleStrip, &ind_arr).unwrap(),
-            target_color: RefCell::new(None),
-            target_depth: RefCell::new(None),
             current_shader: "default",
             start_time: time::precise_time_s() as f32,
             downscale_factor: 1.0f32,
@@ -119,7 +112,11 @@ pub struct PostShaderOptions {
 }
 
 /// Renders the post effect on to the scene rendered in the draw FnMut
-pub fn render_post<T, F>(system: &PostEffect, shader: &Program, target: &mut T, mut draw: F)
+pub fn render_to_texture<T, F>(
+    system: &PostEffect,
+    target: &mut T,
+    mut draw: F,
+) -> (Texture2d, DepthTexture2d)
 where
     T: Surface,
     F: FnMut(&mut SimpleFrameBuffer),
@@ -127,74 +124,26 @@ where
 
     let target_dimensions = target.get_dimensions();
 
-    let mut target_color = system.target_color.borrow_mut();
-    let mut target_depth = system.target_depth.borrow_mut();
+    let target_color = Texture2d::empty(
+        &system.context,
+        (target_dimensions.0 as f32 * system.downscale_factor) as u32,
+        (target_dimensions.1 as f32 * system.downscale_factor) as u32,
+    ).unwrap();
 
-    // check whether the colour buffer needs clearing due to window size change
-    let clear = if let &Some(ref tex) = &*target_color {
-        tex.get_width() != target_dimensions.0 || tex.get_height().unwrap() != target_dimensions.1
-    } else {
-        false
-    };
-
-    if clear || target_color.is_none() {
-        let col_tex = Texture2d::empty(
-            &system.context,
-            (target_dimensions.0 as f32 * system.downscale_factor) as u32,
-            (target_dimensions.1 as f32 * system.downscale_factor) as u32,
-        ).unwrap();
-        *target_color = Some(col_tex);
-
-        let dep_tex = DepthTexture2d::empty_with_format(
-            &system.context,
-            DepthFormat::F32,
-            MipmapsOption::NoMipmap,
-            (target_dimensions.0 as f32 * system.downscale_factor) as u32,
-            (target_dimensions.1 as f32 * system.downscale_factor) as u32,
-        ).unwrap();
-        *target_depth = Some(dep_tex);
-    }
-
-    let target_color = target_color.as_ref().unwrap();
-    let target_depth = target_depth.as_ref().unwrap();
+    let target_depth = DepthTexture2d::empty_with_format(
+        &system.context,
+        DepthFormat::F32,
+        MipmapsOption::NoMipmap,
+        (target_dimensions.0 as f32 * system.downscale_factor) as u32,
+        (target_dimensions.1 as f32 * system.downscale_factor) as u32,
+    ).unwrap();
 
     // first pass draw the scene into a buffer
     draw(&mut SimpleFrameBuffer::with_depth_buffer(
         &system.context,
-        target_color,
-        target_depth,
+        &target_color,
+        &target_depth,
     ).unwrap());
 
-    let uniforms =
-        uniform! {
-            // general uniforms
-            tex: &*target_color,
-            depth_buf: &*target_depth,
-            resolution: (target_dimensions.0 as f32, target_dimensions.1 as f32),
-            time: time::precise_time_s() as f32 - system.start_time,
-            downscale_factor: system.downscale_factor,
-            // post effect param uniforms
-            chrom_offset: system.post_shader_options.chrom_offset,
-            chrom_amt: system.post_shader_options.chrom_amt,
-            blur: system.post_shader_options.blur,
-            blur_amt: system.post_shader_options.blur_amt,
-            blur_radius: system.post_shader_options.blur_radius,
-            blur_weight: system.post_shader_options.blur_weight,
-            bokeh: system.post_shader_options.bokeh,
-            bokeh_focal_depth: system.post_shader_options.bokeh_focal_depth,
-            bokeh_focal_width: system.post_shader_options.bokeh_focal_width,
-            color_offset: system.post_shader_options.color_offset,
-            greyscale: system.post_shader_options.greyscale,
-        };
-
-    // second pass draw the post effect
-    target
-        .draw(
-            &system.vertex_buffer,
-            &system.index_buffer,
-            shader,
-            &uniforms,
-            &Default::default(),
-        )
-        .unwrap();
+    (target_color, target_depth)
 }

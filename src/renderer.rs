@@ -28,7 +28,7 @@ use std::thread;
 
 use shader::Shaders;
 use utils::{dotp, build_persp_proj_mat, build_fp_view_matrix, mul_mat4};
-use posteffect::{PostEffect, render_post};
+use posteffect::{PostEffect, render_to_texture};
 use types::{RenderItem, TextItem, Vector3, Matrix4, Camera, ShaderIn, PhysicsType};
 use lighting::Lighting;
 use input::{Input, MouseButton};
@@ -259,14 +259,8 @@ impl Renderer {
         let mut target = self.display.draw();
         let mut render_count = 0usize;
 
-        render_post(
-            &self.post_effect,
-            &self.shaders
-                .post_shaders
-                .get(self.post_effect.current_shader)
-                .unwrap(),
-            &mut target,
-            |target| {
+        let (target_color, target_depth) =
+            render_to_texture(&self.post_effect, &mut target, |target| {
                 // clear the colour and depth buffers
                 target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
@@ -347,8 +341,42 @@ impl Renderer {
                         )
                         .unwrap();
                 }
-            },
-        );
+            });
+
+        // second pass draw the post effect and composition
+        let uniforms =
+            uniform! {
+                // general uniforms
+                tex: &target_color,
+                depth_buf: &target_depth,
+                resolution: (width as f32, height as f32),
+                time: time::precise_time_s() as f32 - self.post_effect.start_time,
+                downscale_factor: self.post_effect.downscale_factor,
+                // post effect param uniforms
+                chrom_offset: self.post_effect.post_shader_options.chrom_offset,
+                chrom_amt: self.post_effect.post_shader_options.chrom_amt,
+                blur: self.post_effect.post_shader_options.blur,
+                blur_amt: self.post_effect.post_shader_options.blur_amt,
+                blur_radius: self.post_effect.post_shader_options.blur_radius,
+                blur_weight: self.post_effect.post_shader_options.blur_weight,
+                bokeh: self.post_effect.post_shader_options.bokeh,
+                bokeh_focal_depth: self.post_effect.post_shader_options.bokeh_focal_depth,
+                bokeh_focal_width: self.post_effect.post_shader_options.bokeh_focal_width,
+                color_offset: self.post_effect.post_shader_options.color_offset,
+                greyscale: self.post_effect.post_shader_options.greyscale,
+            };
+        target
+            .draw(
+                &self.post_effect.vertex_buffer,
+                &self.post_effect.index_buffer,
+                &self.shaders
+                    .post_shaders
+                    .get(self.post_effect.current_shader)
+                    .unwrap(),
+                &uniforms,
+                &Default::default(),
+            )
+            .unwrap();
 
         self.render_count = render_count;
 
