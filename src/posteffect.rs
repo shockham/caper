@@ -119,10 +119,10 @@ pub struct PostShaderOptions {
 }
 
 /// Renders the post effect on to the scene rendered in the draw FnMut
-pub fn render_post<T, F, R>(system: &PostEffect, shader: &Program, target: &mut T, mut draw: F) -> R
+pub fn render_post<T, F>(system: &PostEffect, shader: &Program, target: &mut T, mut draw: F)
 where
     T: Surface,
-    F: FnMut(&mut SimpleFrameBuffer) -> R,
+    F: FnMut(&mut SimpleFrameBuffer),
 {
 
     let target_dimensions = target.get_dimensions();
@@ -159,7 +159,7 @@ where
     let target_depth = target_depth.as_ref().unwrap();
 
     // first pass draw the scene into a buffer
-    let output = draw(&mut SimpleFrameBuffer::with_depth_buffer(
+    draw(&mut SimpleFrameBuffer::with_depth_buffer(
         &system.context,
         target_color,
         target_depth,
@@ -197,6 +197,4 @@ where
             &Default::default(),
         )
         .unwrap();
-
-    output
 }
