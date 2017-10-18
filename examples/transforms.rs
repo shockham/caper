@@ -152,7 +152,7 @@ fn main() {
         game.update(|_: &Ui| {});
 
         // first person input
-        handle_fp_inputs(&mut game.input, &mut game.cam);
+        handle_fp_inputs(&mut game.input, &mut game.cams[0]);
 
         // temporary fix after removal of update_fn
         sin_y(

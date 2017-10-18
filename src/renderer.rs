@@ -7,6 +7,7 @@ use glium::glutin::CursorState::Hide; //{ Grab, Hide };
 use glium::draw_parameters::{DepthClamp, BackfaceCullingMode};
 use glium::texture::RawImage2d;
 
+
 use glium_text;
 use glium_text::{TextSystem, FontTexture, TextDisplay};
 
@@ -223,7 +224,7 @@ impl Renderer {
     /// Draws a frame
     pub fn draw<F: FnMut(&Ui)>(
         &mut self,
-        cam: &mut Camera,
+        cams: &mut Vec<Camera>,
         render_items: &mut Vec<RenderItem>,
         text_items: &mut Vec<TextItem>,
         mut f: F,
@@ -244,111 +245,128 @@ impl Renderer {
             ..Default::default()
         };
 
-        // uniforms passed to the shaders
-        let projection_matrix =
-            build_persp_proj_mat(60f32, width as f32 / height as f32, 0.01f32, 1000f32);
-        let modelview_matrix = build_fp_view_matrix(cam);
-        let cam_pos = cam.pos;
-        let time = (time::precise_time_s() - self.start_time) as f32;
-
-        // calc frustum places for culling
-        let combo_matrix = mul_mat4(projection_matrix, modelview_matrix);
-        let frustum_planes = Renderer::get_frustum_planes(&combo_matrix);
-
         // drawing a frame
         let mut target = self.display.draw();
         let mut render_count = 0usize;
+        let mut cols = Vec::new();
+        let mut depths = Vec::new();
 
-        let (target_color, target_depth) =
-            render_to_texture(&self.post_effect, &mut target, |target| {
-                // clear the colour and depth buffers
-                target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
+        for c in 0..cams.len() {
+            let cam = cams[c];
+            // uniforms passed to the shaders
+            let projection_matrix =
+                build_persp_proj_mat(60f32, width as f32 / height as f32, 0.01f32, 1000f32);
+            let modelview_matrix = build_fp_view_matrix(&cam);
+            let cam_pos = cam.pos;
+            let time = (time::precise_time_s() - self.start_time) as f32;
 
-                // drawing the render items (with more than one instance)
-                for item in render_items.iter().filter(|r| {
-                    r.active && r.instance_transforms.len() > 0
-                })
-                {
-                    // building the vertex and index buffers
-                    let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices).unwrap();
+            // calc frustum places for culling
+            let combo_matrix = mul_mat4(projection_matrix, modelview_matrix);
+            let frustum_planes = Renderer::get_frustum_planes(&combo_matrix);
 
-                    // add positions for instances
-                    let per_instance = {
-                        let data = item.instance_transforms
-                            .iter()
-                            .filter(|t| {
-                                (t.active && !t.cull) ||
-                                    (t.active &&
-                                         Renderer::frustrum_test(
-                                            &t.pos,
-                                            t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
-                                            &frustum_planes,
-                                        ))
-                            })
-                            .map(|t| {
-                                ShaderIn {
-                                    world_position: t.pos,
-                                    world_rotation: t.rot,
-                                    world_scale: t.scale,
-                                }
-                            })
-                            .collect::<Vec<_>>();
+            // render to texture/depth
+            let (target_color, target_depth) =
+                render_to_texture(&self.post_effect, &mut target, |target| {
+                    // clear the colour and depth buffers
+                    target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
-                        // if there are no active transforms skip ri
-                        if data.len() <= 0 {
-                            continue;
-                        }
+                    // drawing the render items (with more than one instance)
+                    for item in render_items.iter().filter(|r| {
+                        r.active && r.instance_transforms.len() > 0
+                    })
+                    {
+                        // building the vertex and index buffers
+                        let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices)
+                            .unwrap();
 
-                        // add instances to render_count
-                        render_count += data.len();
+                        // add positions for instances
+                        let per_instance = {
+                            let data = item.instance_transforms
+                                .iter()
+                                .filter(|t| {
+                                    (t.active && !t.cull) ||
+                                        (t.active &&
+                                             Renderer::frustrum_test(
+                                                &t.pos,
+                                                t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
+                                                &frustum_planes,
+                                            ))
+                                })
+                                .map(|t| {
+                                    ShaderIn {
+                                        world_position: t.pos,
+                                        world_rotation: t.rot,
+                                        world_scale: t.scale,
+                                    }
+                                })
+                                .collect::<Vec<_>>();
 
-                        VertexBuffer::dynamic(&self.display, &data).unwrap()
-                    };
+                            // if there are no active transforms skip ri
+                            if data.len() <= 0 {
+                                continue;
+                            }
 
-                    let tex_name = item.material.texture_name.clone().unwrap_or(
-                        "default".to_string(),
-                    );
-                    let normal_tex_name = item.material.normal_texture_name.clone().unwrap_or(
-                        "default_normal"
-                            .to_string(),
-                    );
+                            // add instances to render_count
+                            render_count += data.len();
 
-                    let dir_lights = self.lighting.directional_tex.borrow();
+                            VertexBuffer::dynamic(&self.display, &data).unwrap()
+                        };
 
-                    let uniforms =
-                        uniform! {
-                                projection_matrix: projection_matrix,
-                                modelview_matrix: modelview_matrix,
-                                cam_pos: cam_pos,
-                                viewport: (width as f32, height as f32),
-                                time: time,
-                                tex: self.shaders.textures.get(tex_name.as_str()).unwrap(),
-                                normal_tex:
-                                    self.shaders.textures.get(normal_tex_name.as_str()).unwrap(),
-                                dir_lights: &*dir_lights,
-                            };
+                        let tex_name = item.material.texture_name.clone().unwrap_or(
+                            "default".to_string(),
+                        );
+                        let normal_tex_name = item.material.normal_texture_name.clone().unwrap_or(
+                            "default_normal".to_string(),
+                        );
 
-                    target
-                        .draw(
-                            (&vertex_buffer, per_instance.per_instance().unwrap()),
-                            &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
-                            &self.shaders
-                                .shaders
-                                .get(item.material.shader_name.as_str())
-                                .unwrap(),
-                            &uniforms,
-                            &params,
-                        )
-                        .unwrap();
-                }
-            });
+                        let dir_lights = self.lighting.directional_tex.borrow();
+
+                        let uniforms =
+                            uniform! {
+                                    projection_matrix: projection_matrix,
+                                    modelview_matrix: modelview_matrix,
+                                    cam_pos: cam_pos,
+                                    viewport: (width as f32, height as f32),
+                                    time: time,
+                                    tex: self.shaders.textures.get(tex_name.as_str()).unwrap(),
+                                    normal_tex:
+                                        self.shaders.textures.get(normal_tex_name.as_str())
+                                        .unwrap(),
+                                    dir_lights: &*dir_lights,
+                                };
+
+                        target
+                            .draw(
+                                (&vertex_buffer, per_instance.per_instance().unwrap()),
+                                &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
+                                &self.shaders
+                                    .shaders
+                                    .get(item.material.shader_name.as_str())
+                                    .unwrap(),
+                                &uniforms,
+                                &params,
+                            )
+                            .unwrap();
+                    }
+                });
+
+            cols.push(target_color);
+            depths.push(target_depth);
+        }
+
+        //let texs_arr = Texture2dArray::new(&self.post_effect.context, cols).unwrap();
+        //let depths_arr = DepthTexture2dArray::new(&self.post_effect.context, depths).unwrap();
+        //
+        let tex_1_i = cols.len() - 1;
 
         // second pass draw the post effect and composition
         let uniforms =
             uniform! {
                 // general uniforms
-                tex: &target_color,
-                depth_buf: &target_depth,
+                tex: &cols[0],
+                depth_buf: &depths[0],
+                tex_1: &cols[tex_1_i],
+                depth_buf_1: &depths[tex_1_i],
                 resolution: (width as f32, height as f32),
                 time: time::precise_time_s() as f32 - self.post_effect.start_time,
                 downscale_factor: self.post_effect.downscale_factor,
@@ -441,35 +459,37 @@ impl Renderer {
                 .build(|| {
                     // camera state editor
                     if ui.collapsing_header(im_str!("Camera")).build() {
-                        // camera position
-                        if ui.collapsing_header(im_str!("position")).build() {
-                            ui.input_float(im_str!("x"), &mut cam.pos.0)
-                                .step(0.1)
-                                .step_fast(1.0)
-                                .build();
-                            ui.input_float(im_str!("y"), &mut cam.pos.1)
-                                .step(0.1)
-                                .step_fast(1.0)
-                                .build();
-                            ui.input_float(im_str!("z"), &mut cam.pos.2)
-                                .step(0.1)
-                                .step_fast(1.0)
-                                .build();
-                        }
-                        // camera rotation
-                        if ui.collapsing_header(im_str!("rotation")).build() {
-                            ui.input_float(im_str!("x"), &mut cam.euler_rot.0)
-                                .step(0.1)
-                                .step_fast(1.0)
-                                .build();
-                            ui.input_float(im_str!("y"), &mut cam.euler_rot.1)
-                                .step(0.1)
-                                .step_fast(1.0)
-                                .build();
-                            ui.input_float(im_str!("z"), &mut cam.euler_rot.2)
-                                .step(0.1)
-                                .step_fast(1.0)
-                                .build();
+                        for cam in cams {
+                            // camera position
+                            if ui.collapsing_header(im_str!("position")).build() {
+                                ui.input_float(im_str!("x"), &mut cam.pos.0)
+                                    .step(0.1)
+                                    .step_fast(1.0)
+                                    .build();
+                                ui.input_float(im_str!("y"), &mut cam.pos.1)
+                                    .step(0.1)
+                                    .step_fast(1.0)
+                                    .build();
+                                ui.input_float(im_str!("z"), &mut cam.pos.2)
+                                    .step(0.1)
+                                    .step_fast(1.0)
+                                    .build();
+                            }
+                            // camera rotation
+                            if ui.collapsing_header(im_str!("rotation")).build() {
+                                ui.input_float(im_str!("x"), &mut cam.euler_rot.0)
+                                    .step(0.1)
+                                    .step_fast(1.0)
+                                    .build();
+                                ui.input_float(im_str!("y"), &mut cam.euler_rot.1)
+                                    .step(0.1)
+                                    .step_fast(1.0)
+                                    .build();
+                                ui.input_float(im_str!("z"), &mut cam.euler_rot.2)
+                                    .step(0.1)
+                                    .step_fast(1.0)
+                                    .build();
+                            }
                         }
                     }
                     // render items editor

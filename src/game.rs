@@ -28,7 +28,7 @@ pub struct Game {
     /// The audio system
     pub audio: Audio,
     /// Simple struct for camera data
-    pub cam: Camera,
+    pub cams: Vec<Camera>,
     /// All of the mesh items to be rendered in the game
     render_items: Vec<RenderItem>,
     /// All the text items to be rendered in the game
@@ -57,7 +57,7 @@ impl Game {
             renderer: renderer,
             physics: world,
             audio: Audio::new(),
-            cam: cam,
+            cams: vec![cam],
             render_items: Vec::new(),
             text_items: Vec::new(),
             delta: 0.016666667f32,
@@ -265,7 +265,7 @@ impl Game {
         // render the frame
         {
             self.renderer.draw(
-                &mut self.cam,
+                &mut self.cams,
                 &mut self.render_items,
                 &mut self.text_items,
                 &mut render_imgui,

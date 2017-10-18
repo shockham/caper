@@ -73,7 +73,7 @@ fn main() {
             .unwrap(),
     );
 
-    game.cam.pos.1 = 2.5f32 +
+    game.cams[0].pos.1 = 2.5f32 +
         get_pos_perlin(((pseu_cam_pos.0 - fixed_val), (pseu_cam_pos.1 - fixed_val)));
     loop {
         let fps = game.renderer.fps;
@@ -100,7 +100,7 @@ fn main() {
         });
 
         if game.input.hide_mouse {
-            let mv_matrix = caper::utils::build_fp_view_matrix(&game.cam);
+            let mv_matrix = caper::utils::build_fp_view_matrix(&game.cams[0]);
 
             if game.input.keys_down.contains(&Key::S) {
                 pseu_cam_pos.0 += mv_matrix[0][2] * move_speed;
@@ -126,14 +126,14 @@ fn main() {
                 movement_dirty = true;
             }
 
-            game.cam.euler_rot.0 += game.input.mouse_delta.1 * mouse_speed;
-            game.cam.euler_rot.1 += game.input.mouse_delta.0 * mouse_speed;
+            game.cams[0].euler_rot.0 += game.input.mouse_delta.1 * mouse_speed;
+            game.cams[0].euler_rot.1 += game.input.mouse_delta.0 * mouse_speed;
         }
 
         // only regenerate the mesh if movement
         if movement_dirty {
             game.get_render_item(0).vertices = gen_perlin_mesh(pseu_cam_pos, map_size);
-            game.cam.pos.1 = 2.5f32 +
+            game.cams[0].pos.1 = 2.5f32 +
                 get_pos_perlin(((pseu_cam_pos.0 - fixed_val), (pseu_cam_pos.1 - fixed_val)));
 
             // update the sphere location

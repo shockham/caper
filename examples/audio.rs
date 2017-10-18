@@ -40,7 +40,7 @@ fn main() {
         game.update(|_: &Ui| {});
 
         // update the first person inputs
-        handle_fp_inputs(&mut game.input, &mut game.cam);
+        handle_fp_inputs(&mut game.input, &mut game.cams[0]);
 
         // play audio when e is pressed
         if game.input.keys_pressed.contains(&Key::E) {

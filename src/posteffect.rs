@@ -14,7 +14,7 @@ use time;
 /// struct representing a post effect
 pub struct PostEffect {
     /// Ref to the rendering context
-    context: Rc<Context>,
+    pub context: Rc<Context>,
     /// The vertex buffer to render
     pub vertex_buffer: VertexBuffer<Vertex>,
     /// The index buffer to render
