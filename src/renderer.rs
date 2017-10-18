@@ -356,8 +356,6 @@ impl Renderer {
 
         //let texs_arr = Texture2dArray::new(&self.post_effect.context, cols).unwrap();
         //let depths_arr = DepthTexture2dArray::new(&self.post_effect.context, depths).unwrap();
-        //
-        let tex_1_i = cols.len() - 1;
 
         // second pass draw the post effect and composition
         let uniforms =
@@ -365,8 +363,6 @@ impl Renderer {
                 // general uniforms
                 tex: &cols[0],
                 depth_buf: &depths[0],
-                tex_1: &cols[tex_1_i],
-                depth_buf_1: &depths[tex_1_i],
                 resolution: (width as f32, height as f32),
                 time: time::precise_time_s() as f32 - self.post_effect.start_time,
                 downscale_factor: self.post_effect.downscale_factor,
@@ -383,6 +379,47 @@ impl Renderer {
                 color_offset: self.post_effect.post_shader_options.color_offset,
                 greyscale: self.post_effect.post_shader_options.greyscale,
             };
+
+        let uniforms = if cols.len() > 0 {
+            uniforms.add("tex_1", &cols[1])
+                    .add("depth_buf_1", &depths[1])
+        } else {
+            uniforms.add("tex_1", &cols[0])
+                    .add("depth_buf_1", &depths[0])
+        };
+
+        let uniforms = if cols.len() > 1 {
+            uniforms.add("tex_2", &cols[2])
+                    .add("depth_buf_2", &depths[2])
+        } else {
+            uniforms.add("tex_2", &cols[0])
+                    .add("depth_buf_2", &depths[0])
+        };
+
+        let uniforms = if cols.len() > 2 {
+            uniforms.add("tex_3", &cols[3])
+                    .add("depth_buf_3", &depths[3])
+        } else {
+            uniforms.add("tex_3", &cols[0])
+                    .add("depth_buf_3", &depths[0])
+        };
+
+        let uniforms = if cols.len() > 3 {
+            uniforms.add("tex_4", &cols[4])
+                    .add("depth_buf_4", &depths[4])
+        } else {
+            uniforms.add("tex_4", &cols[0])
+                    .add("depth_buf_4", &depths[0])
+        };
+
+        let uniforms = if cols.len() > 4 {
+            uniforms.add("tex_5", &cols[5])
+                    .add("depth_buf_5", &depths[5])
+        } else {
+            uniforms.add("tex_5", &cols[0])
+                    .add("depth_buf_5", &depths[0])
+        };
+
         target
             .draw(
                 &self.post_effect.vertex_buffer,
