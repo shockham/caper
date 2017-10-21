@@ -381,43 +381,63 @@ impl Renderer {
             };
 
         let uniforms = if cols.len() > 1 {
-            uniforms.add("tex_1", &cols[1])
-                    .add("depth_buf_1", &depths[1])
+            uniforms.add("tex_1", &cols[1]).add(
+                "depth_buf_1",
+                &depths[1],
+            )
         } else {
-            uniforms.add("tex_1", &cols[0])
-                    .add("depth_buf_1", &depths[0])
+            uniforms.add("tex_1", &cols[0]).add(
+                "depth_buf_1",
+                &depths[0],
+            )
         };
 
         let uniforms = if cols.len() > 2 {
-            uniforms.add("tex_2", &cols[2])
-                    .add("depth_buf_2", &depths[2])
+            uniforms.add("tex_2", &cols[2]).add(
+                "depth_buf_2",
+                &depths[2],
+            )
         } else {
-            uniforms.add("tex_2", &cols[0])
-                    .add("depth_buf_2", &depths[0])
+            uniforms.add("tex_2", &cols[0]).add(
+                "depth_buf_2",
+                &depths[0],
+            )
         };
 
         let uniforms = if cols.len() > 3 {
-            uniforms.add("tex_3", &cols[3])
-                    .add("depth_buf_3", &depths[3])
+            uniforms.add("tex_3", &cols[3]).add(
+                "depth_buf_3",
+                &depths[3],
+            )
         } else {
-            uniforms.add("tex_3", &cols[0])
-                    .add("depth_buf_3", &depths[0])
+            uniforms.add("tex_3", &cols[0]).add(
+                "depth_buf_3",
+                &depths[0],
+            )
         };
 
         let uniforms = if cols.len() > 4 {
-            uniforms.add("tex_4", &cols[4])
-                    .add("depth_buf_4", &depths[4])
+            uniforms.add("tex_4", &cols[4]).add(
+                "depth_buf_4",
+                &depths[4],
+            )
         } else {
-            uniforms.add("tex_4", &cols[0])
-                    .add("depth_buf_4", &depths[0])
+            uniforms.add("tex_4", &cols[0]).add(
+                "depth_buf_4",
+                &depths[0],
+            )
         };
 
         let uniforms = if cols.len() > 5 {
-            uniforms.add("tex_5", &cols[5])
-                    .add("depth_buf_5", &depths[5])
+            uniforms.add("tex_5", &cols[5]).add(
+                "depth_buf_5",
+                &depths[5],
+            )
         } else {
-            uniforms.add("tex_5", &cols[0])
-                    .add("depth_buf_5", &depths[0])
+            uniforms.add("tex_5", &cols[0]).add(
+                "depth_buf_5",
+                &depths[0],
+            )
         };
 
         target
