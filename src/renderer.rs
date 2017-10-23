@@ -122,16 +122,12 @@ impl Renderer {
             show_editor: false,
         };
 
-        renderer.setup();
+        {
+            let window = renderer.display.gl_window();
+            window.set_cursor_state(Hide).ok();
+        }
 
         (renderer, events_loop)
-    }
-
-    /// Sets up the render window
-    pub fn setup(&self) {
-        // get the window for various values
-        let window = self.display.gl_window();
-        window.set_cursor_state(Hide).ok();
     }
 
     /// Update imgui's interal input state
