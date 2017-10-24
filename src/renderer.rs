@@ -489,22 +489,6 @@ impl Renderer {
 
         // create the engine editor
         if self.show_editor {
-            // available shaders TODO tidy this up, chk_ currently needed for assign
-            /*let chk_shader_list = self.shaders.shaders.keys()
-                .map(|s| s.to_string())
-                .collect::<Vec<String>>();
-            let shader_list = chk_shader_list.iter()
-                .map(|s| im_str!("{}", s))
-                .collect::<Vec<ImStr>>();
-            let shader_list = shader_list.as_slice();
-            // available texture TODO tidy this up, chk_ currently needed for assign
-            let chk_texture_list = self.shaders.textures.keys()
-                .map(|s| s.to_string())
-                .collect::<Vec<String>>();
-            let texture_list = chk_texture_list.iter()
-                .map(|s| im_str!("{}", s))
-                .collect::<Vec<ImStr>>();
-            let texture_list = texture_list.as_slice();*/
             // create the editor window
             ui.window(im_str!("caper editor"))
                 .size((300.0, 200.0), ImGuiSetCond_FirstUseEver)
@@ -513,35 +497,37 @@ impl Renderer {
                     // camera state editor
                     if ui.collapsing_header(im_str!("Camera")).build() {
                         for cam in cams {
-                            // camera position
-                            if ui.collapsing_header(im_str!("position")).build() {
-                                ui.input_float(im_str!("x"), &mut cam.pos.0)
-                                    .step(0.1)
-                                    .step_fast(1.0)
-                                    .build();
-                                ui.input_float(im_str!("y"), &mut cam.pos.1)
-                                    .step(0.1)
-                                    .step_fast(1.0)
-                                    .build();
-                                ui.input_float(im_str!("z"), &mut cam.pos.2)
-                                    .step(0.1)
-                                    .step_fast(1.0)
-                                    .build();
-                            }
-                            // camera rotation
-                            if ui.collapsing_header(im_str!("rotation")).build() {
-                                ui.input_float(im_str!("x"), &mut cam.euler_rot.0)
-                                    .step(0.1)
-                                    .step_fast(1.0)
-                                    .build();
-                                ui.input_float(im_str!("y"), &mut cam.euler_rot.1)
-                                    .step(0.1)
-                                    .step_fast(1.0)
-                                    .build();
-                                ui.input_float(im_str!("z"), &mut cam.euler_rot.2)
-                                    .step(0.1)
-                                    .step_fast(1.0)
-                                    .build();
+                            if ui.collapsing_header(im_str!("Cam")).build() {
+                                // camera position
+                                if ui.collapsing_header(im_str!("position")).build() {
+                                    ui.input_float(im_str!("x"), &mut cam.pos.0)
+                                        .step(0.1)
+                                        .step_fast(1.0)
+                                        .build();
+                                    ui.input_float(im_str!("y"), &mut cam.pos.1)
+                                        .step(0.1)
+                                        .step_fast(1.0)
+                                        .build();
+                                    ui.input_float(im_str!("z"), &mut cam.pos.2)
+                                        .step(0.1)
+                                        .step_fast(1.0)
+                                        .build();
+                                }
+                                // camera rotation
+                                if ui.collapsing_header(im_str!("rotation")).build() {
+                                    ui.input_float(im_str!("x"), &mut cam.euler_rot.0)
+                                        .step(0.1)
+                                        .step_fast(1.0)
+                                        .build();
+                                    ui.input_float(im_str!("y"), &mut cam.euler_rot.1)
+                                        .step(0.1)
+                                        .step_fast(1.0)
+                                        .build();
+                                    ui.input_float(im_str!("z"), &mut cam.euler_rot.2)
+                                        .step(0.1)
+                                        .step_fast(1.0)
+                                        .build();
+                                }
                             }
                         }
                     }
@@ -551,48 +537,6 @@ impl Renderer {
                         for render_item in render_items {
                             ui.tree_node(im_str!("name:{}", render_item.name)).build(
                                 || {
-                                    /*ui.tree_node(im_str!("material")).build(|| {
-                                    // shader name
-                                    let mut shader_index =
-                                        if let Ok(i) =
-                                            chk_shader_list.binary_search(
-                                                &render_item.material.shader_name) {
-                                        i as i32
-                                    } else {
-                                        0i32
-                                    };
-                                    ui.combo(im_str!("shader"), &mut shader_index,
-                                             &shader_list, -1);
-                                    render_item.material.shader_name =
-                                        chk_shader_list[shader_index as usize].clone();
-                                    // texture
-                                    let tex_name =
-                                        render_item.material.texture_name
-                                            .clone().unwrap_or("".to_string());
-                                    let mut tex_index = if let Ok(i) =
-                                        chk_texture_list.binary_search(&tex_name) {
-                                        i as i32
-                                    } else {
-                                        0i32
-                                    };
-                                    ui.combo(im_str!("texture"), &mut tex_index, &texture_list, -1);
-                                    render_item.material.texture_name =
-                                        Some(chk_texture_list[tex_index as usize].clone());
-                                    // normal texture
-                                    let n_tex_name =
-                                        render_item.material.normal_texture_name
-                                            .clone().unwrap_or("".to_string());
-                                    let mut norm_tex_index =
-                                        if let Ok(i) = chk_texture_list.binary_search(&n_tex_name) {
-                                        i as i32
-                                    } else {
-                                        0i32
-                                    };
-                                    ui.combo(im_str!("normal_texture"), &mut norm_tex_index,
-                                                     &texture_list, -1);
-                                    render_item.material.normal_texture_name =
-                                        Some(chk_texture_list[norm_tex_index as usize].clone());
-                                });*/
                                     ui.checkbox(im_str!("active"), &mut render_item.active);
                                     // physics type TODO make sure this is propagated
                                     let mut physics_type = match render_item.physics_type {
