@@ -267,3 +267,71 @@ pub fn handle_fp_inputs(input: &mut Input, cam: &mut Camera) {
         num % TWO_PI
     }
 }
+
+
+/// Test whether an object is in the view frustrum
+pub fn frustrum_test(
+    pos: &Vector3,
+    radius: f32,
+    frustrum_planes: &Vec<(f32, f32, f32, f32)>,
+) -> bool {
+    for plane in frustrum_planes {
+        if dotp(&[pos.0, pos.1, pos.2], &[plane.0, plane.1, plane.2]) + plane.3 <= -radius {
+            // sphere not in frustrum
+            return false;
+        }
+    }
+
+    true
+}
+
+/// Helper function that converts viewing matrix into frustum planes
+pub fn get_frustum_planes(matrix: &Matrix4) -> Vec<(f32, f32, f32, f32)> {
+    let mut planes = Vec::new();
+
+    // column-major
+    // Left clipping plane
+    planes.push((
+        matrix[3][0] + matrix[0][0],
+        matrix[3][1] + matrix[0][1],
+        matrix[3][2] + matrix[0][2],
+        matrix[3][3] + matrix[0][3],
+    ));
+    // Right clipping plane
+    planes.push((
+        matrix[3][0] - matrix[0][0],
+        matrix[3][1] - matrix[0][1],
+        matrix[3][2] - matrix[0][2],
+        matrix[3][3] - matrix[0][3],
+    ));
+    // Top clipping plane
+    planes.push((
+        matrix[3][0] - matrix[1][0],
+        matrix[3][1] - matrix[1][1],
+        matrix[3][2] - matrix[1][2],
+        matrix[3][3] - matrix[1][3],
+    ));
+    // Bottom clipping plane
+    planes.push((
+        matrix[3][0] + matrix[1][0],
+        matrix[3][1] + matrix[1][1],
+        matrix[3][2] + matrix[1][2],
+        matrix[3][3] + matrix[1][3],
+    ));
+    // Near clipping plane
+    planes.push((
+        matrix[3][0] + matrix[2][0],
+        matrix[3][1] + matrix[2][1],
+        matrix[3][2] + matrix[2][2],
+        matrix[3][3] + matrix[2][3],
+    ));
+    // Far clipping plane
+    planes.push((
+        matrix[3][0] - matrix[2][0],
+        matrix[3][1] - matrix[2][1],
+        matrix[3][2] - matrix[2][2],
+        matrix[3][3] - matrix[2][3],
+    ));
+
+    planes
+}

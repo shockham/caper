@@ -2,8 +2,8 @@ use glium::{Display, DrawParameters, Surface, Depth, Blend};
 use glium::index::{NoIndices, PrimitiveType};
 use glium::DepthTest::IfLess;
 use glium::vertex::VertexBuffer;
-use glium::glutin::{WindowBuilder, ContextBuilder, EventsLoop, get_primary_monitor, GlRequest, Api};
-use glium::glutin::CursorState::Hide; //{ Grab, Hide };
+use glium::glutin::{WindowBuilder, ContextBuilder, EventsLoop, GlRequest, Api};
+use glium::glutin::CursorState::Hide;
 use glium::draw_parameters::{DepthClamp, BackfaceCullingMode};
 use glium::texture::RawImage2d;
 
@@ -28,9 +28,10 @@ use std::fs::OpenOptions;
 use std::thread;
 
 use shader::Shaders;
-use utils::{dotp, build_persp_proj_mat, build_fp_view_matrix, mul_mat4};
+use utils::{build_persp_proj_mat, build_fp_view_matrix, mul_mat4, frustrum_test,
+            get_frustum_planes};
 use posteffect::{PostEffect, render_to_texture};
-use types::{RenderItem, TextItem, Vector3, Matrix4, Camera, ShaderIn, PhysicsType};
+use types::{RenderItem, TextItem, Camera, ShaderIn, PhysicsType};
 use lighting::Lighting;
 use input::{Input, MouseButton};
 
@@ -79,7 +80,9 @@ impl Renderer {
     pub fn new(title: String) -> (Renderer, EventsLoop) {
         let events_loop = EventsLoop::new();
         let window_builder = WindowBuilder::new().with_title(title).with_fullscreen(
-            get_primary_monitor(),
+            Some(
+                events_loop.get_primary_monitor(),
+            ),
         );
         let context = ContextBuilder::new()
             .with_depth_buffer(24)
@@ -150,73 +153,6 @@ impl Renderer {
         }
     }
 
-    /// Test whether an object is in the view frustrum
-    fn frustrum_test(
-        pos: &Vector3,
-        radius: f32,
-        frustrum_planes: &Vec<(f32, f32, f32, f32)>,
-    ) -> bool {
-        for plane in frustrum_planes {
-            if dotp(&[pos.0, pos.1, pos.2], &[plane.0, plane.1, plane.2]) + plane.3 <= -radius {
-                // sphere not in frustrum
-                return false;
-            }
-        }
-
-        true
-    }
-
-    /// Helper function that converts viewing matrix into frustum planes
-    fn get_frustum_planes(matrix: &Matrix4) -> Vec<(f32, f32, f32, f32)> {
-        let mut planes = Vec::new();
-
-        // column-major
-        // Left clipping plane
-        planes.push((
-            matrix[3][0] + matrix[0][0],
-            matrix[3][1] + matrix[0][1],
-            matrix[3][2] + matrix[0][2],
-            matrix[3][3] + matrix[0][3],
-        ));
-        // Right clipping plane
-        planes.push((
-            matrix[3][0] - matrix[0][0],
-            matrix[3][1] - matrix[0][1],
-            matrix[3][2] - matrix[0][2],
-            matrix[3][3] - matrix[0][3],
-        ));
-        // Top clipping plane
-        planes.push((
-            matrix[3][0] - matrix[1][0],
-            matrix[3][1] - matrix[1][1],
-            matrix[3][2] - matrix[1][2],
-            matrix[3][3] - matrix[1][3],
-        ));
-        // Bottom clipping plane
-        planes.push((
-            matrix[3][0] + matrix[1][0],
-            matrix[3][1] + matrix[1][1],
-            matrix[3][2] + matrix[1][2],
-            matrix[3][3] + matrix[1][3],
-        ));
-        // Near clipping plane
-        planes.push((
-            matrix[3][0] + matrix[2][0],
-            matrix[3][1] + matrix[2][1],
-            matrix[3][2] + matrix[2][2],
-            matrix[3][3] + matrix[2][3],
-        ));
-        // Far clipping plane
-        planes.push((
-            matrix[3][0] - matrix[2][0],
-            matrix[3][1] - matrix[2][1],
-            matrix[3][2] - matrix[2][2],
-            matrix[3][3] - matrix[2][3],
-        ));
-
-        planes
-    }
-
     /// Draws a frame
     pub fn draw<F: FnMut(&Ui)>(
         &mut self,
@@ -258,7 +194,7 @@ impl Renderer {
 
             // calc frustum places for culling
             let combo_matrix = mul_mat4(projection_matrix, modelview_matrix);
-            let frustum_planes = Renderer::get_frustum_planes(&combo_matrix);
+            let frustum_planes = get_frustum_planes(&combo_matrix);
 
             // render to texture/depth
             let (target_color, target_depth) =
@@ -282,7 +218,7 @@ impl Renderer {
                                 .filter(|t| {
                                     (t.active && !t.cull) ||
                                         (t.active &&
-                                             Renderer::frustrum_test(
+                                             frustrum_test(
                                                 &t.pos,
                                                 t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
                                                 &frustum_planes,
