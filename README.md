@@ -10,7 +10,7 @@ Currently has systems for:
 - Physics ([nphysics](https://github.com/sebcrozet/nphysics))
 - Audio ([rodio](https://github.com/tomaka/rodio) via [impose](https://github.com/shockham/impose))
 
-[**Documentation**](https://shockham.github.io/caper/caper/)
+[**Documentation**](https://docs.rs/caper)
 
 [Example](https://github.com/shockham/caper/blob/master/examples/simple.rs) of a basis for a game:
 ```rust
