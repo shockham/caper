@@ -425,11 +425,14 @@ impl Renderer {
 
         // create the engine editor
         if self.show_editor {
+            let fps = self.fps;
             // create the editor window
             ui.window(im_str!("caper editor"))
                 .size((300.0, 200.0), ImGuiSetCond_FirstUseEver)
                 .position((0.0, 0.0), ImGuiSetCond_FirstUseEver)
                 .build(|| {
+                    // fps
+                    ui.text(im_str!("fps: {:?}", fps));
                     // camera state editor
                     if ui.collapsing_header(im_str!("Camera")).build() {
                         for cam in cams {
