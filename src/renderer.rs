@@ -77,8 +77,7 @@ struct GifInfo {
 
 impl Renderer {
     /// Creates new Renderer instance
-    pub fn new(title: String) -> (Renderer, EventsLoop) {
-        let events_loop = EventsLoop::new();
+    pub fn new(title: String, events_loop: &EventsLoop) -> Renderer {
         let window_builder = WindowBuilder::new().with_title(title).with_fullscreen(
             Some(
                 events_loop.get_primary_monitor(),
@@ -130,7 +129,7 @@ impl Renderer {
             window.set_cursor_state(Hide).ok();
         }
 
-        (renderer, events_loop)
+        renderer
     }
 
     /// Update imgui's interal input state

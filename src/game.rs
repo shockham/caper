@@ -3,11 +3,14 @@ use audio::Audio;
 use types::{RenderItem, TextItem, Camera, PhysicsType};
 use input::Input;
 use imgui::Ui;
+
 use nalgebra::Vector3 as nVector3;
 use nalgebra::Translation3;
 use nphysics3d::world::World;
 use nphysics3d::object::{RigidBody, WorldObject};
 use ncollide::shape::Cuboid;
+
+use glium::glutin::EventsLoop;
 
 use std::boxed::Box;
 use std::time::Instant;
@@ -50,7 +53,9 @@ impl Game {
             euler_rot: (0.0f32, 0.0, 0.0),
         };
 
-        let (renderer, events_loop) = Renderer::new("caper window".to_string());
+        let events_loop = EventsLoop::new();
+
+        let renderer = Renderer::new("caper window".to_string(), &events_loop);
 
         Game {
             input: Input::from_existing(events_loop),
