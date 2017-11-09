@@ -82,8 +82,8 @@ fn main() {
         // run the engine update
         game.update(|ui: &Ui| if debug_mode {
             ui.window(im_str!("debug"))
-                .size((300.0, 200.0), ImGuiSetCond_FirstUseEver)
-                .position((0.0, 0.0), ImGuiSetCond_FirstUseEver)
+                .size((300.0, 200.0), ImGuiCond::FirstUseEver)
+                .position((0.0, 0.0), ImGuiCond::FirstUseEver)
                 .build(|| {
                     ui.text(im_str!("map_size: {}", map_size));
                     ui.text(im_str!("fixed_val: {}", fixed_val));

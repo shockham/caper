@@ -427,8 +427,8 @@ impl Renderer {
             let fps = self.fps;
             // create the editor window
             ui.window(im_str!("caper editor"))
-                .size((300.0, 200.0), ImGuiSetCond_FirstUseEver)
-                .position((0.0, 0.0), ImGuiSetCond_FirstUseEver)
+                .size((300.0, 200.0), ImGuiCond::FirstUseEver)
+                .position((0.0, 0.0), ImGuiCond::FirstUseEver)
                 .build(|| {
                     // fps
                     ui.text(im_str!("fps: {:?}", fps));
