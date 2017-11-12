@@ -16,7 +16,7 @@ fn main() {
     let map_size = 100f32;
     let fixed_val = -(map_size / 2f32);
     let move_speed = 0.1f32;
-    let mouse_speed = 3f32;
+    let mouse_speed = 0.01f32;
     let sphere_pos = (8f32, 10f32);
 
     let mut pseu_cam_pos = (0f32, 0f32);

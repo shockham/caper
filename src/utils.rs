@@ -224,7 +224,7 @@ pub fn build_fp_view_matrix(cam: &Camera) -> Matrix4 {
 pub fn handle_fp_inputs(input: &mut Input, cam: &mut Camera) {
     // some static vals to use the fp inputs
     const MOVE_SPEED: f32 = 0.2f32;
-    const MOUSE_SPEED: f32 = 10f32;
+    const MOUSE_SPEED: f32 = 0.01f32;
 
     let mv_matrix = build_fp_view_matrix(cam);
 
