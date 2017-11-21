@@ -6,6 +6,7 @@ use glium::glutin::{WindowBuilder, ContextBuilder, EventsLoop, GlRequest, Api};
 use glium::glutin::CursorState::Hide;
 use glium::draw_parameters::{DepthClamp, BackfaceCullingMode};
 use glium::texture::RawImage2d;
+use glium::backend::Facade;
 
 
 use glium_text;
@@ -83,11 +84,11 @@ impl Renderer {
                 events_loop.get_primary_monitor(),
             ),
         );
-        let context = ContextBuilder::new()
+        let ctx_builder = ContextBuilder::new()
             .with_depth_buffer(24)
             .with_vsync(true)
             .with_gl(GlRequest::Specific(Api::OpenGl, (4, 0)));
-        let display = Display::new(window_builder, context, &events_loop).unwrap();
+        let display = Display::new(window_builder, ctx_builder, &events_loop).unwrap();
 
         // create a text system instance and font
         let text_system = TextSystem::new(&display);
@@ -163,6 +164,9 @@ impl Renderer {
         // get display dimensions
         let (width, height) = self.display.get_framebuffer_dimensions();
 
+        // get the context
+        let context = self.display.get_context().clone();
+
         // draw parameters
         let params = DrawParameters {
             depth: Depth {
@@ -197,7 +201,7 @@ impl Renderer {
 
             // render to texture/depth
             let (target_color, target_depth) =
-                render_to_texture(&self.post_effect, &mut target, |target| {
+                render_to_texture(&self.post_effect, &context, &mut target, |target| {
                     // clear the colour and depth buffers
                     target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 

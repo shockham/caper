@@ -1,11 +1,9 @@
 use glium::Surface;
 use glium::index::{PrimitiveType, IndexBuffer};
 use glium::vertex::VertexBuffer;
-use glium::backend::{Facade, Context};
+use glium::backend::Facade;
 use glium::framebuffer::SimpleFrameBuffer;
 use glium::texture::{Texture2d, DepthTexture2d, DepthFormat, MipmapsOption};
-
-use std::rc::Rc;
 
 use types::Vertex;
 
@@ -13,8 +11,6 @@ use time;
 
 /// struct representing a post effect
 pub struct PostEffect {
-    /// Ref to the rendering context
-    pub context: Rc<Context>,
     /// The vertex buffer to render
     pub vertex_buffer: VertexBuffer<Vertex>,
     /// The index buffer to render
@@ -62,7 +58,6 @@ impl PostEffect {
         let ind_arr = [1 as u16, 2, 0, 3];
 
         PostEffect {
-            context: facade.get_context().clone(),
             vertex_buffer: VertexBuffer::new(facade, &vert_arr).unwrap(),
             index_buffer: IndexBuffer::new(facade, PrimitiveType::TriangleStrip, &ind_arr).unwrap(),
             current_shader: "default",
@@ -112,26 +107,28 @@ pub struct PostShaderOptions {
 }
 
 /// Renders the post effect on to the scene rendered in the draw FnMut
-pub fn render_to_texture<T, F>(
+pub fn render_to_texture<T, F, C>(
     system: &PostEffect,
+    context: &C,
     target: &mut T,
     mut draw: F,
 ) -> (Texture2d, DepthTexture2d)
 where
     T: Surface,
     F: FnMut(&mut SimpleFrameBuffer),
+    C: Facade + Clone,
 {
 
     let target_dimensions = target.get_dimensions();
 
     let target_color = Texture2d::empty(
-        &system.context,
+        context,
         (target_dimensions.0 as f32 * system.downscale_factor) as u32,
         (target_dimensions.1 as f32 * system.downscale_factor) as u32,
     ).unwrap();
 
     let target_depth = DepthTexture2d::empty_with_format(
-        &system.context,
+        context,
         DepthFormat::F32,
         MipmapsOption::NoMipmap,
         (target_dimensions.0 as f32 * system.downscale_factor) as u32,
@@ -140,7 +137,7 @@ where
 
     // first pass draw the scene into a buffer
     draw(&mut SimpleFrameBuffer::with_depth_buffer(
-        &system.context,
+        context,
         &target_color,
         &target_depth,
     ).unwrap());
