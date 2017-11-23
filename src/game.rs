@@ -37,7 +37,7 @@ pub struct Game {
     /// All the text items to be rendered in the game
     text_items: Vec<TextItem>,
     /// The delta time for each frame
-    delta: f32,
+    pub delta: f32,
 }
 
 impl Game {
