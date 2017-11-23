@@ -42,7 +42,7 @@ pub struct Renderer {
     /// The glium display used for rendering
     pub display: Display,
     /// The glium_text system used for rendering TextItem
-    pub text_system: TextSystem,
+    text_system: TextSystem,
     /// Fefault font that the text renderer will use
     default_font: FontTexture,
     /// Main imgui system
