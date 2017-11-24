@@ -342,6 +342,21 @@ pub fn gen_seed_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> 
     gen_proc_mesh(pseu_pos, map_size, get_pos_perlin)
 }
 
+/// Macro to speed up gen_proc_mesh
+macro_rules! push_vertices {
+    ( $vec:ident, $( $x:expr ),* ) => {
+        {
+            $(
+                $vec.push(Vertex {
+                    position: $x,
+                    normal: DEF_NORMAL,
+                    texture: DEF_UV,
+                });
+            )*
+        }
+    };
+}
+
 /// Generate a procedural function used to calculate a vertex
 pub fn gen_proc_mesh(
     pseu_pos: (f32, f32),
@@ -368,25 +383,15 @@ pub fn gen_proc_mesh(
         size_11 = gen_fn((p_pos.0 + 1f32, p_pos.1 + 1f32));
 
         // create the two tris for this chunk
-        let verts = vec![
+        push_vertices![
+            vertices,
             [pos.0 + 1f32, size_10, pos.1],
             [pos.0, size_00, pos.1],
             [pos.0 + 1f32, size_11, pos.1 + 1f32],
             [pos.0, size_00, pos.1],
             [pos.0, size_01, pos.1 + 1f32],
-            [pos.0 + 1f32, size_11, pos.1 + 1f32],
+            [pos.0 + 1f32, size_11, pos.1 + 1f32]
         ];
-
-        //let calc_normal = calc_normal(verts[0], verts[1], verts[2]);
-
-        // create each Vertex from the verts vec
-        for v in verts {
-            vertices.push(Vertex {
-                position: v,
-                normal: DEF_NORMAL,
-                texture: DEF_UV,
-            });
-        }
 
         // reuse calculated heights for efficiency
         size_00 = size_10;
