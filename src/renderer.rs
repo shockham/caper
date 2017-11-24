@@ -439,7 +439,7 @@ impl Renderer {
                     // camera state editor
                     if ui.collapsing_header(im_str!("Camera")).build() {
                         for cam in cams {
-                            if ui.collapsing_header(im_str!("Cam")).build() {
+                            ui.tree_node(im_str!("cam")).build(|| {
                                 // camera position
                                 if ui.collapsing_header(im_str!("position")).build() {
                                     ui.input_float(im_str!("x"), &mut cam.pos.0)
@@ -470,7 +470,7 @@ impl Renderer {
                                         .step_fast(1.0)
                                         .build();
                                 }
-                            }
+                            });
                         }
                     }
                     // render items editor
