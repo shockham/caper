@@ -100,6 +100,47 @@ impl Renderer {
         ).unwrap();
 
         let mut imgui = ImGui::init();
+
+        {
+            // Set style for caper editor windows
+            let imgui_style = imgui.style_mut();
+            // TitleBg
+            imgui_style.colors[10] = ImVec4::new(0.05f32, 0.05f32, 0.05f32, 0.95f32);
+            // TitleBgActive
+            imgui_style.colors[11] = ImVec4::new(0.01f32, 0.01f32, 0.01f32, 0.95f32);
+            // TitleBgCollapsed
+            imgui_style.colors[12] = ImVec4::new(0.1f32, 0.1f32, 0.1f32, 0.95f32);
+            // ScrollbarBg
+            imgui_style.colors[14] = ImVec4::new(0f32, 0f32, 0f32, 0.8f32);
+            // ScrollbarGrab
+            imgui_style.colors[15] = ImVec4::new(0.98f32, 0.98f32, 0.98f32, 0.8f32);
+            // ScrollbarGrabHovered
+            imgui_style.colors[16] = ImVec4::new(0.95f32, 0.95f32, 0.95f32, 0.8f32);
+            // ScrollBarGrabActive
+            imgui_style.colors[17] = ImVec4::new(0.9f32, 0.9f32, 0.9f32, 0.8f32);
+            // Button
+            imgui_style.colors[22] = ImVec4::new(0.05f32, 0.05f32, 0.05f32, 0.8f32);
+            // ButtonHovered
+            imgui_style.colors[23] = ImVec4::new(0.01f32, 0.01f32, 0.01f32, 0.8f32);
+            // ButtonActive
+            imgui_style.colors[24] = ImVec4::new(0.1f32, 0.1f32, 0.1f32, 0.8f32);
+            // Header
+            imgui_style.colors[25] = ImVec4::new(0.05f32, 0.05f32, 0.05f32, 0.7f32);
+            // HeaderHovered
+            imgui_style.colors[26] = ImVec4::new(0.01f32, 0.01f32, 0.01f32, 0.7f32);
+            // HeaderActive
+            imgui_style.colors[27] = ImVec4::new(0.1f32, 0.1f32, 0.1f32, 0.7f32);
+            // CloseButton
+            imgui_style.colors[34] = ImVec4::new(0.05f32, 0.05f32, 0.05f32, 0.6f32);
+            // CloseButtonHovered
+            imgui_style.colors[35] = ImVec4::new(0.01f32, 0.01f32, 0.01f32, 0.6f32);
+            // CloseButtonActive
+            imgui_style.colors[36] = ImVec4::new(0.1f32, 0.1f32, 0.1f32, 0.6f32);
+            //TextSelectedBg
+            imgui_style.colors[41] = ImVec4::new(0f32, 0f32, 0f32, 0.9f32);
+        }
+
+
         let imgui_rend = ImGuiRenderer::init(&mut imgui, &display).unwrap();
 
         let shaders = Shaders::new(&display);
@@ -433,6 +474,7 @@ impl Renderer {
             ui.window(im_str!("caper editor"))
                 .size((300.0, 200.0), ImGuiCond::FirstUseEver)
                 .position((0.0, 0.0), ImGuiCond::FirstUseEver)
+                .collapsible(true)
                 .build(|| {
                     // fps
                     ui.text(im_str!("fps: {:?}", fps));
