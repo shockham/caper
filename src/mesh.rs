@@ -344,7 +344,7 @@ pub fn gen_seed_perlin_mesh(pseu_pos: (f32, f32), map_size: f32) -> Vec<Vertex> 
 
 /// Macro to speed up gen_proc_mesh
 macro_rules! push_vertices {
-    ( $vec:ident, $( $x:expr ),* ) => {
+    ( $vec:ident, $( $x:expr, )* ) => {
         {
             $(
                 $vec.push(Vertex {
@@ -390,7 +390,7 @@ pub fn gen_proc_mesh(
             [pos.0 + 1f32, size_11, pos.1 + 1f32],
             [pos.0, size_00, pos.1],
             [pos.0, size_01, pos.1 + 1f32],
-            [pos.0 + 1f32, size_11, pos.1 + 1f32]
+            [pos.0 + 1f32, size_11, pos.1 + 1f32],
         ];
 
         // reuse calculated heights for efficiency
