@@ -17,7 +17,7 @@ Currently has systems for:
 extern crate caper;
 
 use caper::types::{ RenderItemBuilder, TransformBuilder };
-use caper::game::Game;
+use caper::game::*;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;
 use caper::input::Key;
