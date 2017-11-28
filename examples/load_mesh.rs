@@ -1,7 +1,7 @@
 extern crate caper;
 
 use caper::types::{RenderItemBuilder, TransformBuilder};
-use caper::game::Game;
+use caper::game::*;
 use caper::imgui::Ui;
 use caper::input::Key;
 use caper::utils::load_wavefront;

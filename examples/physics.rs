@@ -3,7 +3,7 @@ extern crate caper;
 extern crate imgui;
 
 use caper::types::{RenderItemBuilder, TransformBuilder, PhysicsType, MaterialBuilder};
-use caper::game::Game;
+use caper::game::*;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;
 use caper::input::Key;

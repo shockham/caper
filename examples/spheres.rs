@@ -1,7 +1,7 @@
 extern crate caper;
 
 use caper::types::{RenderItemBuilder, TransformBuilder};
-use caper::game::Game;
+use caper::game::*;
 use caper::mesh::{gen_sphere, gen_sphere_segments};
 use caper::imgui::Ui;
 use caper::input::Key;

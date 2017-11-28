@@ -68,19 +68,33 @@ impl Game {
             delta: 0.016666667f32,
         }
     }
+}
 
+/// Trait for operations on RenderItem
+pub trait RenderItems {
     /// Get the len of render_items
-    pub fn render_items_len(&self) -> usize {
+    fn render_items_len(&self) -> usize;
+    /// Get a ref to a render item
+    fn get_render_item(&mut self, index: usize) -> &mut RenderItem;
+    /// Get a ref to a render item from its name, returning the first found
+    fn get_render_item_by_name(&mut self, name: String) -> Option<&mut RenderItem>;
+    /// Add a render item to the game
+    fn add_render_item(&mut self, render_item: RenderItem);
+}
+
+impl RenderItems for Game {
+    /// Get the len of render_items
+    fn render_items_len(&self) -> usize {
         self.render_items.len()
     }
 
     /// Get a ref to a render item
-    pub fn get_render_item(&mut self, index: usize) -> &mut RenderItem {
+    fn get_render_item(&mut self, index: usize) -> &mut RenderItem {
         &mut self.render_items[index]
     }
 
     /// Get a ref to a render item from its name, returning the first found
-    pub fn get_render_item_by_name(&mut self, name: String) -> Option<&mut RenderItem> {
+    fn get_render_item_by_name(&mut self, name: String) -> Option<&mut RenderItem> {
         for i in 0..self.render_items.len() {
             if self.render_items[i].name == name {
                 return Some(&mut self.render_items[i]);
@@ -90,7 +104,7 @@ impl Game {
     }
 
     /// Add a render item to the game
-    pub fn add_render_item(&mut self, render_item: RenderItem) {
+    fn add_render_item(&mut self, render_item: RenderItem) {
         // add the render item
         self.render_items.push(render_item);
 
@@ -100,9 +114,17 @@ impl Game {
         // setup the physics for the item
         self.add_physics(i);
     }
+}
 
+/// Trait for physics operations
+pub trait Physics {
     /// Initalise physics depending on PhysicsType
-    pub fn add_physics(&mut self, i: usize) {
+    fn add_physics(&mut self, i: usize);
+}
+
+impl Physics for Game {
+    /// Initalise physics depending on PhysicsType
+    fn add_physics(&mut self, i: usize) {
         // add the rigid body if needed
         match self.render_items[i].physics_type {
             PhysicsType::Static => {
@@ -162,19 +184,33 @@ impl Game {
             PhysicsType::None => {}
         }
     }
+}
 
+/// Trait for operations on TextItem
+pub trait TextItems {
     /// Get the len of render_items
-    pub fn text_items_len(&self) -> usize {
+    fn text_items_len(&self) -> usize;
+    /// Get a ref to a text item
+    fn get_text_item(&mut self, index: usize) -> &mut TextItem;
+    /// Get a ref to a text item from its name, returning the first found
+    fn get_text_item_by_name(&mut self, name: String) -> Option<&mut TextItem>;
+    /// Add a text item to the game
+    fn add_text_item(&mut self, text_item: TextItem);
+}
+
+impl TextItems for Game {
+    /// Get the len of render_items
+    fn text_items_len(&self) -> usize {
         self.text_items.len()
     }
 
     /// Get a ref to a text item
-    pub fn get_text_item(&mut self, index: usize) -> &mut TextItem {
+    fn get_text_item(&mut self, index: usize) -> &mut TextItem {
         &mut self.text_items[index]
     }
 
     /// Get a ref to a text item from its name, returning the first found
-    pub fn get_text_item_by_name(&mut self, name: String) -> Option<&mut TextItem> {
+    fn get_text_item_by_name(&mut self, name: String) -> Option<&mut TextItem> {
         for i in 0..self.text_items.len() {
             if self.text_items[i].name == name {
                 return Some(&mut self.text_items[i]);
@@ -184,12 +220,21 @@ impl Game {
     }
 
     /// Add a text item to the game
-    pub fn add_text_item(&mut self, text_item: TextItem) {
+    fn add_text_item(&mut self, text_item: TextItem) {
         self.text_items.push(text_item);
     }
+}
 
+/// Trait with default update definition
+pub trait Update {
     /// Starting the game loop
-    pub fn update<F: FnMut(&Ui)>(&mut self, mut render_imgui: F) {
+    fn update<F: FnMut(&Ui)>(&mut self, render_imgui: F);
+}
+
+/// Impl for Update on Game
+impl Update for Game {
+    /// Starting the game loop
+    fn update<F: FnMut(&Ui)>(&mut self, mut render_imgui: F) {
         let frame_start = Instant::now();
 
         // update the inputs

@@ -4,7 +4,7 @@ extern crate caper;
 use caper::utils::load_wavefront;
 use caper::types::{RenderItemBuilder, TransformBuilder, Transform, MaterialBuilder};
 use caper::mesh::{gen_quad, gen_sphere, gen_cube};
-use caper::game::Game;
+use caper::game::*;
 use caper::imgui::Ui;
 use caper::input::Key;
 use caper::utils::handle_fp_inputs;
