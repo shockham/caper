@@ -120,6 +120,8 @@ impl RenderItems for Game {
 pub trait Physics {
     /// Initalise physics depending on PhysicsType
     fn add_physics(&mut self, i: usize);
+    /// Update physics
+    fn update_physics(&mut self);
 }
 
 impl Physics for Game {
@@ -182,6 +184,72 @@ impl Physics for Game {
                 }
             }
             PhysicsType::None => {}
+        }
+    }
+
+    /// Update the physics engine
+    fn update_physics(&mut self) {
+        // update the new positions back to rb
+        {
+            for rbi in self.physics.rigid_bodies() {
+                // actually get access to the rb :|
+                let mut wo = WorldObject::RigidBody(rbi.clone());
+
+                let (ri_i, ri_it_i) = {
+                    let rb = wo.borrow_rigid_body();
+
+                    let user_data = rb.user_data().unwrap();
+                    let tup_ref = user_data.downcast_ref::<(usize, usize)>().unwrap();
+
+                    *tup_ref
+                };
+
+                // check if it actually exists, if it doesn't remove
+                if self.render_items.len() > ri_i &&
+                    self.render_items[ri_i].instance_transforms.len() > ri_it_i
+                {
+                    // update the rb transform pos
+                    let mut rb = wo.borrow_mut_rigid_body();
+                    let ri_pos = self.render_items[ri_i].instance_transforms[ri_it_i].pos;
+                    rb.set_translation(Translation3::new(
+                        ri_pos.0 * PHYSICS_DIVISOR,
+                        ri_pos.1 * PHYSICS_DIVISOR,
+                        ri_pos.2 * PHYSICS_DIVISOR,
+                    ));
+                }
+            }
+        }
+
+        // block for updating physics
+        {
+            // update all the physics items
+            self.physics.step(self.delta);
+
+            for rbi in self.physics.rigid_bodies() {
+                // actually get access to the rb :|
+                let wo = WorldObject::RigidBody(rbi.clone());
+                let rb = wo.borrow_rigid_body();
+
+                // update the RenderItem transform pos
+                let trans = rb.position().translation.vector;
+                let rot = rb.position().rotation.coords.data.as_slice();
+
+                let user_data = rb.user_data().unwrap();
+                let &(ri_i, ri_it_i) = user_data.downcast_ref::<(usize, usize)>().unwrap();
+
+                if self.render_items.len() > ri_i &&
+                    self.render_items[ri_i].instance_transforms.len() > ri_it_i
+                {
+                    self.render_items[ri_i].instance_transforms[ri_it_i].pos =
+                        (
+                            trans.x / PHYSICS_DIVISOR,
+                            trans.y / PHYSICS_DIVISOR,
+                            trans.z / PHYSICS_DIVISOR,
+                        );
+                    self.render_items[ri_i].instance_transforms[ri_it_i].rot =
+                        (rot[0], rot[1], rot[2], rot[3]);
+                }
+            }
         }
     }
 }
@@ -249,68 +317,7 @@ impl Update for Game {
             self.renderer.update_imgui_input(&self.input);
         }
 
-        // update the new positions back to rb
-        {
-            for rbi in self.physics.rigid_bodies() {
-                // actually get access to the rb :|
-                let mut wo = WorldObject::RigidBody(rbi.clone());
-
-                let (ri_i, ri_it_i) = {
-                    let rb = wo.borrow_rigid_body();
-
-                    let user_data = rb.user_data().unwrap();
-                    let tup_ref = user_data.downcast_ref::<(usize, usize)>().unwrap();
-
-                    *tup_ref
-                };
-
-                // check if it actually exists, if it doesn't remove
-                if self.render_items.len() > ri_i &&
-                    self.render_items[ri_i].instance_transforms.len() > ri_it_i
-                {
-                    // update the rb transform pos
-                    let mut rb = wo.borrow_mut_rigid_body();
-                    let ri_pos = self.render_items[ri_i].instance_transforms[ri_it_i].pos;
-                    rb.set_translation(Translation3::new(
-                        ri_pos.0 * PHYSICS_DIVISOR,
-                        ri_pos.1 * PHYSICS_DIVISOR,
-                        ri_pos.2 * PHYSICS_DIVISOR,
-                    ));
-                }
-            }
-        }
-
-        // block for updating physics
-        {
-            // update all the physics items
-            self.physics.step(self.delta);
-
-            for rbi in self.physics.rigid_bodies() {
-                // actually get access to the rb :|
-                let wo = WorldObject::RigidBody(rbi.clone());
-                let rb = wo.borrow_rigid_body();
-
-                // update the RenderItem transform pos
-                let trans = rb.position().translation.vector;
-                let rot = rb.position().rotation.coords.data.as_slice();
-
-                let user_data = rb.user_data().unwrap();
-                let &(ri_i, ri_it_i) = user_data.downcast_ref::<(usize, usize)>().unwrap();
-
-                if self.render_items.len() > ri_i &&
-                    self.render_items[ri_i].instance_transforms.len() > ri_it_i
-                {
-                    self.render_items[ri_i].instance_transforms[ri_it_i].pos =
-                        (
-                            trans.x / PHYSICS_DIVISOR,
-                            trans.y / PHYSICS_DIVISOR,
-                            trans.z / PHYSICS_DIVISOR,
-                        );
-                    self.render_items[ri_i].instance_transforms[ri_it_i].rot =
-                        (rot[0], rot[1], rot[2], rot[3]);
-                }
-            }
-        }
+        self.update_physics();
 
         // render the frame
         {
