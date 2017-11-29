@@ -194,8 +194,84 @@ impl Renderer {
         }
     }
 
+    /// Saves out a screenshot from in-game
+    pub fn save_screenshot(&self) {
+        // reading the front buffer into an image
+        let image: RawImage2d<u8> = self.display.read_front_buffer();
+
+        thread::spawn(move || {
+            let image =
+                image::ImageBuffer::from_raw(image.width, image.height, image.data.into_owned())
+                    .unwrap();
+            let image = image::DynamicImage::ImageRgba8(image).flipv();
+            let mut output = File::create(&Path::new(
+                format!("./screenshot_{}.png", time::precise_time_s())
+                    .as_str(),
+            )).unwrap();
+            image.save(&mut output, image::ImageFormat::PNG).unwrap();
+        });
+    }
+
+    /// When called with the same path adds a frame to a gif at the path
+    pub fn save_add_to_gif(&mut self, path: &'static str) {
+        // reading the front buffer into a gif frame
+        let image: RawImage2d<u8> = self.display.read_front_buffer();
+
+        let (w, h) = (image.width, image.height);
+
+        let mut image = {
+            let image_buf = image::ImageBuffer::from_raw(w, h, image.data.into_owned()).unwrap();
+            let dy_image = image::DynamicImage::ImageRgba8(image_buf).flipv();
+            let fin_image = dy_image.as_rgba8().unwrap();
+            fin_image.clone().into_raw()
+        };
+        let frame = gif::Frame::from_rgba(w as u16, h as u16, image.as_mut_slice());
+
+        // if there is no encoder present create one
+        let new_file = {
+            match self.gif_info.as_ref() {
+                Some(gi_ref) => gi_ref.path != path,
+                None => false,
+            }
+        };
+        if self.gif_info.is_none() || new_file {
+            let output = OpenOptions::new()
+                .write(true)
+                .create(true)
+                .open(path)
+                .unwrap();
+            let mut encoder = gif::Encoder::new(output, w as u16, h as u16, &[]).unwrap();
+            encoder.set(gif::Repeat::Infinite).unwrap();
+
+            let info = GifInfo {
+                encoder: encoder,
+                path: path,
+            };
+
+            self.gif_info = Some(info);
+        }
+        // Write frame to file
+        if let Some(ref mut info) = self.gif_info {
+            info.encoder.write_frame(&frame).unwrap();
+        }
+    }
+}
+
+/// Trait for drawing to screen
+pub trait Draw {
     /// Draws a frame
-    pub fn draw<F: FnMut(&Ui)>(
+    fn draw<F: FnMut(&Ui)>(
+        &mut self,
+        cams: &mut Vec<Camera>,
+        render_items: &mut Vec<RenderItem>,
+        text_items: &mut Vec<TextItem>,
+        f: F,
+    );
+}
+
+impl Draw for Renderer {
+    /// Draws a frame
+    fn draw<F: FnMut(&Ui)>(
         &mut self,
         cams: &mut Vec<Camera>,
         render_items: &mut Vec<RenderItem>,
@@ -620,67 +696,5 @@ impl Renderer {
             }
             Err(e) => println!("{:?}", e),
         };
-    }
-
-    /// Saves out a screenshot from in-game
-    pub fn save_screenshot(&self) {
-        // reading the front buffer into an image
-        let image: RawImage2d<u8> = self.display.read_front_buffer();
-
-        thread::spawn(move || {
-            let image =
-                image::ImageBuffer::from_raw(image.width, image.height, image.data.into_owned())
-                    .unwrap();
-            let image = image::DynamicImage::ImageRgba8(image).flipv();
-            let mut output = File::create(&Path::new(
-                format!("./screenshot_{}.png", time::precise_time_s())
-                    .as_str(),
-            )).unwrap();
-            image.save(&mut output, image::ImageFormat::PNG).unwrap();
-        });
-    }
-
-    /// When called with the same path adds a frame to a gif at the path
-    pub fn save_add_to_gif(&mut self, path: &'static str) {
-        // reading the front buffer into a gif frame
-        let image: RawImage2d<u8> = self.display.read_front_buffer();
-
-        let (w, h) = (image.width, image.height);
-
-        let mut image = {
-            let image_buf = image::ImageBuffer::from_raw(w, h, image.data.into_owned()).unwrap();
-            let dy_image = image::DynamicImage::ImageRgba8(image_buf).flipv();
-            let fin_image = dy_image.as_rgba8().unwrap();
-            fin_image.clone().into_raw()
-        };
-        let frame = gif::Frame::from_rgba(w as u16, h as u16, image.as_mut_slice());
-
-        // if there is no encoder present create one
-        let new_file = {
-            match self.gif_info.as_ref() {
-                Some(gi_ref) => gi_ref.path != path,
-                None => false,
-            }
-        };
-        if self.gif_info.is_none() || new_file {
-            let output = OpenOptions::new()
-                .write(true)
-                .create(true)
-                .open(path)
-                .unwrap();
-            let mut encoder = gif::Encoder::new(output, w as u16, h as u16, &[]).unwrap();
-            encoder.set(gif::Repeat::Infinite).unwrap();
-
-            let info = GifInfo {
-                encoder: encoder,
-                path: path,
-            };
-
-            self.gif_info = Some(info);
-        }
-        // Write frame to file
-        if let Some(ref mut info) = self.gif_info {
-            info.encoder.write_frame(&frame).unwrap();
-        }
     }
 }

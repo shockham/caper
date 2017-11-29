@@ -1,4 +1,4 @@
-use renderer::Renderer;
+use renderer::{Renderer, Draw};
 use audio::Audio;
 use types::{RenderItem, TextItem, Camera, PhysicsType};
 use input::Input;
