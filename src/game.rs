@@ -295,8 +295,10 @@ impl TextItems for Game {
 
 /// Trait with default update definition
 pub trait Update {
-    /// Starting the game loop
+    /// Update the engine state per frame
     fn update<F: FnMut(&Ui)>(&mut self, render_imgui: F);
+    /// Update inputs
+    fn update_inputs(&mut self);
 }
 
 /// Impl for Update on Game
@@ -305,18 +307,7 @@ impl Update for Game {
     fn update<F: FnMut(&Ui)>(&mut self, mut render_imgui: F) {
         let frame_start = Instant::now();
 
-        // update the inputs
-        {
-            // updating and handling the inputs
-            let gl_window = self.renderer.display.gl_window();
-            let window = gl_window.window();
-            self.input.update_inputs(window);
-        }
-        {
-            // update the inputs for imgui
-            self.renderer.update_imgui_input(&self.input);
-        }
-
+        self.update_inputs();
         self.update_physics();
 
         // render the frame
@@ -330,5 +321,19 @@ impl Update for Game {
         }
 
         self.delta = 0.000000001f32 * frame_start.elapsed().subsec_nanos() as f32;
+    }
+
+    /// Update inputs
+    fn update_inputs(&mut self) {
+        {
+            // updating and handling the inputs
+            let gl_window = self.renderer.display.gl_window();
+            let window = gl_window.window();
+            self.input.update_inputs(window);
+        }
+        {
+            // update the inputs for imgui
+            self.renderer.update_imgui_input(&self.input);
+        }
     }
 }
