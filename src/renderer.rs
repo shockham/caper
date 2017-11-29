@@ -51,18 +51,18 @@ pub struct Renderer {
     imgui_rend: ImGuiRenderer,
     /// Instance of PostEffect used for rendering post processing
     pub post_effect: PostEffect,
-    /// The render/engine start time
-    pub start_time: f64,
     /// The shaders that can be used for rendering
     pub shaders: Shaders,
-    /// stuct to track the fps
-    fps_counter: FPSCounter,
-    /// The current frames per second the Renderer is drawing at
-    pub fps: f32,
-    /// Info on the current gif being written to
-    gif_info: Option<GifInfo>,
     /// The lighting system
     pub lighting: Lighting,
+    /// Info on the current gif being written to
+    gif_info: Option<GifInfo>,
+    /// stuct to track the fps
+    fps_counter: FPSCounter,
+    /// The render/engine start time
+    pub start_time: f64,
+    /// The current frames per second the Renderer is drawing at
+    pub fps: f32,
     /// The number items rendered in the last drawn frame
     pub render_count: usize,
     /// Whether to display the engine editor window
