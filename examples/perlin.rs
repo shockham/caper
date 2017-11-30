@@ -157,6 +157,11 @@ fn main() {
             );
         }
 
+        // gif
+        if game.input.keys_pressed.contains(&Key::O) {
+            game.renderer.save_add_to_gif("test.gif");
+        }
+
         if game.input.keys_down.contains(&Key::LShift) {
             if game.input.keys_down.contains(&Key::L) {
                 debug_mode = true;

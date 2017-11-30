@@ -27,6 +27,7 @@ use std::path::Path;
 use std::fs::File;
 use std::fs::OpenOptions;
 use std::thread;
+use std::sync::{Arc, Mutex};
 
 use shader::Shaders;
 use utils::{build_persp_proj_mat, build_fp_view_matrix, mul_mat4, frustrum_test,
@@ -71,7 +72,7 @@ pub struct Renderer {
 
 struct GifInfo {
     /// The encoder for the current gif
-    encoder: gif::Encoder<File>,
+    encoder: Arc<Mutex<gif::Encoder<File>>>,
     /// The path of the current gif
     path: &'static str,
 }
@@ -219,14 +220,6 @@ impl Renderer {
 
         let (w, h) = (image.width, image.height);
 
-        let mut image = {
-            let image_buf = image::ImageBuffer::from_raw(w, h, image.data.into_owned()).unwrap();
-            let dy_image = image::DynamicImage::ImageRgba8(image_buf).flipv();
-            let fin_image = dy_image.as_rgba8().unwrap();
-            fin_image.clone().into_raw()
-        };
-        let frame = gif::Frame::from_rgba(w as u16, h as u16, image.as_mut_slice());
-
         // if there is no encoder present create one
         let new_file = {
             match self.gif_info.as_ref() {
@@ -244,15 +237,29 @@ impl Renderer {
             encoder.set(gif::Repeat::Infinite).unwrap();
 
             let info = GifInfo {
-                encoder: encoder,
+                encoder: Arc::new(Mutex::new(encoder)),
                 path: path,
             };
 
             self.gif_info = Some(info);
         }
-        // Write frame to file
+
+
         if let Some(ref mut info) = self.gif_info {
-            info.encoder.write_frame(&frame).unwrap();
+            let encoder_mutex = info.encoder.clone();
+            thread::spawn(move || {
+                let mut image = {
+                    let image_buf = image::ImageBuffer::from_raw(w, h, image.data.into_owned()).unwrap();
+                    let dy_image = image::DynamicImage::ImageRgba8(image_buf).flipv();
+                    let fin_image = dy_image.as_rgba8().unwrap();
+                    fin_image.clone().into_raw()
+                };
+                let frame = gif::Frame::from_rgba(w as u16, h as u16, image.as_mut_slice());
+
+                let mut encoder = encoder_mutex.lock().unwrap();
+                // Write frame to file
+                encoder.write_frame(&frame).unwrap();
+            });
         }
     }
 }
