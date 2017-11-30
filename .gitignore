@@ -8,3 +8,4 @@ persist
 Cargo.lock
 imgui.ini
 Makefile
+*.gif
