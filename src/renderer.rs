@@ -249,7 +249,8 @@ impl Renderer {
             let encoder_mutex = info.encoder.clone();
             thread::spawn(move || {
                 let mut image = {
-                    let image_buf = image::ImageBuffer::from_raw(w, h, image.data.into_owned()).unwrap();
+                    let image_buf = image::ImageBuffer::from_raw(w, h, image.data.into_owned())
+                        .unwrap();
                     let dy_image = image::DynamicImage::ImageRgba8(image_buf).flipv();
                     let fin_image = dy_image.as_rgba8().unwrap();
                     fin_image.clone().into_raw()
