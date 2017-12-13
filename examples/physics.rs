@@ -2,7 +2,7 @@ extern crate caper;
 #[macro_use]
 extern crate imgui;
 
-use caper::types::{RenderItemBuilder, TransformBuilder, PhysicsType, MaterialBuilder};
+use caper::types::{RenderItemBuilder, TransformBuilder, PhysicsType, MaterialBuilder, DefaultTag};
 use caper::game::*;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;
@@ -10,7 +10,7 @@ use caper::input::Key;
 use imgui::*;
 
 fn main() {
-    let mut game = Game::new();
+    let mut game = Game::<DefaultTag>::new();
     // define some items to be rendered
     game.add_render_item(
         RenderItemBuilder::default()

@@ -268,10 +268,10 @@ impl Renderer {
 /// Trait for drawing to screen
 pub trait Draw {
     /// Draws a frame
-    fn draw<F: FnMut(&Ui)>(
+    fn draw<F: FnMut(&Ui), T: Default>(
         &mut self,
         cams: &mut Vec<Camera>,
-        render_items: &mut Vec<RenderItem>,
+        render_items: &mut Vec<RenderItem<T>>,
         text_items: &mut Vec<TextItem>,
         f: F,
     );
@@ -279,10 +279,10 @@ pub trait Draw {
 
 impl Draw for Renderer {
     /// Draws a frame
-    fn draw<F: FnMut(&Ui)>(
+    fn draw<F: FnMut(&Ui), T: Default>(
         &mut self,
         cams: &mut Vec<Camera>,
-        render_items: &mut Vec<RenderItem>,
+        render_items: &mut Vec<RenderItem<T>>,
         text_items: &mut Vec<TextItem>,
         mut f: F,
     ) {

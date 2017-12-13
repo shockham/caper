@@ -1,6 +1,6 @@
 extern crate caper;
 
-use caper::types::{RenderItemBuilder, TransformBuilder};
+use caper::types::{RenderItemBuilder, TransformBuilder, DefaultTag};
 use caper::game::*;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;
@@ -10,7 +10,7 @@ use caper::utils::handle_fp_inputs;
 
 fn main() {
     // crate an instance of the game struct
-    let mut game = Game::new();
+    let mut game = Game::<DefaultTag>::new();
 
     // define some items to be rendered
     game.add_render_item(

@@ -21,7 +21,7 @@ const PHYSICS_DIVISOR: f32 = 2f32;
 const GLOBAL_REST: f32 = 0.05f32;
 
 /// Struct for creating an instance of a game with all systems and items contained
-pub struct Game {
+pub struct Game<T: Default> {
     /// The input system for the game
     pub input: Input,
     /// The render system for the game
@@ -33,16 +33,16 @@ pub struct Game {
     /// Simple struct for camera data
     pub cams: Vec<Camera>,
     /// All of the mesh items to be rendered in the game
-    render_items: Vec<RenderItem>,
+    render_items: Vec<RenderItem<T>>,
     /// All the text items to be rendered in the game
     text_items: Vec<TextItem>,
     /// The delta time for each frame
     pub delta: f32,
 }
 
-impl Game {
+impl<T: Default> Game<T> {
     /// Creates a new instance of a game
-    pub fn new() -> Game {
+    pub fn new() -> Game<T> {
         // init physics
         let mut world = World::new();
         world.set_gravity(nVector3::new(0.0, -9.81, 0.0));
@@ -72,29 +72,33 @@ impl Game {
 
 /// Trait for operations on RenderItem
 pub trait RenderItems {
+    /// RenderItem utype associated type
+    type T: Default;
     /// Get the len of render_items
     fn render_items_len(&self) -> usize;
     /// Get a ref to a render item
-    fn get_render_item(&mut self, index: usize) -> &mut RenderItem;
+    fn get_render_item(&mut self, index: usize) -> &mut RenderItem<Self::T>;
     /// Get a ref to a render item from its name, returning the first found
-    fn get_render_item_by_name(&mut self, name: String) -> Option<&mut RenderItem>;
+    fn get_render_item_by_name(&mut self, name: String) -> Option<&mut RenderItem<Self::T>>;
     /// Add a render item to the game
-    fn add_render_item(&mut self, render_item: RenderItem);
+    fn add_render_item(&mut self, render_item: RenderItem<Self::T>);
 }
 
-impl RenderItems for Game {
+impl<T: Default> RenderItems for Game<T> {
+    /// Associated type for RenderItems
+    type T = T;
     /// Get the len of render_items
     fn render_items_len(&self) -> usize {
         self.render_items.len()
     }
 
     /// Get a ref to a render item
-    fn get_render_item(&mut self, index: usize) -> &mut RenderItem {
+    fn get_render_item(&mut self, index: usize) -> &mut RenderItem<T> {
         &mut self.render_items[index]
     }
 
     /// Get a ref to a render item from its name, returning the first found
-    fn get_render_item_by_name(&mut self, name: String) -> Option<&mut RenderItem> {
+    fn get_render_item_by_name(&mut self, name: String) -> Option<&mut RenderItem<T>> {
         for i in 0..self.render_items.len() {
             if self.render_items[i].name == name {
                 return Some(&mut self.render_items[i]);
@@ -104,7 +108,7 @@ impl RenderItems for Game {
     }
 
     /// Add a render item to the game
-    fn add_render_item(&mut self, render_item: RenderItem) {
+    fn add_render_item(&mut self, render_item: RenderItem<T>) {
         // add the render item
         self.render_items.push(render_item);
 
@@ -124,7 +128,7 @@ pub trait Physics {
     fn update_physics(&mut self);
 }
 
-impl Physics for Game {
+impl<T: Default> Physics for Game<T> {
     /// Initalise physics depending on PhysicsType
     fn add_physics(&mut self, i: usize) {
         // add the rigid body if needed
@@ -266,7 +270,7 @@ pub trait TextItems {
     fn add_text_item(&mut self, text_item: TextItem);
 }
 
-impl TextItems for Game {
+impl<T: Default> TextItems for Game<T> {
     /// Get the len of render_items
     fn text_items_len(&self) -> usize {
         self.text_items.len()
@@ -302,7 +306,7 @@ pub trait Update {
 }
 
 /// Impl for Update on Game
-impl Update for Game {
+impl<T: Default> Update for Game<T> {
     /// Starting the game loop
     fn update<F: FnMut(&Ui)>(&mut self, mut render_imgui: F) {
         let frame_start = Instant::now();

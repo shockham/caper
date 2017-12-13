@@ -50,9 +50,13 @@ pub enum PhysicsType {
     None,
 }
 
+/// Default RenderItem utype
+#[derive(Clone, Serialize, Deserialize, PartialEq, Debug, Default)]
+pub struct DefaultTag;
+
 /// struct for abstracting items to be sent to render
 #[derive(Builder, Clone, Serialize, Deserialize, PartialEq)]
-pub struct RenderItem {
+pub struct RenderItem<T: Default> {
     /// The vertices representing this items mesh
     #[builder(default = "Vec::new()")]
     pub vertices: Vec<Vertex>,
@@ -71,9 +75,9 @@ pub struct RenderItem {
     /// The name of the RenderItem for lookup
     #[builder(default = "\"ri\".to_string()")]
     pub name: String,
-    /// Tag for grouping similar items
-    #[builder(default = "\"default\".to_string()")]
-    pub tag: String,
+    /// Tag Type for grouping similar items
+    #[builder(default = "T::default()")]
+    pub tag: T,
 }
 
 /// Struct for containing material information

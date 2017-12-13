@@ -2,14 +2,14 @@ extern crate time;
 extern crate caper;
 
 use caper::utils::load_wavefront;
-use caper::types::{RenderItemBuilder, TransformBuilder, MaterialBuilder};
+use caper::types::{RenderItemBuilder, TransformBuilder, MaterialBuilder, DefaultTag};
 use caper::game::*;
 use caper::imgui::Ui;
 use caper::input::Key;
 use caper::utils::handle_fp_inputs;
 
 fn main() {
-    let mut game = Game::new();
+    let mut game = Game::<DefaultTag>::new();
 
     // generate the instance positions
     let transforms = (0..200)

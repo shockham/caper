@@ -4,14 +4,14 @@ extern crate caper;
 extern crate imgui;
 
 use caper::utils::create_skydome;
-use caper::types::{RenderItemBuilder, TextItemBuilder, TransformBuilder, MaterialBuilder};
+use caper::types::{RenderItemBuilder, TextItemBuilder, TransformBuilder, MaterialBuilder, DefaultTag};
 use caper::mesh::{gen_perlin_mesh, gen_sphere, get_pos_perlin};
 use caper::game::*;
 use caper::input::Key;
 use imgui::*;
 
 fn main() {
-    let mut game = Game::new();
+    let mut game = Game::<DefaultTag>::new();
 
     let map_size = 100f32;
     let fixed_val = -(map_size / 2f32);

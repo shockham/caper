@@ -1,7 +1,7 @@
 extern crate caper;
 
 use caper::utils::load_wavefront;
-use caper::types::{RenderItemBuilder, TransformBuilder};
+use caper::types::{RenderItemBuilder, TransformBuilder, DefaultTag};
 use caper::game::*;
 use caper::input::Key;
 use caper::imgui::Ui;
@@ -10,7 +10,7 @@ use caper::utils::handle_fp_inputs;
 
 fn main() {
     // create an instance of Game
-    let mut game = Game::new();
+    let mut game = Game::<DefaultTag>::new();
 
     // generate the instance positions
     let map_size = 50f32;

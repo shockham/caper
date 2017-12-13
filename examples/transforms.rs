@@ -2,7 +2,7 @@ extern crate time;
 extern crate caper;
 
 use caper::utils::load_wavefront;
-use caper::types::{RenderItemBuilder, TransformBuilder, Transform, MaterialBuilder};
+use caper::types::{RenderItemBuilder, TransformBuilder, Transform, MaterialBuilder, DefaultTag};
 use caper::mesh::{gen_quad, gen_sphere, gen_cube};
 use caper::game::*;
 use caper::imgui::Ui;
@@ -10,7 +10,7 @@ use caper::input::Key;
 use caper::utils::handle_fp_inputs;
 
 fn main() {
-    let mut game = Game::new();
+    let mut game = Game::<DefaultTag>::new();
 
     fn sin_y(t: &mut Transform) {
         t.pos = (t.pos.0, time::precise_time_s().sin() as f32, t.pos.2);
