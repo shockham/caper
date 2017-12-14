@@ -60,9 +60,7 @@ fn main() {
         let frame_time = time::precise_time_s() - game.renderer.start_time;
 
         // update items by tag
-        for i in 0..game.render_items_len() {
-            let item = game.get_render_item(i);
-
+        for item in game.render_items_iter_mut() {
             match item.tag {
                 Tags::One => {
                     item.instance_transforms[0].pos.1 = frame_time.sin() as f32;
