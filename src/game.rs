@@ -14,6 +14,7 @@ use glium::glutin::EventsLoop;
 
 use std::boxed::Box;
 use std::time::Instant;
+use std::slice::IterMut;
 
 /// The divisor for the physics space to align with render space
 const PHYSICS_DIVISOR: f32 = 2f32;
@@ -76,6 +77,8 @@ pub trait RenderItems {
     type T: Default;
     /// Get the len of render_items
     fn render_items_len(&self) -> usize;
+    /// Get an IterMut of the RenderItem
+    fn render_items_iter_mut(&mut self) -> IterMut<RenderItem<Self::T>>;
     /// Get a ref to a render item
     fn get_render_item(&mut self, index: usize) -> &mut RenderItem<Self::T>;
     /// Get a ref to a render item from its name, returning the first found
@@ -90,6 +93,11 @@ impl<T: Default> RenderItems for Game<T> {
     /// Get the len of render_items
     fn render_items_len(&self) -> usize {
         self.render_items.len()
+    }
+
+    /// Get an IterMut of the RenderItem
+    fn render_items_iter_mut(&mut self) -> IterMut<RenderItem<T>> {
+        self.render_items.iter_mut() 
     }
 
     /// Get a ref to a render item
