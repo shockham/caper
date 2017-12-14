@@ -1,3 +1,4 @@
+extern crate time;
 extern crate caper;
 
 use caper::types::{RenderItemBuilder, TransformBuilder};
@@ -27,7 +28,7 @@ fn main() {
             .vertices(gen_cube())
             .instance_transforms(vec![
                 TransformBuilder::default()
-                    .pos((-0.5, 0.0, -5.0))
+                    .pos((-1.0, 0.0, -5.0))
                     .build()
                     .unwrap(),
             ])
@@ -40,7 +41,7 @@ fn main() {
             .vertices(gen_cube())
             .instance_transforms(vec![
                 TransformBuilder::default()
-                    .pos((-0.5, 0.0, -5.0))
+                    .pos((1.0, 0.0, -5.0))
                     .build()
                     .unwrap(),
             ])
@@ -55,6 +56,22 @@ fn main() {
 
         // update the first person inputs
         handle_fp_inputs(&mut game.input, &mut game.cams[0]);
+
+        let frame_time = time::precise_time_s() - game.renderer.start_time;
+
+        // update items by tag
+        for i in 0..game.render_items_len() {
+            let item = game.get_render_item(i);
+
+            match item.tag {
+                Tags::One => {
+                    item.instance_transforms[0].pos.1 = frame_time.sin() as f32;
+                },
+                Tags::Two => {
+                    item.instance_transforms[0].pos.1 = frame_time.cos() as f32;
+                },
+            };
+        }
 
         // quit
         if game.input.keys_down.contains(&Key::Escape) {
