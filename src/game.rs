@@ -97,7 +97,7 @@ impl<T: Default> RenderItems for Game<T> {
 
     /// Get an IterMut of the RenderItem
     fn render_items_iter_mut(&mut self) -> IterMut<RenderItem<T>> {
-        self.render_items.iter_mut() 
+        self.render_items.iter_mut()
     }
 
     /// Get a ref to a render item
@@ -270,6 +270,8 @@ impl<T: Default> Physics for Game<T> {
 pub trait TextItems {
     /// Get the len of render_items
     fn text_items_len(&self) -> usize;
+    /// Get an IterMut of the TextItem
+    fn text_items_iter_mut(&mut self) -> IterMut<TextItem>;
     /// Get a ref to a text item
     fn get_text_item(&mut self, index: usize) -> &mut TextItem;
     /// Get a ref to a text item from its name, returning the first found
@@ -282,6 +284,11 @@ impl<T: Default> TextItems for Game<T> {
     /// Get the len of render_items
     fn text_items_len(&self) -> usize {
         self.text_items.len()
+    }
+
+    /// Get an IterMut of the TextItem
+    fn text_items_iter_mut(&mut self) -> IterMut<TextItem> {
+        self.text_items.iter_mut()
     }
 
     /// Get a ref to a text item
