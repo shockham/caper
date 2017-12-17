@@ -15,7 +15,9 @@ enum Tags {
 }
 
 impl Default for Tags {
-    fn default() -> Tags { Tags::One }
+    fn default() -> Tags {
+        Tags::One
+    }
 }
 
 fn main() {
@@ -64,10 +66,10 @@ fn main() {
             match item.tag {
                 Tags::One => {
                     item.instance_transforms[0].pos.1 = frame_time.sin() as f32;
-                },
+                }
                 Tags::Two => {
                     item.instance_transforms[0].pos.1 = frame_time.cos() as f32;
-                },
+                }
             };
         }
 
