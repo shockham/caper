@@ -190,8 +190,8 @@ impl Renderer {
                 false,
             ],
         );
-        for i in 0..input.characters_down.len() {
-            self.imgui.add_input_character(input.characters_down[i])
+        for ch in input.characters_down.iter() {
+            self.imgui.add_input_character(*ch);
         }
     }
 
@@ -311,8 +311,7 @@ impl Draw for Renderer {
         let mut cols = Vec::new();
         let mut depths = Vec::new();
 
-        for c in 0..cams.len() {
-            let cam = cams[c];
+        for cam in cams.iter_mut() {
             // uniforms passed to the shaders
             let projection_matrix =
                 build_persp_proj_mat(60f32, width as f32 / height as f32, 0.01f32, 1000f32);
