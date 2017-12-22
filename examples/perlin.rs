@@ -80,15 +80,14 @@ fn main() {
         let fps = game.renderer.fps;
         let mouse_pos = game.input.mouse_pos;
         let mouse_delta = game.input.mouse_delta;
-        let (width, height, pt_width, pt_height, hidpi) = {
+        let (width, height, hidpi) = {
             let gl_window = game.renderer.display.gl_window();
             let window = gl_window.window();
 
-            let (width, height) = window.get_inner_size_pixels().unwrap();
-            let (pt_width, pt_height) = window.get_inner_size_points().unwrap();
+            let (width, height) = window.get_inner_size().unwrap();
             let hidpi = window.hidpi_factor();
 
-            (width, height, pt_width, pt_height, hidpi)
+            (width, height, hidpi)
         };
         // run the engine update
         game.update(|ui: &Ui| if debug_mode {
@@ -107,7 +106,6 @@ fn main() {
                     ui.text(im_str!("pseu_cam_pos: {:?}", pseu_cam_pos));
                     ui.text(im_str!("fps: {:?}", fps));
                     ui.text(im_str!("px res: ({}, {})", width, height));
-                    ui.text(im_str!("pt res: ({}, {})", pt_width, pt_height));
                     ui.text(im_str!("hidpi: {}", hidpi));
                     ui.checkbox(im_str!("test_check"), &mut test_check);
                 });
