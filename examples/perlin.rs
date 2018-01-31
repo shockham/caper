@@ -17,7 +17,7 @@ fn main() {
     let map_size = 100f32;
     let fixed_val = -(map_size / 2f32);
     let move_speed = 0.1f32;
-    let mouse_speed = 0.01f32;
+    let mouse_speed = 1f32;
     let sphere_pos = (8f32, 10f32);
 
     let mut pseu_cam_pos = (0f32, 0f32);
@@ -138,8 +138,8 @@ fn main() {
                 movement_dirty = true;
             }
 
-            game.cams[0].euler_rot.0 += game.input.mouse_delta.1 * mouse_speed;
-            game.cams[0].euler_rot.1 += game.input.mouse_delta.0 * mouse_speed;
+            game.cams[0].euler_rot.0 += game.input.mouse_axis_motion.1 * mouse_speed;
+            game.cams[0].euler_rot.1 += game.input.mouse_axis_motion.0 * mouse_speed;
         }
 
         // only regenerate the mesh if movement

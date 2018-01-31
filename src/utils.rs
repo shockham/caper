@@ -224,7 +224,7 @@ pub fn build_fp_view_matrix(cam: &Camera) -> Matrix4 {
 pub fn handle_fp_inputs(input: &mut Input, cam: &mut Camera) {
     // some static vals to use the fp inputs
     const MOVE_SPEED: f32 = 0.2f32;
-    const MOUSE_SPEED: f32 = 0.01f32;
+    const MOUSE_SPEED: f32 = 1f32;
 
     let mv_matrix = build_fp_view_matrix(cam);
 
@@ -252,8 +252,8 @@ pub fn handle_fp_inputs(input: &mut Input, cam: &mut Camera) {
         cam.pos.2 -= mv_matrix[2][0] * MOVE_SPEED;
     }
 
-    cam.euler_rot.0 += input.mouse_delta.1 * MOUSE_SPEED;
-    cam.euler_rot.1 += input.mouse_delta.0 * MOUSE_SPEED;
+    cam.euler_rot.0 += input.mouse_axis_motion.1 * MOUSE_SPEED;
+    cam.euler_rot.1 += input.mouse_axis_motion.0 * MOUSE_SPEED;
 
     cam.euler_rot.0 = fix_rot(cam.euler_rot.0);
     cam.euler_rot.1 = fix_rot(cam.euler_rot.1);
