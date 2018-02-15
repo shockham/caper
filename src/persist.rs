@@ -1,4 +1,4 @@
-use bincode::{serialize, deserialize, Infinite};
+use bincode::{serialize, deserialize};
 use serde::ser::Serialize;
 use serde::de::Deserialize;
 
@@ -11,7 +11,7 @@ const PERSIST_BASE_PATH: &'static str = "./persist/";
 
 /// Save and encodable type to persistence at the key
 pub fn save<T: Serialize>(to_save: &T, key: &'static str) {
-    let encoded: Vec<u8> = serialize(to_save, Infinite).unwrap();
+    let encoded: Vec<u8> = serialize(to_save).unwrap();
 
     let _ = thread::spawn(move || {
         // TODO handle this better
