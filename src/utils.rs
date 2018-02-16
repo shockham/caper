@@ -6,12 +6,11 @@ use std::iter::Sum;
 use std::f32::consts::PI;
 
 use types::{RenderItem, RenderItemBuilder, TransformBuilder};
-use types::{Vertex, Quaternion, Vector3, Matrix4, Camera, MaterialBuilder};
+use types::{Camera, MaterialBuilder, Matrix4, Quaternion, Vector3, Vertex};
 
-use input::{Key, Input};
+use input::{Input, Key};
 
 const TWO_PI: f32 = PI * 2f32;
-
 
 /// Returns a Vec<Vertex> that should be converted to buffer and rendered as `TrianglesList`.
 pub fn load_wavefront(data: &[u8]) -> Vec<Vertex> {
@@ -20,40 +19,39 @@ pub fn load_wavefront(data: &[u8]) -> Vec<Vertex> {
 
     let mut vertex_data = Vec::new();
 
-    for shape in data.objects.iter().next().unwrap().groups.iter().flat_map(
-        |g| {
-            g.polys.iter()
-        },
-    )
+    for shape in data.objects
+        .iter()
+        .next()
+        .unwrap()
+        .groups
+        .iter()
+        .flat_map(|g| g.polys.iter())
     {
         match shape {
             &genmesh::Polygon::PolyTri(genmesh::Triangle {
-                                           x: v1,
-                                           y: v2,
-                                           z: v3,
-                                       }) => {
-                for v in [v1, v2, v3].iter() {
-                    let position = data.position[v.0];
-                    let texture = v.1.map(|index| data.texture[index]);
-                    let normal = v.2.map(|index| data.normal[index]);
+                x: v1,
+                y: v2,
+                z: v3,
+            }) => for v in [v1, v2, v3].iter() {
+                let position = data.position[v.0];
+                let texture = v.1.map(|index| data.texture[index]);
+                let normal = v.2.map(|index| data.normal[index]);
 
-                    let texture = texture.unwrap_or([0.0, 0.0]);
-                    let normal = normal.unwrap_or([0.0, 0.0, 0.0]);
+                let texture = texture.unwrap_or([0.0, 0.0]);
+                let normal = normal.unwrap_or([0.0, 0.0, 0.0]);
 
-                    vertex_data.push(Vertex {
-                        position: position,
-                        normal: normal,
-                        texture: texture,
-                    })
-                }
-            }
+                vertex_data.push(Vertex {
+                    position: position,
+                    normal: normal,
+                    texture: texture,
+                })
+            },
             _ => unimplemented!(),
         }
     }
 
     vertex_data
 }
-
 
 /// Returns a RenderItem for the skydome
 pub fn create_skydome<T: Clone + Default>(shader_name: &'static str) -> RenderItem<T> {
@@ -192,7 +190,6 @@ pub fn build_persp_proj_mat(fov: f32, aspect: f32, znear: f32, zfar: f32) -> Mat
 
 /// Returns the model view matrix for a first person view given cam position and rotation
 pub fn build_fp_view_matrix(cam: &Camera) -> Matrix4 {
-
     let (sin_yaw, cos_yaw, sin_pitch, cos_pitch) = (
         cam.euler_rot.1.sin(),
         cam.euler_rot.1.cos(),
@@ -217,7 +214,6 @@ pub fn build_fp_view_matrix(cam: &Camera) -> Matrix4 {
         ],
     ]
 }
-
 
 /// This method is where data transforms take place due to inputs
 /// for a first person camera
@@ -267,7 +263,6 @@ pub fn handle_fp_inputs(input: &mut Input, cam: &mut Camera) {
         num % TWO_PI
     }
 }
-
 
 /// Test whether an object is in the view frustrum
 pub fn frustrum_test(
@@ -334,4 +329,44 @@ pub fn get_frustum_planes(matrix: &Matrix4) -> Vec<(f32, f32, f32, f32)> {
     ));
 
     planes
+}
+
+/// Helper function for creating demo's shadertoy style, so you only need to provide a fragment
+/// shader
+pub fn demo(frag_shader: &'static str) {
+    use types::DefaultTag;
+    use game::*;
+    use imgui::Ui;
+    use input::Key;
+    use utils::handle_fp_inputs;
+    use shader;
+
+    // crate an instance of the game struct
+    let mut game = Game::<DefaultTag>::new();
+
+    if game.renderer
+        .shaders
+        .add_post_shader(
+            &game.renderer.display,
+            "demo",
+            shader::post::gl330::VERT,
+            frag_shader,
+        )
+        .is_ok()
+    {
+        game.renderer.post_effect.current_shader = "demo";
+    }
+
+    loop {
+        // run the engine update
+        game.update(|_: &Ui| {});
+
+        // update the first person inputs
+        handle_fp_inputs(&mut game.input, &mut game.cams[0]);
+
+        // quit
+        if game.input.keys_down.contains(&Key::Escape) {
+            break;
+        }
+    }
 }
