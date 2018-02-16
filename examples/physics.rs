@@ -2,7 +2,7 @@ extern crate caper;
 #[macro_use]
 extern crate imgui;
 
-use caper::types::{RenderItemBuilder, TransformBuilder, PhysicsType, MaterialBuilder, DefaultTag};
+use caper::types::{DefaultTag, MaterialBuilder, PhysicsType, RenderItemBuilder, TransformBuilder};
 use caper::game::*;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;
@@ -98,13 +98,12 @@ fn main() {
                         debug_render_item.instance_transforms[0].pos
                     ));
 
-                    let (mut x, mut y, mut z, mut w) =
-                        (
-                            debug_render_item.instance_transforms[0].rot.0.to_string(),
-                            debug_render_item.instance_transforms[0].rot.1.to_string(),
-                            debug_render_item.instance_transforms[0].rot.2.to_string(),
-                            debug_render_item.instance_transforms[0].rot.3.to_string(),
-                        );
+                    let (mut x, mut y, mut z, mut w) = (
+                        debug_render_item.instance_transforms[0].rot.0.to_string(),
+                        debug_render_item.instance_transforms[0].rot.1.to_string(),
+                        debug_render_item.instance_transforms[0].rot.2.to_string(),
+                        debug_render_item.instance_transforms[0].rot.3.to_string(),
+                    );
                     x.truncate(5);
                     y.truncate(5);
                     z.truncate(5);
@@ -112,7 +111,6 @@ fn main() {
                     ui.text(im_str!("|({},{},{},{})", x, y, z, w));
                 });
         });
-
 
         if game.input.keys_down.contains(&Key::W) {
             game.get_render_item(1).instance_transforms[0].pos.2 -= 0.1f32;

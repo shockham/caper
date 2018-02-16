@@ -1,4 +1,3 @@
-
 /// OpenGL 3.3 default post shaders
 pub mod gl330 {
     /// Default post vertex shader

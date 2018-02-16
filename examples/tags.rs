@@ -1,5 +1,5 @@
-extern crate time;
 extern crate caper;
+extern crate time;
 
 use caper::types::{RenderItemBuilder, TransformBuilder};
 use caper::game::*;

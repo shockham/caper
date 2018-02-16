@@ -1,6 +1,6 @@
-use renderer::{Renderer, Draw};
+use renderer::{Draw, Renderer};
 use audio::Audio;
-use types::{RenderItem, TextItem, Camera, PhysicsType};
+use types::{Camera, PhysicsType, RenderItem, TextItem};
 use input::Input;
 use imgui::Ui;
 
@@ -217,8 +217,8 @@ impl<T: Default> Physics for Game<T> {
                 };
 
                 // check if it actually exists, if it doesn't remove
-                if self.render_items.len() > ri_i &&
-                    self.render_items[ri_i].instance_transforms.len() > ri_it_i
+                if self.render_items.len() > ri_i
+                    && self.render_items[ri_i].instance_transforms.len() > ri_it_i
                 {
                     // update the rb transform pos
                     let mut rb = wo.borrow_mut_rigid_body();
@@ -249,15 +249,14 @@ impl<T: Default> Physics for Game<T> {
                 let user_data = rb.user_data().unwrap();
                 let &(ri_i, ri_it_i) = user_data.downcast_ref::<(usize, usize)>().unwrap();
 
-                if self.render_items.len() > ri_i &&
-                    self.render_items[ri_i].instance_transforms.len() > ri_it_i
+                if self.render_items.len() > ri_i
+                    && self.render_items[ri_i].instance_transforms.len() > ri_it_i
                 {
-                    self.render_items[ri_i].instance_transforms[ri_it_i].pos =
-                        (
-                            trans.x / PHYSICS_DIVISOR,
-                            trans.y / PHYSICS_DIVISOR,
-                            trans.z / PHYSICS_DIVISOR,
-                        );
+                    self.render_items[ri_i].instance_transforms[ri_it_i].pos = (
+                        trans.x / PHYSICS_DIVISOR,
+                        trans.y / PHYSICS_DIVISOR,
+                        trans.z / PHYSICS_DIVISOR,
+                    );
                     self.render_items[ri_i].instance_transforms[ri_it_i].rot =
                         (rot[0], rot[1], rot[2], rot[3]);
                 }

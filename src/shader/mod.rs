@@ -11,11 +11,10 @@ pub mod texture;
 /// Default post effect shader
 pub mod post;
 
-use glium::{Program, Display};
+use glium::{Display, Program};
 use glium::texture::compressed_srgb_texture2d::CompressedSrgbTexture2d;
 use std::collections::HashMap;
 use std::error::Error;
-
 
 /// Contains all the shaders to be used
 pub struct Shaders {
@@ -30,7 +29,6 @@ pub struct Shaders {
 impl Shaders {
     /// Creates a new instance of Shaders
     pub fn new(display: &Display) -> Shaders {
-
         let mut shader_map = HashMap::new();
 
         // the shader programs
@@ -122,7 +120,6 @@ impl Shaders {
         tess_cont: &'static str,
         tess_eval: &'static str,
     ) -> Result<&str, &str> {
-
         let shader_prog = match program!(display,
                                          330 => {
                                              vertex: vert,
@@ -131,7 +128,6 @@ impl Shaders {
                                              tessellation_control: tess_cont,
                                              tessellation_evaluation: tess_eval,
                                          }) {
-
             Ok(s) => s,
             Err(e) => {
                 println!("{}", e.cause().unwrap());
@@ -152,7 +148,6 @@ impl Shaders {
         vert: &'static str,
         frag: &'static str,
     ) -> Result<&str, &str> {
-
         let post_shader_prog = match program!(display,
                                               330 => {
                                                   vertex: vert,

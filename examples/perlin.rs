@@ -4,8 +4,8 @@ extern crate caper;
 extern crate imgui;
 
 use caper::utils::create_skydome;
-use caper::types::{RenderItemBuilder, TextItemBuilder, TransformBuilder, MaterialBuilder,
-                   DefaultTag};
+use caper::types::{DefaultTag, MaterialBuilder, RenderItemBuilder, TextItemBuilder,
+                   TransformBuilder};
 use caper::mesh::{gen_perlin_mesh, gen_sphere, get_pos_perlin};
 use caper::game::*;
 use caper::input::Key;
@@ -74,8 +74,8 @@ fn main() {
             .unwrap(),
     );
 
-    game.cams[0].pos.1 = 2.5f32 +
-        get_pos_perlin(((pseu_cam_pos.0 - fixed_val), (pseu_cam_pos.1 - fixed_val)));
+    game.cams[0].pos.1 =
+        2.5f32 + get_pos_perlin(((pseu_cam_pos.0 - fixed_val), (pseu_cam_pos.1 - fixed_val)));
     loop {
         let fps = game.renderer.fps;
         let mouse_pos = game.input.mouse_pos;
@@ -90,25 +90,27 @@ fn main() {
             (width, height, hidpi)
         };
         // run the engine update
-        game.update(|ui: &Ui| if debug_mode {
-            ui.window(im_str!("debug"))
-                .size((300.0, 200.0), ImGuiCond::FirstUseEver)
-                .position((0.0, 0.0), ImGuiCond::FirstUseEver)
-                .build(|| {
-                    ui.text(im_str!("map_size: {}", map_size));
-                    ui.text(im_str!("fixed_val: {}", fixed_val));
-                    ui.separator();
-                    ui.text(im_str!("move_speed: {}", move_speed));
-                    ui.text(im_str!("mouse_speed: {}", mouse_speed));
-                    ui.text(im_str!("mouse_pos: {:?}", mouse_pos));
-                    ui.text(im_str!("mouse_delta: {:?}", mouse_delta));
-                    ui.separator();
-                    ui.text(im_str!("pseu_cam_pos: {:?}", pseu_cam_pos));
-                    ui.text(im_str!("fps: {:?}", fps));
-                    ui.text(im_str!("px res: ({}, {})", width, height));
-                    ui.text(im_str!("hidpi: {}", hidpi));
-                    ui.checkbox(im_str!("test_check"), &mut test_check);
-                });
+        game.update(|ui: &Ui| {
+            if debug_mode {
+                ui.window(im_str!("debug"))
+                    .size((300.0, 200.0), ImGuiCond::FirstUseEver)
+                    .position((0.0, 0.0), ImGuiCond::FirstUseEver)
+                    .build(|| {
+                        ui.text(im_str!("map_size: {}", map_size));
+                        ui.text(im_str!("fixed_val: {}", fixed_val));
+                        ui.separator();
+                        ui.text(im_str!("move_speed: {}", move_speed));
+                        ui.text(im_str!("mouse_speed: {}", mouse_speed));
+                        ui.text(im_str!("mouse_pos: {:?}", mouse_pos));
+                        ui.text(im_str!("mouse_delta: {:?}", mouse_delta));
+                        ui.separator();
+                        ui.text(im_str!("pseu_cam_pos: {:?}", pseu_cam_pos));
+                        ui.text(im_str!("fps: {:?}", fps));
+                        ui.text(im_str!("px res: ({}, {})", width, height));
+                        ui.text(im_str!("hidpi: {}", hidpi));
+                        ui.checkbox(im_str!("test_check"), &mut test_check);
+                    });
+            }
         });
 
         if game.input.hide_mouse {
@@ -145,8 +147,8 @@ fn main() {
         // only regenerate the mesh if movement
         if movement_dirty {
             game.get_render_item(0).vertices = gen_perlin_mesh(pseu_cam_pos, map_size);
-            game.cams[0].pos.1 = 2.5f32 +
-                get_pos_perlin(((pseu_cam_pos.0 - fixed_val), (pseu_cam_pos.1 - fixed_val)));
+            game.cams[0].pos.1 = 2.5f32
+                + get_pos_perlin(((pseu_cam_pos.0 - fixed_val), (pseu_cam_pos.1 - fixed_val)));
 
             // update the sphere location
             game.get_render_item(2).instance_transforms[0].pos = (

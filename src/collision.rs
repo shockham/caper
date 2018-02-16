@@ -43,7 +43,6 @@ pub fn overlapping(
     size_b: &(f32, f32),
     separate: bool,
 ) -> CollisionInfo {
-
     let (left_a, left_b) = (pos_a.0, pos_b.0);
     let (right_a, right_b) = (pos_a.0 + size_a.0, pos_b.0 + size_b.0);
     let (top_a, top_b) = (pos_a.1, pos_b.1);

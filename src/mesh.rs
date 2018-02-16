@@ -1,6 +1,6 @@
 use utils::calc_normal;
 use types::Vertex;
-use noise::{Perlin, Seedable, NoiseModule};
+use noise::{NoiseModule, Perlin, Seedable};
 use std::f32::consts::PI;
 
 /// The default normal to give a mesh vertex
@@ -258,52 +258,40 @@ pub fn gen_sphere_segments(segs: f32, rings: f32) -> Vec<Vertex> {
 
             // skip first triangle on first ring
             if r > 0.0 {
-                verts.push(
-                    [
-                        (PI * r / rings).sin() * (PI2 * s_plus / segs).cos(),
-                        (PI * r / rings).cos(),
-                        (PI * r / rings).sin() * (PI2 * s_plus / segs).sin(),
-                    ],
-                );
-                verts.push(
-                    [
-                        (PI * r_plus / rings).sin() * (PI2 * s / segs).cos(),
-                        (PI * r_plus / rings).cos(),
-                        (PI * r_plus / rings).sin() * (PI2 * s / segs).sin(),
-                    ],
-                );
-                verts.push(
-                    [
-                        (PI * r / rings).sin() * (PI2 * s / segs).cos(),
-                        (PI * r / rings).cos(),
-                        (PI * r / rings).sin() * (PI2 * s / segs).sin(),
-                    ],
-                );
+                verts.push([
+                    (PI * r / rings).sin() * (PI2 * s_plus / segs).cos(),
+                    (PI * r / rings).cos(),
+                    (PI * r / rings).sin() * (PI2 * s_plus / segs).sin(),
+                ]);
+                verts.push([
+                    (PI * r_plus / rings).sin() * (PI2 * s / segs).cos(),
+                    (PI * r_plus / rings).cos(),
+                    (PI * r_plus / rings).sin() * (PI2 * s / segs).sin(),
+                ]);
+                verts.push([
+                    (PI * r / rings).sin() * (PI2 * s / segs).cos(),
+                    (PI * r / rings).cos(),
+                    (PI * r / rings).sin() * (PI2 * s / segs).sin(),
+                ]);
             }
 
             // skip last triangle on last ring
             if r < rings - 1.0 {
-                verts.push(
-                    [
-                        (PI * r_plus / rings).sin() * (PI2 * s_plus / segs).cos(),
-                        (PI * r_plus / rings).cos(),
-                        (PI * r_plus / rings).sin() * (PI2 * s_plus / segs).sin(),
-                    ],
-                );
-                verts.push(
-                    [
-                        (PI * r_plus / rings).sin() * (PI2 * s / segs).cos(),
-                        (PI * r_plus / rings).cos(),
-                        (PI * r_plus / rings).sin() * (PI2 * s / segs).sin(),
-                    ],
-                );
-                verts.push(
-                    [
-                        (PI * r / rings).sin() * (PI2 * s_plus / segs).cos(),
-                        (PI * r / rings).cos(),
-                        (PI * r / rings).sin() * (PI2 * s_plus / segs).sin(),
-                    ],
-                );
+                verts.push([
+                    (PI * r_plus / rings).sin() * (PI2 * s_plus / segs).cos(),
+                    (PI * r_plus / rings).cos(),
+                    (PI * r_plus / rings).sin() * (PI2 * s_plus / segs).sin(),
+                ]);
+                verts.push([
+                    (PI * r_plus / rings).sin() * (PI2 * s / segs).cos(),
+                    (PI * r_plus / rings).cos(),
+                    (PI * r_plus / rings).sin() * (PI2 * s / segs).sin(),
+                ]);
+                verts.push([
+                    (PI * r / rings).sin() * (PI2 * s_plus / segs).cos(),
+                    (PI * r / rings).cos(),
+                    (PI * r / rings).sin() * (PI2 * s_plus / segs).sin(),
+                ]);
             }
 
             let normal = calc_normal(verts[0], verts[1], verts[2]);

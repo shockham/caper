@@ -1,6 +1,6 @@
 extern crate caper;
 
-use caper::types::{RenderItemBuilder, TransformBuilder, DefaultTag};
+use caper::types::{DefaultTag, RenderItemBuilder, TransformBuilder};
 use caper::game::*;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;
@@ -27,10 +27,8 @@ fn main() {
 
     // add some audio
     game.audio.add_audio("test", "./examples/assets/test.ogg");
-    game.audio.add_packed_audio(
-        "test_packed",
-        include_bytes!("./assets/test.ogg").to_vec(),
-    );
+    game.audio
+        .add_packed_audio("test_packed", include_bytes!("./assets/test.ogg").to_vec());
 
     // play the audio on start
     //game.audio.play("test");

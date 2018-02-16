@@ -1,8 +1,8 @@
-use bincode::{serialize, deserialize};
+use bincode::{deserialize, serialize};
 use serde::ser::Serialize;
 use serde::de::Deserialize;
 
-use std::fs::{File, create_dir};
+use std::fs::{create_dir, File};
 use std::thread;
 use std::io::{Read, Write};
 
@@ -56,7 +56,9 @@ fn save_load_test() {
         entities: Vec<Entity>,
     }
 
-    let world = World { entities: vec![Entity { x: 0.0, y: 4.0 }, Entity { x: 10.0, y: 20.5 }] };
+    let world = World {
+        entities: vec![Entity { x: 0.0, y: 4.0 }, Entity { x: 10.0, y: 20.5 }],
+    };
 
     save(&world, "test");
     let _ = load::<Entity>("test");

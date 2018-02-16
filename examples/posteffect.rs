@@ -1,6 +1,6 @@
 extern crate caper;
 
-use caper::types::{RenderItemBuilder, TransformBuilder, DefaultTag};
+use caper::types::{DefaultTag, RenderItemBuilder, TransformBuilder};
 use caper::game::*;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;

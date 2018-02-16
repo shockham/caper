@@ -1,8 +1,8 @@
-extern crate time;
 extern crate caper;
+extern crate time;
 
 use caper::utils::load_wavefront;
-use caper::types::{RenderItemBuilder, TransformBuilder, MaterialBuilder, DefaultTag};
+use caper::types::{DefaultTag, MaterialBuilder, RenderItemBuilder, TransformBuilder};
 use caper::game::*;
 use caper::imgui::Ui;
 use caper::input::Key;
@@ -15,11 +15,7 @@ fn main() {
     let transforms = (0..200)
         .map(|i| {
             TransformBuilder::default()
-                .pos((
-                    (i as f32 % 10f32) * 2f32,
-                    0.0f32,
-                    (i as f32 / 10f32) * 2f32,
-                ))
+                .pos(((i as f32 % 10f32) * 2f32, 0.0f32, (i as f32 / 10f32) * 2f32))
                 .rot((0f32, 0f32, 0f32, 1f32))
                 .scale((1f32, 1f32, 1f32))
                 .build()
@@ -42,7 +38,6 @@ fn main() {
             .unwrap(),
     );
 
-
     loop {
         // run the engine update
         game.update(|_: &Ui| {});
@@ -56,8 +51,7 @@ fn main() {
         for t in game.get_render_item(0).instance_transforms.iter_mut() {
             t.pos = (
                 t.pos.0,
-                ((t.pos.0 / 5f32).sin() * (t.pos.2 / 5f32).cos() * update_time.sin() as f32) *
-                    2f32,
+                ((t.pos.0 / 5f32).sin() * (t.pos.2 / 5f32).cos() * update_time.sin() as f32) * 2f32,
                 t.pos.2,
             );
             t.scale = (

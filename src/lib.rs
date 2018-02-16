@@ -55,31 +55,31 @@ fn main() {
 #![deny(missing_docs)]
 
 #[macro_use]
-pub extern crate glium;
-#[macro_use]
 extern crate derive_builder;
 #[macro_use]
-extern crate serde_derive;
+pub extern crate glium;
 #[macro_use]
 extern crate lazy_static;
+#[macro_use]
+extern crate serde_derive;
 
+pub extern crate image;
 pub extern crate imgui;
+pub extern crate impose as audio;
+pub extern crate nalgebra;
 pub extern crate ncollide;
 pub extern crate nphysics3d;
-pub extern crate nalgebra;
-pub extern crate image;
 pub extern crate volition as input;
-pub extern crate impose as audio;
 
-extern crate glium_text_rusttype as glium_text;
-extern crate noise;
-extern crate time;
-extern crate fps_counter;
 extern crate bincode;
-extern crate serde;
+extern crate fps_counter;
 extern crate gif;
+extern crate glium_text_rusttype as glium_text;
 extern crate imgui_glium_renderer;
+extern crate noise;
 extern crate rayon;
+extern crate serde;
+extern crate time;
 
 /// Module for utility functions for textures
 #[macro_use]

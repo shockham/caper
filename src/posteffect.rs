@@ -1,9 +1,9 @@
 use glium::Surface;
-use glium::index::{PrimitiveType, IndexBuffer};
+use glium::index::{IndexBuffer, PrimitiveType};
 use glium::vertex::VertexBuffer;
 use glium::backend::Facade;
 use glium::framebuffer::SimpleFrameBuffer;
-use glium::texture::{Texture2d, DepthTexture2d, DepthFormat, MipmapsOption};
+use glium::texture::{DepthFormat, DepthTexture2d, MipmapsOption, Texture2d};
 
 use types::Vertex;
 
@@ -118,7 +118,6 @@ where
     F: FnMut(&mut SimpleFrameBuffer),
     C: Facade + Clone,
 {
-
     let target_dimensions = target.get_dimensions();
 
     let target_color = Texture2d::empty(
@@ -136,11 +135,7 @@ where
     ).unwrap();
 
     // first pass draw the scene into a buffer
-    draw(&mut SimpleFrameBuffer::with_depth_buffer(
-        context,
-        &target_color,
-        &target_depth,
-    ).unwrap());
+    draw(&mut SimpleFrameBuffer::with_depth_buffer(context, &target_color, &target_depth).unwrap());
 
     (target_color, target_depth)
 }

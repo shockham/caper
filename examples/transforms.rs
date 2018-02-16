@@ -1,9 +1,9 @@
-extern crate time;
 extern crate caper;
+extern crate time;
 
 use caper::utils::load_wavefront;
-use caper::types::{RenderItemBuilder, TransformBuilder, Transform, MaterialBuilder, DefaultTag};
-use caper::mesh::{gen_quad, gen_sphere, gen_cube};
+use caper::types::{DefaultTag, MaterialBuilder, RenderItemBuilder, Transform, TransformBuilder};
+use caper::mesh::{gen_cube, gen_quad, gen_sphere};
 use caper::game::*;
 use caper::imgui::Ui;
 use caper::input::Key;
@@ -126,18 +126,15 @@ fn main() {
             .unwrap(),
     );
 
-    game.renderer.lighting.add_directional_light(
-        "one".to_string(),
-        (-0.2, 0.8, 0.1),
-    );
-    game.renderer.lighting.add_directional_light(
-        "two".to_string(),
-        (1.0, 0.0, 0.0),
-    );
-    game.renderer.lighting.add_directional_light(
-        "three".to_string(),
-        (0.0, 1.0, 0.0),
-    );
+    game.renderer
+        .lighting
+        .add_directional_light("one".to_string(), (-0.2, 0.8, 0.1));
+    game.renderer
+        .lighting
+        .add_directional_light("two".to_string(), (1.0, 0.0, 0.0));
+    game.renderer
+        .lighting
+        .add_directional_light("three".to_string(), (0.0, 1.0, 0.0));
 
     // test getting a direcitonal light by name
     {
@@ -158,26 +155,22 @@ fn main() {
         sin_y(
             &mut game.get_render_item_by_name("sphere".to_string())
                 .unwrap()
-                .instance_transforms
-                [0],
+                .instance_transforms[0],
         );
         circle(
             &mut game.get_render_item_by_name("sphere".to_string())
                 .unwrap()
-                .instance_transforms
-                [0],
+                .instance_transforms[0],
         );
         circle(
             &mut game.get_render_item_by_name("sphere".to_string())
                 .unwrap()
-                .instance_transforms
-                [1],
+                .instance_transforms[1],
         );
         spin(
             &mut game.get_render_item_by_name("floor".to_string())
                 .unwrap()
-                .instance_transforms
-                [1],
+                .instance_transforms[1],
         );
 
         // quit

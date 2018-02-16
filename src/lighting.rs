@@ -1,6 +1,6 @@
 use types::Vector3;
 use glium::texture::Texture1d;
-use glium::backend::{Facade, Context};
+use glium::backend::{Context, Facade};
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -47,7 +47,6 @@ impl Lighting {
         }
     }
 
-
     /// Add a direction light with direction dir to the lighting system
     pub fn add_directional_light(&mut self, name: String, dir: Vector3) {
         let light = DirectionalLightBuilder::default()
@@ -58,7 +57,6 @@ impl Lighting {
         self.directional_lights.push(light);
         self.regenerate_lighting_tex();
     }
-
 
     /// Regenerates the tex that is used to send location to shader
     /// Note: must be called when mutating any lighting data

@@ -1,16 +1,15 @@
-use glium::{Display, DrawParameters, Surface, Depth, Blend};
+use glium::{Blend, Depth, Display, DrawParameters, Surface};
 use glium::index::{NoIndices, PrimitiveType};
 use glium::DepthTest::IfLess;
 use glium::vertex::VertexBuffer;
-use glium::glutin::{WindowBuilder, ContextBuilder, EventsLoop, GlRequest, Api};
+use glium::glutin::{Api, ContextBuilder, EventsLoop, GlRequest, WindowBuilder};
 use glium::glutin::CursorState::Hide;
-use glium::draw_parameters::{DepthClamp, BackfaceCullingMode};
+use glium::draw_parameters::{BackfaceCullingMode, DepthClamp};
 use glium::texture::RawImage2d;
 use glium::backend::Facade;
 
-
 use glium_text;
-use glium_text::{TextSystem, FontTexture, TextDisplay};
+use glium_text::{FontTexture, TextDisplay, TextSystem};
 
 use time;
 use std::default::Default;
@@ -30,13 +29,12 @@ use std::thread;
 use std::sync::{Arc, Mutex};
 
 use shader::Shaders;
-use utils::{build_persp_proj_mat, build_fp_view_matrix, mul_mat4, frustrum_test,
-            get_frustum_planes};
-use posteffect::{PostEffect, render_to_texture};
-use types::{RenderItem, TextItem, Camera, ShaderIn, PhysicsType};
+use utils::{build_fp_view_matrix, build_persp_proj_mat, frustrum_test, get_frustum_planes,
+            mul_mat4};
+use posteffect::{render_to_texture, PostEffect};
+use types::{Camera, PhysicsType, RenderItem, ShaderIn, TextItem};
 use lighting::Lighting;
 use input::{Input, MouseButton};
-
 
 /// struct for abstracting the render state
 pub struct Renderer {
@@ -80,11 +78,9 @@ struct GifInfo {
 impl Renderer {
     /// Creates new Renderer instance
     pub fn new(title: String, events_loop: &EventsLoop) -> Renderer {
-        let window_builder = WindowBuilder::new().with_title(title).with_fullscreen(
-            Some(
-                events_loop.get_primary_monitor(),
-            ),
-        );
+        let window_builder = WindowBuilder::new()
+            .with_title(title)
+            .with_fullscreen(Some(events_loop.get_primary_monitor()));
         let ctx_builder = ContextBuilder::new()
             .with_depth_buffer(24)
             .with_vsync(true)
@@ -141,7 +137,6 @@ impl Renderer {
             imgui_style.colors[41] = ImVec4::new(0f32, 0f32, 0f32, 0.9f32);
         }
 
-
         let imgui_rend = ImGuiRenderer::init(&mut imgui, &display).unwrap();
 
         let shaders = Shaders::new(&display);
@@ -177,19 +172,15 @@ impl Renderer {
 
     /// Update imgui's interal input state
     pub fn update_imgui_input(&mut self, input: &Input) {
-        self.imgui.set_mouse_pos(
-            input.mouse_pos.0,
-            input.mouse_pos.1,
-        );
-        self.imgui.set_mouse_down(
-            &[
-                input.mouse_btns_down.contains(&MouseButton::Left),
-                input.mouse_btns_down.contains(&MouseButton::Right),
-                input.mouse_btns_down.contains(&MouseButton::Middle),
-                false,
-                false,
-            ],
-        );
+        self.imgui
+            .set_mouse_pos(input.mouse_pos.0, input.mouse_pos.1);
+        self.imgui.set_mouse_down(&[
+            input.mouse_btns_down.contains(&MouseButton::Left),
+            input.mouse_btns_down.contains(&MouseButton::Right),
+            input.mouse_btns_down.contains(&MouseButton::Middle),
+            false,
+            false,
+        ]);
         for ch in input.characters_down.iter() {
             self.imgui.add_input_character(*ch);
         }
@@ -206,8 +197,7 @@ impl Renderer {
                     .unwrap();
             let image = image::DynamicImage::ImageRgba8(image).flipv();
             let mut output = File::create(&Path::new(
-                format!("./screenshot_{}.png", time::precise_time_s())
-                    .as_str(),
+                format!("./screenshot_{}.png", time::precise_time_s()).as_str(),
             )).unwrap();
             image.save(&mut output, image::ImageFormat::PNG).unwrap();
         });
@@ -244,13 +234,12 @@ impl Renderer {
             self.gif_info = Some(info);
         }
 
-
         if let Some(ref mut info) = self.gif_info {
             let encoder_mutex = info.encoder.clone();
             thread::spawn(move || {
                 let mut image = {
-                    let image_buf = image::ImageBuffer::from_raw(w, h, image.data.into_owned())
-                        .unwrap();
+                    let image_buf =
+                        image::ImageBuffer::from_raw(w, h, image.data.into_owned()).unwrap();
                     let dy_image = image::DynamicImage::ImageRgba8(image_buf).flipv();
                     let fin_image = dy_image.as_rgba8().unwrap();
                     fin_image.clone().into_raw()
@@ -330,33 +319,31 @@ impl Draw for Renderer {
                     target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
                     // drawing the render items (with more than one instance)
-                    for item in render_items.iter().filter(|r| {
-                        r.active && r.instance_transforms.len() > 0
-                    })
+                    for item in render_items
+                        .iter()
+                        .filter(|r| r.active && r.instance_transforms.len() > 0)
                     {
                         // building the vertex and index buffers
-                        let vertex_buffer = VertexBuffer::new(&self.display, &item.vertices)
-                            .unwrap();
+                        let vertex_buffer =
+                            VertexBuffer::new(&self.display, &item.vertices).unwrap();
 
                         // add positions for instances
                         let per_instance = {
                             let data = item.instance_transforms
                                 .iter()
                                 .filter(|t| {
-                                    (t.active && !t.cull) ||
-                                        (t.active &&
-                                             frustrum_test(
+                                    (t.active && !t.cull)
+                                        || (t.active
+                                            && frustrum_test(
                                                 &t.pos,
                                                 t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
                                                 &frustum_planes,
                                             ))
                                 })
-                                .map(|t| {
-                                    ShaderIn {
-                                        world_position: t.pos,
-                                        world_rotation: t.rot,
-                                        world_scale: t.scale,
-                                    }
+                                .map(|t| ShaderIn {
+                                    world_position: t.pos,
+                                    world_rotation: t.rot,
+                                    world_scale: t.scale,
                                 })
                                 .collect::<Vec<_>>();
 
@@ -371,33 +358,36 @@ impl Draw for Renderer {
                             VertexBuffer::dynamic(&self.display, &data).unwrap()
                         };
 
-                        let tex_name = item.material.texture_name.clone().unwrap_or(
-                            "default".to_string(),
-                        );
-                        let normal_tex_name = item.material.normal_texture_name.clone().unwrap_or(
-                            "default_normal".to_string(),
-                        );
+                        let tex_name = item.material
+                            .texture_name
+                            .clone()
+                            .unwrap_or("default".to_string());
+                        let normal_tex_name = item.material
+                            .normal_texture_name
+                            .clone()
+                            .unwrap_or("default_normal".to_string());
 
                         let dir_lights = self.lighting.directional_tex.borrow();
 
-                        let uniforms =
-                            uniform! {
-                                    projection_matrix: projection_matrix,
-                                    modelview_matrix: modelview_matrix,
-                                    cam_pos: cam_pos,
-                                    viewport: (width as f32, height as f32),
-                                    time: time,
-                                    tex: self.shaders.textures.get(tex_name.as_str()).unwrap(),
-                                    normal_tex:
-                                        self.shaders.textures.get(normal_tex_name.as_str())
-                                        .unwrap(),
-                                    dir_lights: &*dir_lights,
-                                };
+                        let uniforms = uniform! {
+                            projection_matrix: projection_matrix,
+                            modelview_matrix: modelview_matrix,
+                            cam_pos: cam_pos,
+                            viewport: (width as f32, height as f32),
+                            time: time,
+                            tex: self.shaders.textures.get(tex_name.as_str()).unwrap(),
+                            normal_tex:
+                                self.shaders.textures.get(normal_tex_name.as_str())
+                                .unwrap(),
+                            dir_lights: &*dir_lights,
+                        };
 
                         target
                             .draw(
                                 (&vertex_buffer, per_instance.per_instance().unwrap()),
-                                &NoIndices(PrimitiveType::Patches { vertices_per_patch: 3 }),
+                                &NoIndices(PrimitiveType::Patches {
+                                    vertices_per_patch: 3,
+                                }),
                                 &self.shaders
                                     .shaders
                                     .get(item.material.shader_name.as_str())
@@ -417,86 +407,75 @@ impl Draw for Renderer {
         //let depths_arr = DepthTexture2dArray::new(&self.post_effect.context, depths).unwrap();
 
         // second pass draw the post effect and composition
-        let uniforms =
-            uniform! {
-                // general uniforms
-                tex: &cols[0],
-                depth_buf: &depths[0],
-                resolution: (width as f32, height as f32),
-                time: time::precise_time_s() as f32 - self.post_effect.start_time,
-                downscale_factor: self.post_effect.downscale_factor,
-                // post effect param uniforms
-                chrom_offset: self.post_effect.post_shader_options.chrom_offset,
-                chrom_amt: self.post_effect.post_shader_options.chrom_amt,
-                blur: self.post_effect.post_shader_options.blur,
-                blur_amt: self.post_effect.post_shader_options.blur_amt,
-                blur_radius: self.post_effect.post_shader_options.blur_radius,
-                blur_weight: self.post_effect.post_shader_options.blur_weight,
-                bokeh: self.post_effect.post_shader_options.bokeh,
-                bokeh_focal_depth: self.post_effect.post_shader_options.bokeh_focal_depth,
-                bokeh_focal_width: self.post_effect.post_shader_options.bokeh_focal_width,
-                color_offset: self.post_effect.post_shader_options.color_offset,
-                greyscale: self.post_effect.post_shader_options.greyscale,
-            };
+        let uniforms = uniform! {
+            // general uniforms
+            tex: &cols[0],
+            depth_buf: &depths[0],
+            resolution: (width as f32, height as f32),
+            time: time::precise_time_s() as f32 - self.post_effect.start_time,
+            downscale_factor: self.post_effect.downscale_factor,
+            // post effect param uniforms
+            chrom_offset: self.post_effect.post_shader_options.chrom_offset,
+            chrom_amt: self.post_effect.post_shader_options.chrom_amt,
+            blur: self.post_effect.post_shader_options.blur,
+            blur_amt: self.post_effect.post_shader_options.blur_amt,
+            blur_radius: self.post_effect.post_shader_options.blur_radius,
+            blur_weight: self.post_effect.post_shader_options.blur_weight,
+            bokeh: self.post_effect.post_shader_options.bokeh,
+            bokeh_focal_depth: self.post_effect.post_shader_options.bokeh_focal_depth,
+            bokeh_focal_width: self.post_effect.post_shader_options.bokeh_focal_width,
+            color_offset: self.post_effect.post_shader_options.color_offset,
+            greyscale: self.post_effect.post_shader_options.greyscale,
+        };
 
         let uniforms = if cols.len() > 1 {
-            uniforms.add("tex_1", &cols[1]).add(
-                "depth_buf_1",
-                &depths[1],
-            )
+            uniforms
+                .add("tex_1", &cols[1])
+                .add("depth_buf_1", &depths[1])
         } else {
-            uniforms.add("tex_1", &cols[0]).add(
-                "depth_buf_1",
-                &depths[0],
-            )
+            uniforms
+                .add("tex_1", &cols[0])
+                .add("depth_buf_1", &depths[0])
         };
 
         let uniforms = if cols.len() > 2 {
-            uniforms.add("tex_2", &cols[2]).add(
-                "depth_buf_2",
-                &depths[2],
-            )
+            uniforms
+                .add("tex_2", &cols[2])
+                .add("depth_buf_2", &depths[2])
         } else {
-            uniforms.add("tex_2", &cols[0]).add(
-                "depth_buf_2",
-                &depths[0],
-            )
+            uniforms
+                .add("tex_2", &cols[0])
+                .add("depth_buf_2", &depths[0])
         };
 
         let uniforms = if cols.len() > 3 {
-            uniforms.add("tex_3", &cols[3]).add(
-                "depth_buf_3",
-                &depths[3],
-            )
+            uniforms
+                .add("tex_3", &cols[3])
+                .add("depth_buf_3", &depths[3])
         } else {
-            uniforms.add("tex_3", &cols[0]).add(
-                "depth_buf_3",
-                &depths[0],
-            )
+            uniforms
+                .add("tex_3", &cols[0])
+                .add("depth_buf_3", &depths[0])
         };
 
         let uniforms = if cols.len() > 4 {
-            uniforms.add("tex_4", &cols[4]).add(
-                "depth_buf_4",
-                &depths[4],
-            )
+            uniforms
+                .add("tex_4", &cols[4])
+                .add("depth_buf_4", &depths[4])
         } else {
-            uniforms.add("tex_4", &cols[0]).add(
-                "depth_buf_4",
-                &depths[0],
-            )
+            uniforms
+                .add("tex_4", &cols[0])
+                .add("depth_buf_4", &depths[0])
         };
 
         let uniforms = if cols.len() > 5 {
-            uniforms.add("tex_5", &cols[5]).add(
-                "depth_buf_5",
-                &depths[5],
-            )
+            uniforms
+                .add("tex_5", &cols[5])
+                .add("depth_buf_5", &depths[5])
         } else {
-            uniforms.add("tex_5", &cols[0]).add(
-                "depth_buf_5",
-                &depths[0],
-            )
+            uniforms
+                .add("tex_5", &cols[0])
+                .add("depth_buf_5", &depths[0])
         };
 
         target
@@ -602,8 +581,8 @@ impl Draw for Renderer {
                     if ui.collapsing_header(im_str!("Render items")).build() {
                         // create node for each item
                         for render_item in render_items {
-                            ui.tree_node(im_str!("name:{}", render_item.name)).build(
-                                || {
+                            ui.tree_node(im_str!("name:{}", render_item.name))
+                                .build(|| {
                                     ui.checkbox(im_str!("active"), &mut render_item.active);
                                     // physics type TODO make sure this is propagated
                                     let mut physics_type = match render_item.physics_type {
@@ -628,8 +607,7 @@ impl Draw for Renderer {
                                         render_item.instance_transforms.len()
                                     ));
                                     ui.text(im_str!("vert_count:{}", render_item.vertices.len()));
-                                },
-                            );
+                                });
                         }
                     }
                     // text items editor
