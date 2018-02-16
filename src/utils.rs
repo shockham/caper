@@ -344,18 +344,15 @@ pub fn demo(frag_shader: &'static str) {
     // crate an instance of the game struct
     let mut game = Game::<DefaultTag>::new();
 
-    if game.renderer
+    game.renderer
         .shaders
         .add_post_shader(
             &game.renderer.display,
             "demo",
             shader::post::gl330::VERT,
             frag_shader,
-        )
-        .is_ok()
-    {
-        game.renderer.post_effect.current_shader = "demo";
-    }
+        ).unwrap();
+    game.renderer.post_effect.current_shader = "demo";
 
     loop {
         // run the engine update
