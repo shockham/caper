@@ -413,6 +413,7 @@ impl Draw for Renderer {
             depth_buf: &depths[0],
             resolution: (width as f32, height as f32),
             time: time::precise_time_s() as f32 - self.post_effect.start_time,
+            cam_pos: cams[0].pos,
             downscale_factor: self.post_effect.downscale_factor,
             // post effect param uniforms
             chrom_offset: self.post_effect.post_shader_options.chrom_offset,

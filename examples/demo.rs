@@ -11,6 +11,7 @@ const float MAX_DIST = 100.0;
 const float EPSILON = 0.0001;
 
 uniform vec2 resolution;
+uniform vec3 cam_pos;
 
 in vec2 v_tex_coords;
 
@@ -47,8 +48,7 @@ vec3 rayDirection(float fieldOfView, vec2 size, vec2 fragCoord) {
 
 void main() {
 	vec3 dir = rayDirection(45.0, resolution, v_tex_coords * resolution);
-    vec3 eye = vec3(0.0, 0.0, 5.0);
-    float dist = shortestDistanceToSurface(eye, dir, MIN_DIST, MAX_DIST);
+    float dist = shortestDistanceToSurface(cam_pos, dir, MIN_DIST, MAX_DIST);
 
     if (dist > MAX_DIST - EPSILON) {
         // Didn't hit anything
