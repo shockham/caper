@@ -17,12 +17,12 @@ in vec2 v_tex_coords;
 
 varying out vec4 frag_output;
 
-float sphereSDF(vec3 samplePoint) {
-    return length(samplePoint) - 1.0;
+float sphereSDF(vec3 p, float s) {
+    return length(p) - s;
 }
 
-float sceneSDF(vec3 samplePoint) {
-    return sphereSDF(samplePoint);
+float sceneSDF(vec3 p) {
+    return sphereSDF(p, 1.0);
 }
 
 float shortestDistanceToSurface(vec3 eye, vec3 marchingDirection, float start, float end) {
