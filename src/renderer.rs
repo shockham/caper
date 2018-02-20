@@ -299,12 +299,20 @@ impl Draw for Renderer {
         let mut render_count = 0usize;
         let mut cols = Vec::new();
         let mut depths = Vec::new();
+        let mut p_mat = None;
+        let mut mv_mat = None;
 
         for cam in cams.iter_mut() {
             // uniforms passed to the shaders
             let projection_matrix =
                 build_persp_proj_mat(60f32, width as f32 / height as f32, 0.01f32, 1000f32);
+            if p_mat.is_none() {
+                p_mat = Some(projection_matrix);
+            }
             let modelview_matrix = build_fp_view_matrix(&cam);
+            if mv_mat.is_none() {
+                mv_mat = Some(modelview_matrix);
+            }
             let cam_pos = cam.pos;
             let time = (time::precise_time_s() - self.start_time) as f32;
 
@@ -414,6 +422,8 @@ impl Draw for Renderer {
             resolution: (width as f32, height as f32),
             time: time::precise_time_s() as f32 - self.post_effect.start_time,
             cam_pos: cams[0].pos,
+            projection_matrix: p_mat.unwrap(),
+            modelview_matrix: mv_mat.unwrap(),
             downscale_factor: self.post_effect.downscale_factor,
             // post effect param uniforms
             chrom_offset: self.post_effect.post_shader_options.chrom_offset,
