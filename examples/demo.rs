@@ -4,7 +4,8 @@ use caper::utils::demo;
 
 fn main() {
     // Shader re-purposed from https://www.shadertoy.com/view/llt3R4
-    demo("
+    demo(
+        "
 const int MAX_MARCHING_STEPS = 255;
 const float MIN_DIST = 0.0;
 const float MAX_DIST = 100.0;
@@ -58,5 +59,6 @@ void main() {
 
     frag_output = vec4(1.0, 0.0, 0.0, 1.0);
 }
-         ");
+         ",
+    );
 }

@@ -1,6 +1,6 @@
 use utils::calc_normal;
 use types::Vertex;
-use noise::{Perlin, Seedable, NoiseFn};
+use noise::{NoiseFn, Perlin, Seedable};
 use std::f32::consts::PI;
 
 /// The default normal to give a mesh vertex

@@ -351,7 +351,8 @@ pub fn demo(frag_shader: &'static str) {
             "demo",
             shader::post::gl330::VERT,
             frag_shader,
-        ).unwrap();
+        )
+        .unwrap();
     game.renderer.post_effect.current_shader = "demo";
 
     loop {
