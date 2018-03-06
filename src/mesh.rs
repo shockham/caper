@@ -1,6 +1,6 @@
 use utils::calc_normal;
 use types::Vertex;
-use noise::{NoiseModule, Perlin, Seedable};
+use noise::{Perlin, Seedable, NoiseFn};
 use std::f32::consts::PI;
 
 /// The default normal to give a mesh vertex
@@ -9,7 +9,7 @@ pub const DEF_NORMAL: [f32; 3] = [0f32, 0f32, 0f32];
 pub const DEF_UV: [f32; 2] = [0f32, 0f32];
 const PI2: f32 = PI * 2f32;
 /// The default seed base for creating a perlin mesh
-pub const DEF_SEED_BASE: usize = 0;
+pub const DEF_SEED_BASE: u32 = 0;
 
 lazy_static! {
     /// static ref to generate perlin noise from
@@ -311,13 +311,13 @@ pub fn gen_sphere_segments(segs: f32, rings: f32) -> Vec<Vertex> {
 }
 
 /// Set the seed for perlin generation
-pub fn set_perlin_seed(seed: usize) {
+pub fn set_perlin_seed(seed: u32) {
     PERLIN.set_seed(seed);
 }
 
 /// Get a height for a pos p using perlin noise
 pub fn get_pos_perlin(p: (f32, f32)) -> f32 {
-    PERLIN.get([p.0 / 15f32, p.1 / 15f32]).abs() * 6f32
+    PERLIN.get([p.0 as f64 / 15f64, p.1 as f64 / 15f64]).abs() as f32 * 6f32
 }
 
 /// Generates a perlin mesh from pseu_pos with each side of vert length map_size
