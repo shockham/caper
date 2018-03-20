@@ -18,6 +18,7 @@ Due to the crate alsa-sys being use for linux the following packages are require
 #### Fedora/RHEL/CentOS
 `yum install alsa-lib-devel`
 
+## Usage
 ```no_run
 extern crate caper;
 

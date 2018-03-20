@@ -20,6 +20,7 @@ Due to the crate alsa-sys being use for linux the following packages are require
 #### Fedora/RHEL/CentOS
 `yum install alsa-lib-devel`
 
+## Usage
 [Example](https://github.com/shockham/caper/blob/master/examples/simple.rs) of a basis for a game:
 ```rust
 extern crate caper;
