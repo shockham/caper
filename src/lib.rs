@@ -10,6 +10,14 @@ Currently has systems for:
 
 [Example](https://github.com/shockham/caper/blob/master/examples/simple.rs) of a basis for a game:
 
+## Setup
+### Linux
+Due to the crate alsa-sys being use for linux the following packages are required:
+#### Debian/Ubuntu etc
+`apt install libasound2-dev pkg-config`
+#### Fedora/RHEL/CentOS
+`yum install alsa-lib-devel`
+
 ```no_run
 extern crate caper;
 
