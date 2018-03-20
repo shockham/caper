@@ -16,7 +16,7 @@ Due to the crate alsa-sys being use for linux the following packages are require
 #### Debian/Ubuntu etc
 `apt install libasound2-dev pkg-config`
 #### Fedora/RHEL/CentOS
-`yum install alsa-lib-devel`
+`dnf install alsa-lib-devel`
 
 ## Usage
 ```no_run
