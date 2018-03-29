@@ -87,7 +87,7 @@ fn main() {
         // clone of the RenderItem for access in the ui rendering
         let debug_render_item = game.get_render_item(1).clone();
         // updating the game & ui rendering
-        game.update(|ui: &Ui| {
+        let status = game.update(|ui: &Ui| {
             ui.window(im_str!("Editor"))
                 .size((500.0, 200.0), ImGuiCond::FirstUseEver)
                 .position((0.0, 0.0), ImGuiCond::FirstUseEver)
@@ -110,29 +110,35 @@ fn main() {
                     w.truncate(5);
                     ui.text(im_str!("|({},{},{},{})", x, y, z, w));
                 });
+        }, |g: &mut Game<DefaultTag>| -> UpdateStatus {
+            if g.input.keys_down.contains(&Key::W) {
+                g.get_render_item(1).instance_transforms[0].pos.2 -= 0.1f32;
+            }
+            if g.input.keys_down.contains(&Key::S) {
+                g.get_render_item(1).instance_transforms[0].pos.2 += 0.1f32;
+            }
+            if g.input.keys_down.contains(&Key::D) {
+                g.get_render_item(1).instance_transforms[0].pos.0 += 0.1f32;
+            }
+            if g.input.keys_down.contains(&Key::A) {
+                g.get_render_item(1).instance_transforms[0].pos.0 -= 0.1f32;
+            }
+            if g.input.keys_down.contains(&Key::Space) {
+                g.get_render_item(1).instance_transforms[0].pos.1 += 0.1f32;
+            }
+
+            let player_pos = g.get_render_item(1).instance_transforms[0].pos;
+            g.cams[0].pos = (player_pos.0, player_pos.1 + 1.5f32, player_pos.2 + 8f32);
+
+            // quit
+            if g.input.keys_down.contains(&Key::Escape) {
+                return UpdateStatus::Finish;
+            }
+
+            UpdateStatus::Continue
         });
 
-        if game.input.keys_down.contains(&Key::W) {
-            game.get_render_item(1).instance_transforms[0].pos.2 -= 0.1f32;
-        }
-        if game.input.keys_down.contains(&Key::S) {
-            game.get_render_item(1).instance_transforms[0].pos.2 += 0.1f32;
-        }
-        if game.input.keys_down.contains(&Key::D) {
-            game.get_render_item(1).instance_transforms[0].pos.0 += 0.1f32;
-        }
-        if game.input.keys_down.contains(&Key::A) {
-            game.get_render_item(1).instance_transforms[0].pos.0 -= 0.1f32;
-        }
-        if game.input.keys_down.contains(&Key::Space) {
-            game.get_render_item(1).instance_transforms[0].pos.1 += 0.1f32;
-        }
-
-        let player_pos = game.get_render_item(1).instance_transforms[0].pos;
-        game.cams[0].pos = (player_pos.0, player_pos.1 + 1.5f32, player_pos.2 + 8f32);
-
-        // quit
-        if game.input.keys_down.contains(&Key::Escape) {
+        if let UpdateStatus::Finish = status {
             break;
         }
     }
