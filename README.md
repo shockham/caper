@@ -25,7 +25,7 @@ Due to the crate alsa-sys being use for linux the following packages are require
 ```rust
 extern crate caper;
 
-use caper::types::{RenderItemBuilder, TransformBuilder, DefaultTag};
+use caper::types::{DefaultTag, RenderItemBuilder, TransformBuilder};
 use caper::game::*;
 use caper::mesh::gen_cube;
 use caper::imgui::Ui;
@@ -44,20 +44,29 @@ fn main() {
                 TransformBuilder::default()
                     .pos((-0.5, 0.0, -5.0))
                     .build()
-                    .unwrap()
+                    .unwrap(),
             ])
             .build()
-            .unwrap());
+            .unwrap(),
+    );
 
     loop {
         // run the engine update
-        game.update(|_:&Ui|{ });
+        let status = game.update(|_: &Ui| {}, |g: &mut Game<DefaultTag>| -> UpdateStatus {
+            // update the first person inputs
+            handle_fp_inputs(&mut g.input, &mut g.cams[0]);
 
-        // update the first person inputs
-        handle_fp_inputs(&mut game.input, &mut game.cams[0]);
+            // quit
+            if g.input.keys_down.contains(&Key::Escape) {
+                return UpdateStatus::Finish;
+            }
 
-        // quit
-        if game.input.keys_down.contains(&Key::Escape) { break; }
+            UpdateStatus::Continue
+        });
+
+        if let UpdateStatus::Finish = status {
+            break;
+        }
     }
 }
 ```
