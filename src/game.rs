@@ -313,20 +313,30 @@ impl<T: Default> TextItems for Game<T> {
 
 /// Trait with default update definition
 pub trait Update {
+    /// RenderItem utype associated type
+    type T;
     /// Update the engine state per frame
-    fn update<F: FnMut(&Ui)>(&mut self, render_imgui: F);
+    fn update<F: FnMut(&Ui), U: FnMut(&mut Game<Self::T>)>(&mut self, render_imgui: F, update: U);
     /// Update inputs
     fn update_inputs(&mut self);
 }
 
 /// Impl for Update on Game
 impl<T: Default> Update for Game<T> {
+    /// Associated type for RenderItems
+    type T = T;
     /// Starting the game loop
-    fn update<F: FnMut(&Ui)>(&mut self, mut render_imgui: F) {
+    fn update<F: FnMut(&Ui), U: FnMut(&mut Game<T>)>(
+        &mut self,
+        mut render_imgui: F,
+        mut update: U,
+    ) {
         let frame_start = Instant::now();
 
         self.update_inputs();
         self.update_physics();
+
+        update(self);
 
         // render the frame
         {
