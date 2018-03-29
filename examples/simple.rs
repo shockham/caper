@@ -27,14 +27,14 @@ fn main() {
 
     loop {
         // run the engine update
-        game.update(|_: &Ui| {});
+        game.update(|_: &Ui| {}, |g: &mut Game<DefaultTag>| {
+            // update the first person inputs
+            handle_fp_inputs(&mut g.input, &mut g.cams[0]);
 
-        // update the first person inputs
-        handle_fp_inputs(&mut game.input, &mut game.cams[0]);
-
-        // quit
-        if game.input.keys_down.contains(&Key::Escape) {
-            break;
-        }
+            // quit
+            if g.input.keys_down.contains(&Key::Escape) {
+                //break;
+            }
+        });
     }
 }
