@@ -54,27 +54,33 @@ fn main() {
 
     loop {
         // run the engine update
-        game.update(|_: &Ui| {});
+        let status = game.update(|_: &Ui| {}, |g: &mut Game<Tags>| -> UpdateStatus {
+            // update the first person inputs
+            handle_fp_inputs(&mut g.input, &mut g.cams[0]);
 
-        // update the first person inputs
-        handle_fp_inputs(&mut game.input, &mut game.cams[0]);
+            let frame_time = time::precise_time_s() - g.renderer.start_time;
 
-        let frame_time = time::precise_time_s() - game.renderer.start_time;
+            // update items by tag
+            for item in g.render_items_iter_mut() {
+                match item.tag {
+                    Tags::One => {
+                        item.instance_transforms[0].pos.1 = frame_time.sin() as f32;
+                    }
+                    Tags::Two => {
+                        item.instance_transforms[0].pos.1 = frame_time.cos() as f32;
+                    }
+                };
+            }
 
-        // update items by tag
-        for item in game.render_items_iter_mut() {
-            match item.tag {
-                Tags::One => {
-                    item.instance_transforms[0].pos.1 = frame_time.sin() as f32;
-                }
-                Tags::Two => {
-                    item.instance_transforms[0].pos.1 = frame_time.cos() as f32;
-                }
-            };
-        }
+            // quit
+            if g.input.keys_down.contains(&Key::Escape) {
+                return UpdateStatus::Finish;
+            }
 
-        // quit
-        if game.input.keys_down.contains(&Key::Escape) {
+            UpdateStatus::Continue
+        });
+
+        if let UpdateStatus::Finish = status {
             break;
         }
     }
