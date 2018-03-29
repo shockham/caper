@@ -35,24 +35,31 @@ fn main() {
 
     loop {
         // run the engine update
-        game.update(|_: &Ui| {});
+        let status = game.update(|_: &Ui| {}, |g: &mut Game<DefaultTag>| -> UpdateStatus {
+            // update the first person inputs
+            handle_fp_inputs(&mut g.input, &mut g.cams[0]);
 
-        // update the first person inputs
-        handle_fp_inputs(&mut game.input, &mut game.cams[0]);
+            // play audio when e is pressed
+            if g.input.keys_pressed.contains(&Key::E) {
+                g.audio.play("test");
+            }
 
-        // play audio when e is pressed
-        if game.input.keys_pressed.contains(&Key::E) {
-            game.audio.play("test");
-        }
+            // play packed audio when q is pressed
+            if g.input.keys_pressed.contains(&Key::Q) {
+                g.audio.play("test_packed");
+            }
 
-        // play packed audio when q is pressed
-        if game.input.keys_pressed.contains(&Key::Q) {
-            game.audio.play("test_packed");
-        }
+            // quit
+            if g.input.keys_down.contains(&Key::Escape) {
+                return UpdateStatus::Finish;
+            }
 
-        // quit
-        if game.input.keys_down.contains(&Key::Escape) {
+            UpdateStatus::Continue
+        });
+
+        if let UpdateStatus::Finish = status {
             break;
         }
+
     }
 }
