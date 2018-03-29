@@ -358,7 +358,7 @@ impl<T: Default> Update for Game<T> {
 
         self.delta = 0.000000001f32 * frame_start.elapsed().subsec_nanos() as f32;
 
-        return status;
+        status
     }
 
     /// Update inputs
