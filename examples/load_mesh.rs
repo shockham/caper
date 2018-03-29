@@ -29,13 +29,19 @@ fn main() {
 
     loop {
         // run the engine update
-        game.update(|_: &Ui| {});
+        let status = game.update(|_: &Ui| {}, |g: &mut Game<DefaultTag>| -> UpdateStatus {
+            // update the first person inputs
+            handle_fp_inputs(&mut g.input, &mut g.cams[0]);
 
-        // update the first person inputs
-        handle_fp_inputs(&mut game.input, &mut game.cams[0]);
+            // quit
+            if g.input.keys_down.contains(&Key::Escape) {
+                return UpdateStatus::Finish;
+            }
 
-        // quit
-        if game.input.keys_down.contains(&Key::Escape) {
+            UpdateStatus::Continue
+        });
+
+        if let UpdateStatus::Finish = status {
             break;
         }
     }
