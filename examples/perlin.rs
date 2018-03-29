@@ -89,9 +89,11 @@ fn main() {
 
             (width, height, hidpi)
         };
+        let debug_pseu_cam_pos = pseu_cam_pos;
+        let debug_debug_mode = debug_mode;
         // run the engine update
-        game.update(|ui: &Ui| {
-            if debug_mode {
+        let status = game.update(|ui: &Ui| {
+            if debug_debug_mode {
                 ui.window(im_str!("debug"))
                     .size((300.0, 200.0), ImGuiCond::FirstUseEver)
                     .position((0.0, 0.0), ImGuiCond::FirstUseEver)
@@ -104,77 +106,84 @@ fn main() {
                         ui.text(im_str!("mouse_pos: {:?}", mouse_pos));
                         ui.text(im_str!("mouse_delta: {:?}", mouse_delta));
                         ui.separator();
-                        ui.text(im_str!("pseu_cam_pos: {:?}", pseu_cam_pos));
+                        ui.text(im_str!("pseu_cam_pos: {:?}", debug_pseu_cam_pos));
                         ui.text(im_str!("fps: {:?}", fps));
                         ui.text(im_str!("px res: ({}, {})", width, height));
                         ui.text(im_str!("hidpi: {}", hidpi));
                         ui.checkbox(im_str!("test_check"), &mut test_check);
                     });
             }
+        }, |g: &mut Game<DefaultTag>| -> UpdateStatus {
+            if g.input.hide_mouse {
+                let mv_matrix = caper::utils::build_fp_view_matrix(&g.cams[0]);
+
+                if g.input.keys_down.contains(&Key::S) {
+                    pseu_cam_pos.0 += mv_matrix[0][2] * move_speed;
+                    pseu_cam_pos.1 += mv_matrix[2][2] * move_speed;
+                    movement_dirty = true;
+                }
+
+                if g.input.keys_down.contains(&Key::W) {
+                    pseu_cam_pos.0 -= mv_matrix[0][2] * move_speed;
+                    pseu_cam_pos.1 -= mv_matrix[2][2] * move_speed;
+                    movement_dirty = true;
+                }
+
+                if g.input.keys_down.contains(&Key::D) {
+                    pseu_cam_pos.0 += mv_matrix[0][0] * move_speed;
+                    pseu_cam_pos.1 += mv_matrix[2][0] * move_speed;
+                    movement_dirty = true;
+                }
+
+                if g.input.keys_down.contains(&Key::A) {
+                    pseu_cam_pos.0 -= mv_matrix[0][0] * move_speed;
+                    pseu_cam_pos.1 -= mv_matrix[2][0] * move_speed;
+                    movement_dirty = true;
+                }
+
+                g.cams[0].euler_rot.0 += g.input.mouse_axis_motion.1 * mouse_speed;
+                g.cams[0].euler_rot.1 += g.input.mouse_axis_motion.0 * mouse_speed;
+            }
+
+            // only regenerate the mesh if movement
+            if movement_dirty {
+                g.get_render_item(0).vertices = gen_perlin_mesh(pseu_cam_pos, map_size);
+                g.cams[0].pos.1 = 2.5f32
+                    + get_pos_perlin(((pseu_cam_pos.0 - fixed_val), (pseu_cam_pos.1 - fixed_val)));
+
+                // update the sphere location
+                g.get_render_item(2).instance_transforms[0].pos = (
+                    sphere_pos.0 - pseu_cam_pos.0,
+                    3.0,
+                    sphere_pos.1 - pseu_cam_pos.1,
+                );
+            }
+
+            // gif
+            if g.input.keys_pressed.contains(&Key::O) {
+                g.renderer.save_add_to_gif("test.gif");
+            }
+
+            if g.input.keys_down.contains(&Key::LShift) {
+                if g.input.keys_down.contains(&Key::L) {
+                    debug_mode = true;
+                }
+                if g.input.keys_down.contains(&Key::K) {
+                    debug_mode = false;
+                }
+                g.input.hide_mouse = !g.input.keys_down.contains(&Key::M);
+            }
+            g.renderer.show_editor = debug_mode;
+
+            // quit
+            if g.input.keys_down.contains(&Key::Escape) {
+                return UpdateStatus::Finish;
+            }
+
+            UpdateStatus::Continue
         });
 
-        if game.input.hide_mouse {
-            let mv_matrix = caper::utils::build_fp_view_matrix(&game.cams[0]);
-
-            if game.input.keys_down.contains(&Key::S) {
-                pseu_cam_pos.0 += mv_matrix[0][2] * move_speed;
-                pseu_cam_pos.1 += mv_matrix[2][2] * move_speed;
-                movement_dirty = true;
-            }
-
-            if game.input.keys_down.contains(&Key::W) {
-                pseu_cam_pos.0 -= mv_matrix[0][2] * move_speed;
-                pseu_cam_pos.1 -= mv_matrix[2][2] * move_speed;
-                movement_dirty = true;
-            }
-
-            if game.input.keys_down.contains(&Key::D) {
-                pseu_cam_pos.0 += mv_matrix[0][0] * move_speed;
-                pseu_cam_pos.1 += mv_matrix[2][0] * move_speed;
-                movement_dirty = true;
-            }
-
-            if game.input.keys_down.contains(&Key::A) {
-                pseu_cam_pos.0 -= mv_matrix[0][0] * move_speed;
-                pseu_cam_pos.1 -= mv_matrix[2][0] * move_speed;
-                movement_dirty = true;
-            }
-
-            game.cams[0].euler_rot.0 += game.input.mouse_axis_motion.1 * mouse_speed;
-            game.cams[0].euler_rot.1 += game.input.mouse_axis_motion.0 * mouse_speed;
-        }
-
-        // only regenerate the mesh if movement
-        if movement_dirty {
-            game.get_render_item(0).vertices = gen_perlin_mesh(pseu_cam_pos, map_size);
-            game.cams[0].pos.1 = 2.5f32
-                + get_pos_perlin(((pseu_cam_pos.0 - fixed_val), (pseu_cam_pos.1 - fixed_val)));
-
-            // update the sphere location
-            game.get_render_item(2).instance_transforms[0].pos = (
-                sphere_pos.0 - pseu_cam_pos.0,
-                3.0,
-                sphere_pos.1 - pseu_cam_pos.1,
-            );
-        }
-
-        // gif
-        if game.input.keys_pressed.contains(&Key::O) {
-            game.renderer.save_add_to_gif("test.gif");
-        }
-
-        if game.input.keys_down.contains(&Key::LShift) {
-            if game.input.keys_down.contains(&Key::L) {
-                debug_mode = true;
-            }
-            if game.input.keys_down.contains(&Key::K) {
-                debug_mode = false;
-            }
-            game.input.hide_mouse = !game.input.keys_down.contains(&Key::M);
-        }
-        game.renderer.show_editor = debug_mode;
-        // quit
-        if game.input.keys_down.contains(&Key::Escape) {
+        if let UpdateStatus::Finish = status {
             break;
         }
     }
