@@ -357,14 +357,20 @@ pub fn demo(frag_shader: &'static str) {
 
     loop {
         // run the engine update
-        game.update(|_: &Ui| {}, |g: &mut Game<DefaultTag>| {
+        let status = game.update(|_: &Ui| {}, |g: &mut Game<DefaultTag>| -> UpdateStatus {
             // update the first person inputs
             handle_fp_inputs(&mut g.input, &mut g.cams[0]);
 
             // quit
             if g.input.keys_down.contains(&Key::Escape) {
-                //break;
+                return UpdateStatus::Finish;
             }
+
+            UpdateStatus::Continue
         });
+
+        if let UpdateStatus::Finish = status {
+            break;
+        }
     }
 }

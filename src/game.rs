@@ -21,6 +21,14 @@ const PHYSICS_DIVISOR: f32 = 2f32;
 /// global restitution for physics objects
 const GLOBAL_REST: f32 = 0.05f32;
 
+/// Enum for update to return status
+pub enum UpdateStatus {
+    /// Contune to update
+    Continue,
+    /// Finish/Exit the game
+    Finish,
+}
+
 /// Struct for creating an instance of a game with all systems and items contained
 pub struct Game<T: Default> {
     /// The input system for the game
@@ -316,7 +324,7 @@ pub trait Update {
     /// RenderItem utype associated type
     type T;
     /// Update the engine state per frame
-    fn update<F: FnMut(&Ui), U: FnMut(&mut Game<Self::T>)>(&mut self, render_imgui: F, update: U);
+    fn update<F: FnMut(&Ui), U: FnMut(&mut Game<Self::T>) -> UpdateStatus>(&mut self, render_imgui: F, update: U) -> UpdateStatus;
     /// Update inputs
     fn update_inputs(&mut self);
 }
@@ -326,17 +334,17 @@ impl<T: Default> Update for Game<T> {
     /// Associated type for RenderItems
     type T = T;
     /// Starting the game loop
-    fn update<F: FnMut(&Ui), U: FnMut(&mut Game<T>)>(
+    fn update<F: FnMut(&Ui), U: FnMut(&mut Game<T>) -> UpdateStatus>(
         &mut self,
         mut render_imgui: F,
         mut update: U,
-    ) {
+    ) -> UpdateStatus {
         let frame_start = Instant::now();
 
         self.update_inputs();
         self.update_physics();
 
-        update(self);
+        let status = update(self);
 
         // render the frame
         {
@@ -349,6 +357,8 @@ impl<T: Default> Update for Game<T> {
         }
 
         self.delta = 0.000000001f32 * frame_start.elapsed().subsec_nanos() as f32;
+
+        return status;
     }
 
     /// Update inputs
