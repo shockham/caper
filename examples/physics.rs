@@ -87,56 +87,59 @@ fn main() {
         // clone of the RenderItem for access in the ui rendering
         let debug_render_item = game.get_render_item(1).clone();
         // updating the game & ui rendering
-        let status = game.update(|ui: &Ui| {
-            ui.window(im_str!("Editor"))
-                .size((500.0, 200.0), ImGuiCond::FirstUseEver)
-                .position((0.0, 0.0), ImGuiCond::FirstUseEver)
-                .movable(false)
-                .build(|| {
-                    ui.text(im_str!(
-                        "{:?}",
-                        debug_render_item.instance_transforms[0].pos
-                    ));
+        let status = game.update(
+            |ui: &Ui| {
+                ui.window(im_str!("Editor"))
+                    .size((500.0, 200.0), ImGuiCond::FirstUseEver)
+                    .position((0.0, 0.0), ImGuiCond::FirstUseEver)
+                    .movable(false)
+                    .build(|| {
+                        ui.text(im_str!(
+                            "{:?}",
+                            debug_render_item.instance_transforms[0].pos
+                        ));
 
-                    let (mut x, mut y, mut z, mut w) = (
-                        debug_render_item.instance_transforms[0].rot.0.to_string(),
-                        debug_render_item.instance_transforms[0].rot.1.to_string(),
-                        debug_render_item.instance_transforms[0].rot.2.to_string(),
-                        debug_render_item.instance_transforms[0].rot.3.to_string(),
-                    );
-                    x.truncate(5);
-                    y.truncate(5);
-                    z.truncate(5);
-                    w.truncate(5);
-                    ui.text(im_str!("|({},{},{},{})", x, y, z, w));
-                });
-        }, |g: &mut Game<DefaultTag>| -> UpdateStatus {
-            if g.input.keys_down.contains(&Key::W) {
-                g.get_render_item(1).instance_transforms[0].pos.2 -= 0.1f32;
-            }
-            if g.input.keys_down.contains(&Key::S) {
-                g.get_render_item(1).instance_transforms[0].pos.2 += 0.1f32;
-            }
-            if g.input.keys_down.contains(&Key::D) {
-                g.get_render_item(1).instance_transforms[0].pos.0 += 0.1f32;
-            }
-            if g.input.keys_down.contains(&Key::A) {
-                g.get_render_item(1).instance_transforms[0].pos.0 -= 0.1f32;
-            }
-            if g.input.keys_down.contains(&Key::Space) {
-                g.get_render_item(1).instance_transforms[0].pos.1 += 0.1f32;
-            }
+                        let (mut x, mut y, mut z, mut w) = (
+                            debug_render_item.instance_transforms[0].rot.0.to_string(),
+                            debug_render_item.instance_transforms[0].rot.1.to_string(),
+                            debug_render_item.instance_transforms[0].rot.2.to_string(),
+                            debug_render_item.instance_transforms[0].rot.3.to_string(),
+                        );
+                        x.truncate(5);
+                        y.truncate(5);
+                        z.truncate(5);
+                        w.truncate(5);
+                        ui.text(im_str!("|({},{},{},{})", x, y, z, w));
+                    });
+            },
+            |g: &mut Game<DefaultTag>| -> UpdateStatus {
+                if g.input.keys_down.contains(&Key::W) {
+                    g.get_render_item(1).instance_transforms[0].pos.2 -= 0.1f32;
+                }
+                if g.input.keys_down.contains(&Key::S) {
+                    g.get_render_item(1).instance_transforms[0].pos.2 += 0.1f32;
+                }
+                if g.input.keys_down.contains(&Key::D) {
+                    g.get_render_item(1).instance_transforms[0].pos.0 += 0.1f32;
+                }
+                if g.input.keys_down.contains(&Key::A) {
+                    g.get_render_item(1).instance_transforms[0].pos.0 -= 0.1f32;
+                }
+                if g.input.keys_down.contains(&Key::Space) {
+                    g.get_render_item(1).instance_transforms[0].pos.1 += 0.1f32;
+                }
 
-            let player_pos = g.get_render_item(1).instance_transforms[0].pos;
-            g.cams[0].pos = (player_pos.0, player_pos.1 + 1.5f32, player_pos.2 + 8f32);
+                let player_pos = g.get_render_item(1).instance_transforms[0].pos;
+                g.cams[0].pos = (player_pos.0, player_pos.1 + 1.5f32, player_pos.2 + 8f32);
 
-            // quit
-            if g.input.keys_down.contains(&Key::Escape) {
-                return UpdateStatus::Finish;
-            }
+                // quit
+                if g.input.keys_down.contains(&Key::Escape) {
+                    return UpdateStatus::Finish;
+                }
 
-            UpdateStatus::Continue
-        });
+                UpdateStatus::Continue
+            },
+        );
 
         if let UpdateStatus::Finish = status {
             break;

@@ -324,7 +324,11 @@ pub trait Update {
     /// RenderItem utype associated type
     type T;
     /// Update the engine state per frame
-    fn update<F: FnMut(&Ui), U: FnMut(&mut Game<Self::T>) -> UpdateStatus>(&mut self, render_imgui: F, update: U) -> UpdateStatus;
+    fn update<F: FnMut(&Ui), U: FnMut(&mut Game<Self::T>) -> UpdateStatus>(
+        &mut self,
+        render_imgui: F,
+        update: U,
+    ) -> UpdateStatus;
     /// Update inputs
     fn update_inputs(&mut self);
 }

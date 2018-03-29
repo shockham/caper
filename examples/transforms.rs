@@ -146,39 +146,42 @@ fn main() {
 
     loop {
         // run the engine update
-        let status = game.update(|_: &Ui| {}, |g: &mut Game<DefaultTag>| -> UpdateStatus {
-            // update the first person inputs
-            handle_fp_inputs(&mut g.input, &mut g.cams[0]);
+        let status = game.update(
+            |_: &Ui| {},
+            |g: &mut Game<DefaultTag>| -> UpdateStatus {
+                // update the first person inputs
+                handle_fp_inputs(&mut g.input, &mut g.cams[0]);
 
-            // temporary fix after removal of update_fn
-            sin_y(
-                &mut g.get_render_item_by_name("sphere".to_string())
-                    .unwrap()
-                    .instance_transforms[0],
-            );
-            circle(
-                &mut g.get_render_item_by_name("sphere".to_string())
-                    .unwrap()
-                    .instance_transforms[0],
-            );
-            circle(
-                &mut g.get_render_item_by_name("sphere".to_string())
-                    .unwrap()
-                    .instance_transforms[1],
-            );
-            spin(
-                &mut g.get_render_item_by_name("floor".to_string())
-                    .unwrap()
-                    .instance_transforms[1],
-            );
+                // temporary fix after removal of update_fn
+                sin_y(
+                    &mut g.get_render_item_by_name("sphere".to_string())
+                        .unwrap()
+                        .instance_transforms[0],
+                );
+                circle(
+                    &mut g.get_render_item_by_name("sphere".to_string())
+                        .unwrap()
+                        .instance_transforms[0],
+                );
+                circle(
+                    &mut g.get_render_item_by_name("sphere".to_string())
+                        .unwrap()
+                        .instance_transforms[1],
+                );
+                spin(
+                    &mut g.get_render_item_by_name("floor".to_string())
+                        .unwrap()
+                        .instance_transforms[1],
+                );
 
-            // quit
-            if g.input.keys_down.contains(&Key::Escape) {
-                return UpdateStatus::Finish;
-            }
+                // quit
+                if g.input.keys_down.contains(&Key::Escape) {
+                    return UpdateStatus::Finish;
+                }
 
-            UpdateStatus::Continue
-        });
+                UpdateStatus::Continue
+            },
+        );
 
         if let UpdateStatus::Finish = status {
             break;

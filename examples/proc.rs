@@ -40,36 +40,37 @@ fn main() {
 
     loop {
         // run the engine update
-        let status = game.update(|_: &Ui| {}, |g: &mut Game<DefaultTag>| -> UpdateStatus {
+        let status = game.update(
+            |_: &Ui| {},
+            |g: &mut Game<DefaultTag>| -> UpdateStatus {
+                // update the first person inputs
+                handle_fp_inputs(&mut g.input, &mut g.cams[0]);
 
-            // update the first person inputs
-            handle_fp_inputs(&mut g.input, &mut g.cams[0]);
+                // update some items
+                let update_time = time::precise_time_s();
 
-            // update some items
-            let update_time = time::precise_time_s();
+                for t in g.get_render_item(0).instance_transforms.iter_mut() {
+                    t.pos = (
+                        t.pos.0,
+                        ((t.pos.0 / 5f32).sin() * (t.pos.2 / 5f32).cos() * update_time.sin() as f32)
+                            * 2f32,
+                        t.pos.2,
+                    );
+                    t.scale = (
+                        update_time.sin() as f32,
+                        update_time.sin() as f32,
+                        update_time.sin() as f32,
+                    );
+                }
 
-            for t in g.get_render_item(0).instance_transforms.iter_mut() {
-                t.pos = (
-                    t.pos.0,
-                    ((t.pos.0 / 5f32).sin() *
-                     (t.pos.2 / 5f32).cos() *
-                     update_time.sin() as f32) * 2f32,
-                    t.pos.2,
-                );
-                t.scale = (
-                    update_time.sin() as f32,
-                    update_time.sin() as f32,
-                    update_time.sin() as f32,
-                );
-            }
+                // quit
+                if g.input.keys_down.contains(&Key::Escape) {
+                    return UpdateStatus::Finish;
+                }
 
-            // quit
-            if g.input.keys_down.contains(&Key::Escape) {
-                return UpdateStatus::Finish;
-            }
-
-            UpdateStatus::Continue
-        });
+                UpdateStatus::Continue
+            },
+        );
 
         if let UpdateStatus::Finish = status {
             break;
