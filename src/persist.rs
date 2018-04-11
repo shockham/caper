@@ -15,7 +15,7 @@ pub fn save<T: Serialize>(to_save: &T, key: &'static str) {
 
     let _ = thread::spawn(move || {
         // TODO handle this better
-        let _ = match create_dir(PERSIST_BASE_PATH) {
+        match create_dir(PERSIST_BASE_PATH) {
             _ => (),
         };
 
