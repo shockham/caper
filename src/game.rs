@@ -74,7 +74,7 @@ impl<T: Default> Game<T> {
             cams: vec![cam],
             render_items: Vec::new(),
             text_items: Vec::new(),
-            delta: 0.016666667f32,
+            delta: 0.016_666_667f32,
         }
     }
 }
@@ -360,7 +360,7 @@ impl<T: Default> Update for Game<T> {
             );
         }
 
-        self.delta = 0.000000001f32 * frame_start.elapsed().subsec_nanos() as f32;
+        self.delta = 0.000_000_001f32 * frame_start.elapsed().subsec_nanos() as f32;
 
         status
     }
