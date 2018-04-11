@@ -79,6 +79,14 @@ impl<T: Default> Game<T> {
     }
 }
 
+/// Default trait implementation from Game
+impl<T: Default> Default for Game<T> {
+    /// Returns a default instance of Game
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// Trait for operations on RenderItem
 pub trait RenderItems {
     /// RenderItem utype associated type
