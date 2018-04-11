@@ -228,7 +228,7 @@ impl Renderer {
 
             let info = GifInfo {
                 encoder: Arc::new(Mutex::new(encoder)),
-                path: path,
+                path,
             };
 
             self.gif_info = Some(info);

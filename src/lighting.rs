@@ -41,7 +41,7 @@ impl Lighting {
         let dir_tex = Texture1d::new(&context, dir_lights.as_slice()).unwrap();
 
         Lighting {
-            context: context,
+            context,
             directional_lights: Vec::new(),
             directional_tex: RefCell::new(dir_tex),
         }

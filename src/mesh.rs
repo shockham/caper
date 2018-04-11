@@ -300,7 +300,7 @@ pub fn gen_sphere_segments(segs: f32, rings: f32) -> Vec<Vertex> {
             for v in verts {
                 vertices.push(Vertex {
                     position: v,
-                    normal: normal,
+                    normal,
                     texture: [(v[0] + 1f32) / 2f32, (v[1] + 1f32) / 2f32],
                 });
             }

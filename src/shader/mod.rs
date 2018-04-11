@@ -29,10 +29,10 @@ pub struct Shaders {
 impl Shaders {
     /// Creates a new instance of Shaders
     pub fn new(display: &Display) -> Shaders {
-        let mut shader_map = HashMap::new();
+        let mut shaders = HashMap::new();
 
         // the shader programs
-        shader_map.insert(
+        shaders.insert(
             "dist",
             program!(display,
                      330 => {
@@ -44,7 +44,7 @@ impl Shaders {
                      }).unwrap(),
         );
 
-        shader_map.insert(
+        shaders.insert(
             "height",
             program!(display,
                      330 => {
@@ -56,7 +56,7 @@ impl Shaders {
                      }).unwrap(),
         );
 
-        shader_map.insert(
+        shaders.insert(
             "line",
             program!(display,
                      330 => {
@@ -69,7 +69,7 @@ impl Shaders {
         );
 
         // the shader programs
-        shader_map.insert(
+        shaders.insert(
             "texture",
             program!(display,
                      330 => {
@@ -83,9 +83,9 @@ impl Shaders {
                      }).unwrap(),
         );
 
-        let mut post_shader_map = HashMap::new();
+        let mut post_shaders = HashMap::new();
 
-        post_shader_map.insert(
+        post_shaders.insert(
             "default",
             program!(display,
                      330 => {
@@ -103,9 +103,9 @@ impl Shaders {
         );
 
         Shaders {
-            shaders: shader_map,
-            post_shaders: post_shader_map,
-            textures: textures,
+            shaders,
+            post_shaders,
+            textures,
         }
     }
 

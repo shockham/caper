@@ -41,9 +41,9 @@ pub fn load_wavefront(data: &[u8]) -> Vec<Vertex> {
                 let normal = normal.unwrap_or([0.0, 0.0, 0.0]);
 
                 vertex_data.push(Vertex {
-                    position: position,
-                    normal: normal,
-                    texture: texture,
+                    position,
+                    normal,
+                    texture,
                 })
             },
             _ => unimplemented!(),

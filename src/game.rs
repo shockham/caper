@@ -53,8 +53,8 @@ impl<T: Default> Game<T> {
     /// Creates a new instance of a game
     pub fn new() -> Game<T> {
         // init physics
-        let mut world = World::new();
-        world.set_gravity(nVector3::new(0.0, -9.81, 0.0));
+        let mut physics = World::new();
+        physics.set_gravity(nVector3::new(0.0, -9.81, 0.0));
 
         //cam state
         let cam = Camera {
@@ -68,8 +68,8 @@ impl<T: Default> Game<T> {
 
         Game {
             input: Input::from_existing(events_loop),
-            renderer: renderer,
-            physics: world,
+            renderer,
+            physics,
             audio: Audio::new(),
             cams: vec![cam],
             render_items: Vec::new(),
