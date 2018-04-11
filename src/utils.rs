@@ -27,12 +27,12 @@ pub fn load_wavefront(data: &[u8]) -> Vec<Vertex> {
         .iter()
         .flat_map(|g| g.polys.iter())
     {
-        match shape {
-            &genmesh::Polygon::PolyTri(genmesh::Triangle {
+        match *shape {
+            genmesh::Polygon::PolyTri(genmesh::Triangle {
                 x: v1,
                 y: v2,
                 z: v3,
-            }) => for v in [v1, v2, v3].iter() {
+            }) => for v in &[v1, v2, v3] {
                 let position = data.position[v.0];
                 let texture = v.1.map(|index| data.texture[index]);
                 let normal = v.2.map(|index| data.normal[index]);
