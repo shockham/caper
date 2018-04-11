@@ -140,7 +140,7 @@ fn main() {
     {
         let _ = game.renderer
             .lighting
-            .get_directional_light_by_name("one".to_string())
+            .get_directional_light_by_name("one")
             .unwrap();
     }
 
