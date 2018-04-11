@@ -381,10 +381,8 @@ impl Draw for Renderer {
                             cam_pos: cam_pos,
                             viewport: (width as f32, height as f32),
                             time: time,
-                            tex: self.shaders.textures.get(tex_name.as_str()).unwrap(),
-                            normal_tex:
-                                self.shaders.textures.get(normal_tex_name.as_str())
-                                .unwrap(),
+                            tex: &self.shaders.textures[tex_name.as_str()],
+                            normal_tex: &self.shaders.textures[normal_tex_name.as_str()],
                             dir_lights: &*dir_lights,
                         };
 
@@ -394,10 +392,7 @@ impl Draw for Renderer {
                                 &NoIndices(PrimitiveType::Patches {
                                     vertices_per_patch: 3,
                                 }),
-                                &self.shaders
-                                    .shaders
-                                    .get(item.material.shader_name.as_str())
-                                    .unwrap(),
+                                &self.shaders.shaders[item.material.shader_name.as_str()],
                                 &uniforms,
                                 &params,
                             )
@@ -491,10 +486,7 @@ impl Draw for Renderer {
             .draw(
                 &self.post_effect.vertex_buffer,
                 &self.post_effect.index_buffer,
-                &self.shaders
-                    .post_shaders
-                    .get(self.post_effect.current_shader)
-                    .unwrap(),
+                &self.shaders.post_shaders[self.post_effect.current_shader],
                 &uniforms,
                 &Default::default(),
             )
