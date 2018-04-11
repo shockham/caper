@@ -367,11 +367,11 @@ impl Draw for Renderer {
                         let tex_name = item.material
                             .texture_name
                             .clone()
-                            .unwrap_or("default".to_string());
+                            .unwrap_or_else(|| "default".to_string());
                         let normal_tex_name = item.material
                             .normal_texture_name
                             .clone()
-                            .unwrap_or("default_normal".to_string());
+                            .unwrap_or_else(|| "default_normal".to_string());
 
                         let dir_lights = self.lighting.directional_tex.borrow();
 
