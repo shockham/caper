@@ -1,7 +1,7 @@
 /// OpenGL 3.3 shaders with height roll off
 pub mod gl330 {
     /// Height fragment shader that rolls off to white in relation to the y-axis
-    pub const FRAG: &'static str = "
+    pub const FRAG: &str = "
         #version 330
 
         uniform vec3 cam_pos;

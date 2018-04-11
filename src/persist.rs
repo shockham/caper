@@ -7,7 +7,7 @@ use std::thread;
 use std::io::{Read, Write};
 
 /// The base path the persistent items will be placed
-const PERSIST_BASE_PATH: &'static str = "./persist/";
+const PERSIST_BASE_PATH: &str = "./persist/";
 
 /// Save and encodable type to persistence at the key
 pub fn save<T: Serialize>(to_save: &T, key: &'static str) {

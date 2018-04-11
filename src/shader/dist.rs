@@ -1,7 +1,7 @@
 /// OpenGL 3.3 shaders for distance roll off
 pub mod gl330 {
     /// Distance fragment shader that rolls off to white the further from the camera
-    pub const FRAG: &'static str = "
+    pub const FRAG: &str = "
         #version 330
 
         uniform vec3 cam_pos;

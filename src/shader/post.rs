@@ -1,7 +1,7 @@
 /// OpenGL 3.3 default post shaders
 pub mod gl330 {
     /// Default post vertex shader
-    pub const VERT: &'static str = "
+    pub const VERT: &str = "
         #version 330
 
         layout(location = 0) in vec3 position;
@@ -15,7 +15,7 @@ pub mod gl330 {
         }
     ";
     /// Default post fragment shader
-    pub const FRAG: &'static str = "
+    pub const FRAG: &str = "
         #version 330
 
         #define M_PI 3.1415926535897932384626433832795
