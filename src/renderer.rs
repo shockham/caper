@@ -354,7 +354,7 @@ impl Draw for Renderer {
                                 .collect::<Vec<_>>();
 
                             // if there are no active transforms skip ri
-                            if data.len() <= 0 {
+                            if data.is_empty() {
                                 continue;
                             }
 
