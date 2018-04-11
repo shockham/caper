@@ -340,13 +340,11 @@ impl Draw for Renderer {
                             let data = item.instance_transforms
                                 .iter()
                                 .filter(|t| {
-                                    (t.active && !t.cull)
-                                        || (t.active
-                                            && frustrum_test(
-                                                &t.pos,
-                                                t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
-                                                &frustum_planes,
-                                            ))
+                                    (!t.cull || frustrum_test(
+                                            &t.pos,
+                                            t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
+                                            &frustum_planes,
+                                        )) && t.active
                                 })
                                 .map(|t| ShaderIn {
                                     world_position: t.pos,
