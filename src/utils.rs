@@ -110,10 +110,10 @@ pub fn calc_normal(p0: [f32; 3], p1: [f32; 3], p2: [f32; 3]) -> [f32; 3] {
 pub fn mul_mat4(a: Matrix4, b: Matrix4) -> Matrix4 {
     let mut new_mat: Matrix4 = [[0f32; 4]; 4];
 
-    for i in 0..4 {
-        for j in 0..4 {
-            for x in 0..4 {
-                new_mat[i][j] += a[x][i] * b[j][x];
+    for (i, i_mat) in new_mat.iter_mut().enumerate().take(4) {
+        for (j, j_mat) in i_mat.iter_mut().enumerate().take(4) {
+            for (x, a_item) in a.iter().enumerate().take(4) {
+                *j_mat += a_item[i] * b[j][x];
             }
         }
     }
