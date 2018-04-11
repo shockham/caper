@@ -329,7 +329,7 @@ impl Draw for Renderer {
                     // drawing the render items (with more than one instance)
                     for item in render_items
                         .iter()
-                        .filter(|r| r.active && r.instance_transforms.len() > 0)
+                        .filter(|r| r.active && r.instance_transforms.is_empty())
                     {
                         // building the vertex and index buffers
                         let vertex_buffer =
