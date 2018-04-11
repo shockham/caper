@@ -268,7 +268,7 @@ pub fn handle_fp_inputs(input: &mut Input, cam: &mut Camera) {
 pub fn frustrum_test(
     pos: &Vector3,
     radius: f32,
-    frustrum_planes: &Vec<(f32, f32, f32, f32)>,
+    frustrum_planes: &[(f32, f32, f32, f32)],
 ) -> bool {
     for plane in frustrum_planes {
         if dotp(&[pos.0, pos.1, pos.2], &[plane.0, plane.1, plane.2]) + plane.3 <= -radius {
