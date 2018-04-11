@@ -140,24 +140,24 @@ impl Renderer {
         let imgui_rend = ImGuiRenderer::init(&mut imgui, &display).unwrap();
 
         let shaders = Shaders::new(&display);
-        let post_fx = PostEffect::new(&display);
+        let post_effect = PostEffect::new(&display);
         let lighting = Lighting::new(&display);
 
         let fps_counter = FPSCounter::new();
 
         let renderer = Renderer {
-            display: display,
-            text_system: text_system,
+            display,
+            text_system,
             default_font: font,
-            imgui: imgui,
-            imgui_rend: imgui_rend,
-            post_effect: post_fx,
+            imgui,
+            imgui_rend,
+            post_effect,
             start_time: time::precise_time_s(),
-            shaders: shaders,
-            fps_counter: fps_counter,
+            shaders,
+            fps_counter,
             fps: 0f32,
             gif_info: None,
-            lighting: lighting,
+            lighting,
             render_count: 0usize,
             show_editor: false,
         };
