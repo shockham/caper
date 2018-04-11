@@ -181,7 +181,7 @@ impl Renderer {
             false,
             false,
         ]);
-        for ch in input.characters_down.iter() {
+        for ch in &input.characters_down {
             self.imgui.add_input_character(*ch);
         }
     }
