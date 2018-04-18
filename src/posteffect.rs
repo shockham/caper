@@ -1,9 +1,9 @@
-use glium::Surface;
-use glium::index::{IndexBuffer, PrimitiveType};
-use glium::vertex::VertexBuffer;
 use glium::backend::Facade;
 use glium::framebuffer::SimpleFrameBuffer;
+use glium::index::{IndexBuffer, PrimitiveType};
 use glium::texture::{DepthFormat, DepthTexture2d, MipmapsOption, Texture2d};
+use glium::vertex::VertexBuffer;
+use glium::Surface;
 
 use types::Vertex;
 

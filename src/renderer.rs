@@ -1,40 +1,40 @@
-use glium::{Blend, Depth, Display, DrawParameters, Surface};
-use glium::index::{NoIndices, PrimitiveType};
-use glium::DepthTest::IfLess;
-use glium::vertex::VertexBuffer;
-use glium::glutin::{Api, ContextBuilder, EventsLoop, GlRequest, WindowBuilder};
-use glium::glutin::CursorState::Hide;
-use glium::draw_parameters::{BackfaceCullingMode, DepthClamp};
-use glium::texture::RawImage2d;
 use glium::backend::Facade;
+use glium::draw_parameters::{BackfaceCullingMode, DepthClamp};
+use glium::glutin::CursorState::Hide;
+use glium::glutin::{Api, ContextBuilder, EventsLoop, GlRequest, WindowBuilder};
+use glium::index::{NoIndices, PrimitiveType};
+use glium::texture::RawImage2d;
+use glium::vertex::VertexBuffer;
+use glium::DepthTest::IfLess;
+use glium::{Blend, Depth, Display, DrawParameters, Surface};
 
 use glium_text;
 use glium_text::{FontTexture, TextDisplay, TextSystem};
 
-use time;
-use std::default::Default;
 use fps_counter::FPSCounter;
+use std::default::Default;
+use time;
 
 use imgui::*;
 use imgui_glium_renderer::Renderer as ImGuiRenderer;
 
-use image;
 use gif;
 use gif::SetParameter;
+use image;
 
-use std::path::Path;
 use std::fs::File;
 use std::fs::OpenOptions;
-use std::thread;
+use std::path::Path;
 use std::sync::{Arc, Mutex};
+use std::thread;
 
+use input::{Input, MouseButton};
+use lighting::Lighting;
+use posteffect::{render_to_texture, PostEffect};
 use shader::Shaders;
+use types::{Camera, PhysicsType, RenderItem, ShaderIn, TextItem};
 use utils::{build_fp_view_matrix, build_persp_proj_mat, frustrum_test, get_frustum_planes,
             mul_mat4};
-use posteffect::{render_to_texture, PostEffect};
-use types::{Camera, PhysicsType, RenderItem, ShaderIn, TextItem};
-use lighting::Lighting;
-use input::{Input, MouseButton};
 
 /// struct for abstracting the render state
 pub struct Renderer {
@@ -340,7 +340,8 @@ impl Draw for Renderer {
                             let data = item.instance_transforms
                                 .iter()
                                 .filter(|t| {
-                                    (!t.cull || frustrum_test(
+                                    (!t.cull
+                                        || frustrum_test(
                                             &t.pos,
                                             t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
                                             &frustum_planes,

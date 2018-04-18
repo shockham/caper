@@ -1,7 +1,7 @@
-use utils::calc_normal;
-use types::Vertex;
 use noise::{NoiseFn, Perlin, Seedable};
 use std::f32::consts::PI;
+use types::Vertex;
+use utils::calc_normal;
 
 /// The default normal to give a mesh vertex
 pub const DEF_NORMAL: [f32; 3] = [0f32, 0f32, 0f32];
@@ -317,7 +317,9 @@ pub fn set_perlin_seed(seed: u32) {
 
 /// Get a height for a pos p using perlin noise
 pub fn get_pos_perlin(p: (f32, f32)) -> f32 {
-    PERLIN.get([f64::from(p.0) / 15f64, f64::from(p.1) / 15f64]).abs() as f32 * 6f32
+    PERLIN
+        .get([f64::from(p.0) / 15f64, f64::from(p.1) / 15f64])
+        .abs() as f32 * 6f32
 }
 
 /// Generates a perlin mesh from pseu_pos with each side of vert length map_size

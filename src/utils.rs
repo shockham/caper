@@ -1,12 +1,12 @@
 extern crate genmesh;
 extern crate obj;
 
-use std::ops::{Add, Mul};
-use std::iter::Sum;
 use std::f32::consts::PI;
+use std::iter::Sum;
+use std::ops::{Add, Mul};
 
-use types::{RenderItem, RenderItemBuilder, TransformBuilder};
 use types::{Camera, MaterialBuilder, Matrix4, Quaternion, Vector3, Vertex};
+use types::{RenderItem, RenderItemBuilder, TransformBuilder};
 
 use input::{Input, Key};
 
@@ -265,11 +265,7 @@ pub fn handle_fp_inputs(input: &mut Input, cam: &mut Camera) {
 }
 
 /// Test whether an object is in the view frustrum
-pub fn frustrum_test(
-    pos: &Vector3,
-    radius: f32,
-    frustrum_planes: &[(f32, f32, f32, f32)],
-) -> bool {
+pub fn frustrum_test(pos: &Vector3, radius: f32, frustrum_planes: &[(f32, f32, f32, f32)]) -> bool {
     for plane in frustrum_planes {
         if dotp(&[pos.0, pos.1, pos.2], &[plane.0, plane.1, plane.2]) + plane.3 <= -radius {
             // sphere not in frustrum
@@ -334,12 +330,12 @@ pub fn get_frustum_planes(matrix: &Matrix4) -> Vec<(f32, f32, f32, f32)> {
 /// Helper function for creating demo's shadertoy style, so you only need to provide a fragment
 /// shader
 pub fn demo(frag_shader: &'static str) {
-    use types::DefaultTag;
     use game::*;
     use imgui::Ui;
     use input::Key;
-    use utils::handle_fp_inputs;
     use shader;
+    use types::DefaultTag;
+    use utils::handle_fp_inputs;
 
     // crate an instance of the game struct
     let mut game = Game::<DefaultTag>::new();

@@ -6,13 +6,13 @@ pub mod dist;
 pub mod height;
 /// Line shaders for rendering wireframes
 pub mod line;
-/// Shader for rendering with textures
-pub mod texture;
 /// Default post effect shader
 pub mod post;
+/// Shader for rendering with textures
+pub mod texture;
 
-use glium::{Display, Program};
 use glium::texture::compressed_srgb_texture2d::CompressedSrgbTexture2d;
+use glium::{Display, Program};
 use std::collections::HashMap;
 use std::error::Error;
 

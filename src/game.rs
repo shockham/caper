@@ -1,20 +1,20 @@
-use renderer::{Draw, Renderer};
 use audio::Audio;
-use types::{Camera, PhysicsType, RenderItem, TextItem};
-use input::Input;
 use imgui::Ui;
+use input::Input;
+use renderer::{Draw, Renderer};
+use types::{Camera, PhysicsType, RenderItem, TextItem};
 
-use nalgebra::Vector3 as nVector3;
 use nalgebra::Translation3;
-use nphysics3d::world::World;
-use nphysics3d::object::{RigidBody, WorldObject};
+use nalgebra::Vector3 as nVector3;
 use ncollide::shape::Cuboid;
+use nphysics3d::object::{RigidBody, WorldObject};
+use nphysics3d::world::World;
 
 use glium::glutin::EventsLoop;
 
 use std::boxed::Box;
-use std::time::Instant;
 use std::slice::IterMut;
+use std::time::Instant;
 
 /// The divisor for the physics space to align with render space
 const PHYSICS_DIVISOR: f32 = 2f32;

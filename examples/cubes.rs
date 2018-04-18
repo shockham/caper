@@ -1,12 +1,12 @@
 extern crate caper;
 
-use caper::utils::load_wavefront;
-use caper::types::{DefaultTag, RenderItemBuilder, TransformBuilder};
 use caper::game::*;
-use caper::input::Key;
 use caper::imgui::Ui;
+use caper::input::Key;
 use caper::mesh::get_pos_perlin;
+use caper::types::{DefaultTag, RenderItemBuilder, TransformBuilder};
 use caper::utils::handle_fp_inputs;
+use caper::utils::load_wavefront;
 
 fn main() {
     // create an instance of Game

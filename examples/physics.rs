@@ -2,11 +2,11 @@ extern crate caper;
 #[macro_use]
 extern crate imgui;
 
-use caper::types::{DefaultTag, MaterialBuilder, PhysicsType, RenderItemBuilder, TransformBuilder};
 use caper::game::*;
-use caper::mesh::gen_cube;
 use caper::imgui::Ui;
 use caper::input::Key;
+use caper::mesh::gen_cube;
+use caper::types::{DefaultTag, MaterialBuilder, PhysicsType, RenderItemBuilder, TransformBuilder};
 use imgui::*;
 
 fn main() {

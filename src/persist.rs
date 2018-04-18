@@ -1,10 +1,10 @@
 use bincode::{deserialize, serialize};
-use serde::ser::Serialize;
 use serde::de::Deserialize;
+use serde::ser::Serialize;
 
 use std::fs::{create_dir, File};
-use std::thread;
 use std::io::{Read, Write};
+use std::thread;
 
 /// The base path the persistent items will be placed
 const PERSIST_BASE_PATH: &str = "./persist/";

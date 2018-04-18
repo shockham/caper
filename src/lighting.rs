@@ -1,8 +1,8 @@
-use types::Vector3;
-use glium::texture::Texture1d;
 use glium::backend::{Context, Facade};
+use glium::texture::Texture1d;
 use std::cell::RefCell;
 use std::rc::Rc;
+use types::Vector3;
 
 use rayon::prelude::*;
 

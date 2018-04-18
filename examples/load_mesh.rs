@@ -1,11 +1,11 @@
 extern crate caper;
 
-use caper::types::{DefaultTag, RenderItemBuilder, TransformBuilder};
 use caper::game::*;
 use caper::imgui::Ui;
 use caper::input::Key;
-use caper::utils::load_wavefront;
+use caper::types::{DefaultTag, RenderItemBuilder, TransformBuilder};
 use caper::utils::handle_fp_inputs;
+use caper::utils::load_wavefront;
 
 fn main() {
     // crate an instance of the game struct

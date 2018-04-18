@@ -102,23 +102,23 @@ extern crate time;
 /// Module for utility functions for textures
 #[macro_use]
 pub mod texture;
-/// A module for rendering items
-pub mod renderer;
-/// Utility functions and macros
-pub mod utils;
-/// Module for dealing with shaders
-pub mod shader;
-/// Module for procedurally generated meshes
-pub mod mesh;
-/// Rendering post processing effects
-pub mod posteffect;
-/// All of the caper types
-pub mod types;
 /// Simple collision detection
 pub mod collision;
-/// Module for saving and loading data
-pub mod persist;
 /// Module represent another way of creating a game
 pub mod game;
 /// Module for the lighting system
 pub mod lighting;
+/// Module for procedurally generated meshes
+pub mod mesh;
+/// Module for saving and loading data
+pub mod persist;
+/// Rendering post processing effects
+pub mod posteffect;
+/// A module for rendering items
+pub mod renderer;
+/// Module for dealing with shaders
+pub mod shader;
+/// All of the caper types
+pub mod types;
+/// Utility functions and macros
+pub mod utils;
