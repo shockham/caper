@@ -196,10 +196,9 @@ impl Renderer {
                 image::ImageBuffer::from_raw(image.width, image.height, image.data.into_owned())
                     .unwrap();
             let image = image::DynamicImage::ImageRgba8(image).flipv();
-            let mut output = File::create(&Path::new(
-                format!("./screenshot_{}.png", time::precise_time_s()).as_str(),
-            )).unwrap();
-            image.save(&mut output, image::ImageFormat::PNG).unwrap();
+            let path_string = format!("./screenshot_{}.png", time::precise_time_s());
+            let path = Path::new(&path_string);
+            image.save(path).unwrap();
         });
     }
 
