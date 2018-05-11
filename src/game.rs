@@ -4,22 +4,24 @@ use input::Input;
 use renderer::{Draw, Renderer};
 use types::{Camera, PhysicsType, RenderItem, TextItem};
 
-use nalgebra::Translation3;
+use nalgebra::zero;
 use nalgebra::Vector3 as nVector3;
-use ncollide::shape::Cuboid;
-use nphysics3d::object::{RigidBody, WorldObject};
+use nalgebra::Isometry3;
+use nalgebra::Translation3;
+use ncollide::shape::{Cuboid, ShapeHandle};
+use nphysics3d::object::{BodyStatus, Material, BodyHandle};
 use nphysics3d::world::World;
+use nphysics3d::volumetric::Volumetric;
 
 use glium::glutin::EventsLoop;
 
-use std::boxed::Box;
 use std::slice::IterMut;
 use std::time::Instant;
 
 /// The divisor for the physics space to align with render space
 const PHYSICS_DIVISOR: f32 = 2f32;
-/// global restitution for physics objects
-const GLOBAL_REST: f32 = 0.05f32;
+/// collider margin
+const COLLIDER_MARGIN: f32 = 0f32;
 
 /// Enum for update to return status
 pub enum UpdateStatus {
@@ -27,6 +29,12 @@ pub enum UpdateStatus {
     Continue,
     /// Finish/Exit the game
     Finish,
+}
+
+/// Struct for storing physics handles and associated RenderItem
+struct PhysicsHandle {
+    render_item: (usize, usize),
+    body_handle: BodyHandle,
 }
 
 /// Struct for creating an instance of a game with all systems and items contained
@@ -45,6 +53,8 @@ pub struct Game<T: Default> {
     render_items: Vec<RenderItem<T>>,
     /// All the text items to be rendered in the game
     text_items: Vec<TextItem>,
+    /// All the body handles for physics items
+    physics_items: Vec<PhysicsHandle>,
     /// The delta time for each frame
     pub delta: f32,
 }
@@ -74,6 +84,7 @@ impl<T: Default> Game<T> {
             cams: vec![cam],
             render_items: Vec::new(),
             text_items: Vec::new(),
+            physics_items: Vec::new(),
             delta: 0.016_666_667f32,
         }
     }
@@ -155,60 +166,83 @@ pub trait Physics {
 impl<T: Default> Physics for Game<T> {
     /// Initalise physics depending on PhysicsType
     fn add_physics(&mut self, i: usize) {
+        // default physics mat
+        let material = Material::default();
         // add the rigid body if needed
         match self.render_items[i].physics_type {
             PhysicsType::Static => {
                 for j in 0..self.render_items[i].instance_transforms.len() {
                     let ri_trans = self.render_items[i].instance_transforms[j];
 
-                    let geom = Cuboid::new(nVector3::new(
+                    let geom = ShapeHandle::new(Cuboid::new(nVector3::new(
                         ri_trans.scale.0,
                         ri_trans.scale.1,
                         ri_trans.scale.2,
-                    ));
-                    let mut rb = RigidBody::new_static(geom, GLOBAL_REST, 0.6);
-
-                    rb.append_translation(&Translation3::new(
+                    )));
+                    let inertia = geom.inertia(1.0);
+                    let center_of_mass = geom.center_of_mass();
+                    let pos = Isometry3::new(nVector3::new(
                         ri_trans.pos.0 * PHYSICS_DIVISOR,
                         ri_trans.pos.1 * PHYSICS_DIVISOR,
                         ri_trans.pos.2 * PHYSICS_DIVISOR,
-                    ));
+                    ), zero());
 
-                    // track which render item instance this refers to
-                    rb.set_user_data(Some(Box::new((i, j))));
 
-                    rb.set_margin(0f32);
+                    let handle = self.physics.add_rigid_body(pos, inertia, center_of_mass);
+                    let physics_handle = PhysicsHandle {
+                        render_item: (i, j),
+                        body_handle: handle,
+                    };
+                    self.physics_items.push(physics_handle);
 
-                    self.physics.add_rigid_body(rb);
+                    {
+                        let mut rb = self.physics.rigid_body_mut(handle).unwrap();
+                        rb.set_status(BodyStatus::Static);
+                    }
+
+                    self.physics.add_collider(
+                        COLLIDER_MARGIN,
+                        geom.clone(),
+                        handle,
+                        Isometry3::identity(),
+                        material.clone(),
+                    );
                 }
             }
             PhysicsType::Dynamic => {
                 for j in 0..self.render_items[i].instance_transforms.len() {
                     let ri_trans = self.render_items[i].instance_transforms[j];
 
-                    let geom = Cuboid::new(nVector3::new(
+                    let geom = ShapeHandle::new(Cuboid::new(nVector3::new(
                         ri_trans.scale.0,
                         ri_trans.scale.1,
                         ri_trans.scale.2,
-                    ));
-                    let mut rb = RigidBody::new_dynamic(geom, 5.0, GLOBAL_REST, 0.8);
-
-                    rb.append_translation(&Translation3::new(
+                    )));
+                    let inertia = geom.inertia(1.0);
+                    let center_of_mass = geom.center_of_mass();
+                    let pos = Isometry3::new(nVector3::new(
                         ri_trans.pos.0 * PHYSICS_DIVISOR,
                         ri_trans.pos.1 * PHYSICS_DIVISOR,
                         ri_trans.pos.2 * PHYSICS_DIVISOR,
-                    ));
+                    ), zero());
 
-                    // track which render item instance this refers to
-                    rb.set_user_data(Some(Box::new((i, j))));
 
-                    rb.set_margin(0f32);
+                    let handle = self.physics.add_rigid_body(pos, inertia, center_of_mass);
+                    let physics_handle = PhysicsHandle {
+                        render_item: (i, j),
+                        body_handle: handle,
+                    };
+                    self.physics_items.push(physics_handle);
 
-                    if i == 1 && j == 0 {
-                        rb.set_deactivation_threshold(None);
-                    }
+                    let _ = self.physics.rigid_body_mut(handle).unwrap();
 
-                    self.physics.add_rigid_body(rb);
+                    self.physics.add_collider(
+                        COLLIDER_MARGIN,
+                        geom.clone(),
+                        handle,
+                        Isometry3::identity(),
+                        material.clone(),
+                    );
                 }
             }
             PhysicsType::None => {}
@@ -219,31 +253,21 @@ impl<T: Default> Physics for Game<T> {
     fn update_physics(&mut self) {
         // update the new positions back to rb
         {
-            for rbi in self.physics.rigid_bodies() {
-                // actually get access to the rb :|
-                let mut wo = WorldObject::RigidBody(rbi.clone());
-
-                let (ri_i, ri_it_i) = {
-                    let rb = wo.borrow_rigid_body();
-
-                    let user_data = rb.user_data().unwrap();
-                    let tup_ref = user_data.downcast_ref::<(usize, usize)>().unwrap();
-
-                    *tup_ref
-                };
+            for ph in self.physics_items.iter() {
+                let (ri_i, ri_it_i) = ph.render_item;
 
                 // check if it actually exists, if it doesn't remove
                 if self.render_items.len() > ri_i
                     && self.render_items[ri_i].instance_transforms.len() > ri_it_i
                 {
                     // update the rb transform pos
-                    let mut rb = wo.borrow_mut_rigid_body();
+                    let mut rb = self.physics.rigid_body_mut(ph.body_handle).unwrap();
                     let ri_pos = self.render_items[ri_i].instance_transforms[ri_it_i].pos;
-                    rb.set_translation(Translation3::new(
+                    rb.position().translation = Translation3::new(
                         ri_pos.0 * PHYSICS_DIVISOR,
                         ri_pos.1 * PHYSICS_DIVISOR,
                         ri_pos.2 * PHYSICS_DIVISOR,
-                    ));
+                    );
                 }
             }
         }
@@ -251,19 +275,17 @@ impl<T: Default> Physics for Game<T> {
         // block for updating physics
         {
             // update all the physics items
-            self.physics.step(self.delta);
+            self.physics.step();
 
-            for rbi in self.physics.rigid_bodies() {
-                // actually get access to the rb :|
-                let wo = WorldObject::RigidBody(rbi.clone());
-                let rb = wo.borrow_rigid_body();
+            for ph in self.physics_items.iter() {
+                let rb = self.physics.rigid_body_mut(ph.body_handle).unwrap();
 
                 // update the RenderItem transform pos
                 let trans = rb.position().translation.vector;
-                let rot = rb.position().rotation.coords.data.as_slice();
+                let prot = rb.position().rotation;
+                let rot = prot.coords.data.as_slice();
 
-                let user_data = rb.user_data().unwrap();
-                let &(ri_i, ri_it_i) = user_data.downcast_ref::<(usize, usize)>().unwrap();
+                let (ri_i, ri_it_i) = ph.render_item;
 
                 if self.render_items.len() > ri_i
                     && self.render_items[ri_i].instance_transforms.len() > ri_it_i

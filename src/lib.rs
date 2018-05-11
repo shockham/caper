@@ -85,7 +85,7 @@ pub extern crate image;
 pub extern crate imgui;
 pub extern crate impose as audio;
 pub extern crate nalgebra;
-pub extern crate ncollide;
+pub extern crate ncollide3d as ncollide;
 pub extern crate nphysics3d;
 pub extern crate volition as input;
 
