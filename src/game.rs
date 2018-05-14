@@ -5,13 +5,13 @@ use renderer::{Draw, Renderer};
 use types::{Camera, PhysicsType, RenderItem, TextItem};
 
 use nalgebra::zero;
-use nalgebra::Vector3 as nVector3;
 use nalgebra::Isometry3;
 use nalgebra::Translation3;
+use nalgebra::Vector3 as nVector3;
 use ncollide::shape::{Cuboid, ShapeHandle};
-use nphysics3d::object::{BodyStatus, Material, BodyHandle};
-use nphysics3d::world::World;
+use nphysics3d::object::{BodyHandle, BodyStatus, Material};
 use nphysics3d::volumetric::Volumetric;
+use nphysics3d::world::World;
 
 use glium::glutin::EventsLoop;
 
@@ -181,12 +181,14 @@ impl<T: Default> Physics for Game<T> {
                     )));
                     let inertia = geom.inertia(1.0);
                     let center_of_mass = geom.center_of_mass();
-                    let pos = Isometry3::new(nVector3::new(
-                        ri_trans.pos.0 * PHYSICS_DIVISOR,
-                        ri_trans.pos.1 * PHYSICS_DIVISOR,
-                        ri_trans.pos.2 * PHYSICS_DIVISOR,
-                    ), zero());
-
+                    let pos = Isometry3::new(
+                        nVector3::new(
+                            ri_trans.pos.0 * PHYSICS_DIVISOR,
+                            ri_trans.pos.1 * PHYSICS_DIVISOR,
+                            ri_trans.pos.2 * PHYSICS_DIVISOR,
+                        ),
+                        zero(),
+                    );
 
                     let handle = self.physics.add_rigid_body(pos, inertia, center_of_mass);
                     let physics_handle = PhysicsHandle {
@@ -220,12 +222,14 @@ impl<T: Default> Physics for Game<T> {
                     )));
                     let inertia = geom.inertia(1.0);
                     let center_of_mass = geom.center_of_mass();
-                    let pos = Isometry3::new(nVector3::new(
-                        ri_trans.pos.0 * PHYSICS_DIVISOR,
-                        ri_trans.pos.1 * PHYSICS_DIVISOR,
-                        ri_trans.pos.2 * PHYSICS_DIVISOR,
-                    ), zero());
-
+                    let pos = Isometry3::new(
+                        nVector3::new(
+                            ri_trans.pos.0 * PHYSICS_DIVISOR,
+                            ri_trans.pos.1 * PHYSICS_DIVISOR,
+                            ri_trans.pos.2 * PHYSICS_DIVISOR,
+                        ),
+                        zero(),
+                    );
 
                     let handle = self.physics.add_rigid_body(pos, inertia, center_of_mass);
                     let physics_handle = PhysicsHandle {

@@ -6,8 +6,9 @@ extern crate imgui;
 use caper::game::*;
 use caper::input::Key;
 use caper::mesh::{gen_perlin_mesh, gen_sphere, get_pos_perlin};
-use caper::types::{DefaultTag, MaterialBuilder, RenderItemBuilder, TextItemBuilder,
-                   TransformBuilder};
+use caper::types::{
+    DefaultTag, MaterialBuilder, RenderItemBuilder, TextItemBuilder, TransformBuilder,
+};
 use caper::utils::create_skydome;
 use imgui::*;
 

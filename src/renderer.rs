@@ -33,8 +33,9 @@ use lighting::Lighting;
 use posteffect::{render_to_texture, PostEffect};
 use shader::Shaders;
 use types::{Camera, PhysicsType, RenderItem, ShaderIn, TextItem};
-use utils::{build_fp_view_matrix, build_persp_proj_mat, frustrum_test, get_frustum_planes,
-            mul_mat4};
+use utils::{
+    build_fp_view_matrix, build_persp_proj_mat, frustrum_test, get_frustum_planes, mul_mat4,
+};
 
 /// struct for abstracting the render state
 pub struct Renderer {
