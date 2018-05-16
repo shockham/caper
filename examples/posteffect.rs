@@ -35,6 +35,8 @@ fn main() {
         .bokeh_focal_depth(0.45f32)
         .bokeh_focal_width(0.4f32)
         .color_offset((1f32, 0.8f32, 1f32, 1f32))
+        .greyscale(true)
+        .noise(0.5f32)
         .build()
         .unwrap();
 

@@ -431,6 +431,7 @@ impl Draw for Renderer {
             bokeh_focal_width: self.post_effect.post_shader_options.bokeh_focal_width,
             color_offset: self.post_effect.post_shader_options.color_offset,
             greyscale: self.post_effect.post_shader_options.greyscale,
+            noise: self.post_effect.post_shader_options.noise,
         };
 
         let uniforms = if cols.len() > 1 {

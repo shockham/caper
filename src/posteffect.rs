@@ -104,6 +104,9 @@ pub struct PostShaderOptions {
     /// Greyscale
     #[builder(default = "false")]
     pub greyscale: bool,
+    /// Noise
+    #[builder(default = "0f32")]
+    pub noise: f32,
 }
 
 /// Renders the post effect on to the scene rendered in the draw FnMut

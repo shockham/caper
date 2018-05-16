@@ -23,6 +23,7 @@ pub mod gl330 {
         uniform vec2 resolution;
         uniform sampler2D tex;
         uniform sampler2D depth_buf;
+        uniform float time;
 
         // chromatic aberration params
         uniform float chrom_amt;
@@ -45,6 +46,9 @@ pub mod gl330 {
         // greyscale
         uniform bool greyscale;
 
+        // noise
+        uniform float noise;
+
         in vec2 v_tex_coords;
 
         out vec4 frag_output;
@@ -61,6 +65,10 @@ pub mod gl330 {
             (0.5 * blur_radius) / resolution.y,
             (1.5 * blur_radius) / resolution.y
         );
+
+        float rand (vec2 s) {
+            return fract(sin(dot(s, vec2(12.9898, 78.233))) * 43758.5453);
+        }
 
         void main() {
             vec4 color = texture(tex, v_tex_coords);
@@ -100,8 +108,11 @@ pub mod gl330 {
                 color = mix(color, vec4(blur_color, 1.0), blur_amt);
             }
 
-            // color grading
+            // color grading and noise
             vec4 graded = color  * color_offset;
+
+            // noise
+            graded = mix(graded, vec4(vec3(rand(v_tex_coords + time)), 1.0), noise);
 
             // greyscale or not
             if (greyscale) {
