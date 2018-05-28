@@ -1,3 +1,13 @@
+/// Module for utility functions for textures
+#[macro_use]
+pub mod texture;
+/// Rendering post processing effects
+pub mod posteffect;
+/// Module for dealing with shaders
+pub mod shader;
+/// Module for the lighting system
+pub mod lighting;
+
 use glium::backend::Facade;
 use glium::draw_parameters::{BackfaceCullingMode, DepthClamp};
 use glium::glutin::CursorState::Hide;

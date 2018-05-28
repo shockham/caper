@@ -57,7 +57,7 @@ pub fn load_wavefront(data: &[u8]) -> Vec<Vertex> {
 pub fn create_skydome<T: Clone + Default>(shader_name: &'static str) -> RenderItem<T> {
     RenderItemBuilder::default()
         .name("skydome".to_string())
-        .vertices(load_wavefront(include_bytes!("./resources/skydome.obj")))
+        .vertices(load_wavefront(include_bytes!("./renderer/resources/skydome.obj")))
         .material(
             MaterialBuilder::default()
                 .shader_name(shader_name.to_string())

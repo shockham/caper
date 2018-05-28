@@ -99,26 +99,22 @@ extern crate rayon;
 extern crate serde;
 extern crate time;
 
-/// Module for utility functions for textures
-#[macro_use]
-pub mod texture;
 /// Simple collision detection
 pub mod collision;
 /// Module represent another way of creating a game
 pub mod game;
-/// Module for the lighting system
-pub mod lighting;
 /// Module for procedurally generated meshes
 pub mod mesh;
 /// Module for saving and loading data
 pub mod persist;
-/// Rendering post processing effects
-pub mod posteffect;
 /// A module for rendering items
 pub mod renderer;
-/// Module for dealing with shaders
-pub mod shader;
 /// All of the caper types
 pub mod types;
 /// Utility functions and macros
 pub mod utils;
+
+pub use renderer::lighting;
+pub use renderer::posteffect;
+pub use renderer::texture;
+pub use renderer::shader;
