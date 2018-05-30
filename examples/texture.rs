@@ -17,7 +17,7 @@ fn main() {
             .vertices(gen_cube())
             .material(
                 MaterialBuilder::default()
-                    .shader_name("texture".to_string())
+                    .shader_name("texture")
                     .texture_name(Some("default".to_string()))
                     .build()
                     .unwrap(),

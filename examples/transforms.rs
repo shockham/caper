@@ -37,7 +37,7 @@ fn main() {
 
     game.add_render_item(
         RenderItemBuilder::default()
-            .name("sphere".to_string())
+            .name("sphere")
             .vertices(load_wavefront(include_bytes!("assets/sphere.obj")))
             .instance_transforms(vec![
                 TransformBuilder::default()
@@ -56,7 +56,7 @@ fn main() {
     );
     game.add_render_item(
         RenderItemBuilder::default()
-            .name("floor".to_string())
+            .name("floor")
             .vertices(load_wavefront(include_bytes!("assets/floor.obj")))
             .material(
                 MaterialBuilder::default()

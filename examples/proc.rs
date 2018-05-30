@@ -29,7 +29,7 @@ fn main() {
             .vertices(load_wavefront(include_bytes!("assets/sphere.obj")))
             .material(
                 MaterialBuilder::default()
-                    .shader_name("height".to_string())
+                    .shader_name("height")
                     .build()
                     .unwrap(),
             )
