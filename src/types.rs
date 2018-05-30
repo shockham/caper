@@ -21,22 +21,30 @@ implement_vertex!(Vertex, position, normal, texture);
 
 /// struct for handling transform data
 #[derive(Builder, Copy, Clone, Serialize, Deserialize, PartialEq)]
+#[builder(default)]
 pub struct Transform {
     /// The position of the transform
-    #[builder(default = "(0f32, 0f32, 0f32)")]
     pub pos: Vector3,
     /// The rotation of the transform
-    #[builder(default = "(0f32, 0f32, 0f32, 1f32)")]
     pub rot: Quaternion,
     /// The scale of the transform
-    #[builder(default = "(1f32, 1f32, 1f32)")]
     pub scale: Vector3,
     /// Whether the transform is currently active/should be rendered
-    #[builder(default = "true")]
     pub active: bool,
     /// Whether the transform is frustum culled
-    #[builder(default = "true")]
     pub cull: bool,
+}
+
+impl Default for Transform {
+    fn default() -> Self {
+        Transform {
+            pos: (0f32, 0f32, 0f32),
+            rot: (0f32, 0f32, 0f32, 0f32),
+            scale: (1f32, 1f32, 1f32),
+            active: true,
+            cull: true,
+         }
+    }
 }
 
 /// Denotes how the RenderItem acts in the physics engine
@@ -56,76 +64,112 @@ pub struct DefaultTag;
 
 /// struct for abstracting items to be sent to render
 #[derive(Builder, Clone, Serialize, Deserialize, PartialEq)]
+#[builder(default)]
 pub struct RenderItem<T: Default> {
     /// The vertices representing this items mesh
-    #[builder(default = "Vec::new()")]
     pub vertices: Vec<Vertex>,
     /// The material that will be used for rendering the Item
-    #[builder(default = "MaterialBuilder::default().build().unwrap()")]
     pub material: Material,
     /// The instances of this item
-    #[builder(default = "Vec::new()")]
     pub instance_transforms: Vec<Transform>,
     /// Whether the item is active/should be rendered
-    #[builder(default = "true")]
     pub active: bool,
     /// How this item acts in the physics engine
-    #[builder(default = "PhysicsType::None")]
     pub physics_type: PhysicsType,
     /// The name of the RenderItem for lookup
-    #[builder(default = "\"ri\".to_string()")]
+    #[builder(setter(into))]
     pub name: String,
     /// Tag Type for grouping similar items
-    #[builder(default = "T::default()")]
     pub tag: T,
+}
+
+impl<T: Default> Default for RenderItem<T> {
+    fn default() -> Self {
+        RenderItem {
+            vertices: Default::default(),
+            material: Default::default(),
+            instance_transforms: Default::default(),
+            active: true,
+            physics_type: PhysicsType::None,
+            name: "ri".into(),
+            tag: Default::default(),
+        }
+    }
 }
 
 /// Struct for containing material information
 #[derive(Builder, Clone, Serialize, Deserialize, PartialEq)]
+#[builder(default)]
 pub struct Material {
     /// The shader that will used to render this item
-    #[builder(default = "\"dist\".to_string()")]
+    #[builder(setter(into))]
     pub shader_name: String,
     /// The texture that will be used
-    #[builder(default = "None")]
     pub texture_name: Option<String>,
     /// The normal texture that will be used
-    #[builder(default = "None")]
     pub normal_texture_name: Option<String>,
+}
+
+impl Default for Material {
+    fn default() -> Self {
+        Material {
+            shader_name: "dist".into(),
+            texture_name: None,
+            normal_texture_name: None,
+        }
+    }
 }
 
 /// struct for abstacting text items to be rendered
 #[derive(Builder, Clone, Serialize, Deserialize, PartialEq)]
+#[builder(default)]
 pub struct TextItem {
     /// The text that the item displays
-    #[builder(default = "\"\".to_string()")]
+    #[builder(setter(into))]
     pub text: String,
     /// The color the text is displayed in
-    #[builder(default = "(0f32, 0f32, 0f32, 1f32)")]
     pub color: (f32, f32, f32, f32),
     /// The position to display this text
-    #[builder(default = "(0f32, 0f32, 0f32)")]
     pub pos: Vector3,
     /// The scale/size the text is displayed at
-    #[builder(default = "(1f32, 1f32, 1f32)")]
     pub scale: Vector3,
     /// Whether this item is active/should be rendered
-    #[builder(default = "true")]
     pub active: bool,
     /// The name of the RenderItem for lookup
-    #[builder(default = "\"ti\".to_string()")]
+    #[builder(setter(into))]
     pub name: String,
+}
+
+impl Default for TextItem {
+    fn default() -> Self {
+        TextItem {
+            text: Default::default(),
+            color: (0f32, 0f32, 0f32, 1f32),
+            pos: (0f32, 0f32, 0f32),
+            scale: (1f32, 1f32, 1f32),
+            active: true,
+            name: "ti".into(),
+        }
+    }
 }
 
 /// struct for abstracting the camera state
 #[derive(Builder, Copy, Clone, Serialize, Deserialize, PartialEq)]
+#[builder(default)]
 pub struct Camera {
     /// The position of the camera in 3d space
-    #[builder(default = "(0f32, 0f32, 0f32)")]
     pub pos: Vector3,
     /// The euler rotation of the camera
-    #[builder(default = "(0f32, 0f32, 0f32)")]
     pub euler_rot: Vector3,
+}
+
+impl Default for Camera {
+    fn default() -> Self {
+        Camera {
+            pos: (0f32, 0f32, 0f32),
+            euler_rot: (0f32, 0f32, 0f32),
+        }
+    }
 }
 
 /// struct for shader attributes

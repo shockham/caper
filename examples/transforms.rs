@@ -65,7 +65,7 @@ fn main() {
                     .unwrap(),
             )
             .instance_transforms(vec![
-                TransformBuilder::default().build().unwrap(),
+                Transform::default(),
                 TransformBuilder::default()
                     .active(true)
                     .pos((15.0, 0.0, 0.0))
