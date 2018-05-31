@@ -109,7 +109,7 @@ pub trait RenderItems {
     /// Get a ref to a render item
     fn get_render_item(&mut self, index: usize) -> &mut RenderItem<Self::T>;
     /// Get a ref to a render item from its name, returning the first found
-    fn get_render_item_by_name(&mut self, name: String) -> Option<&mut RenderItem<Self::T>>;
+    fn get_render_item_by_name(&mut self, name: &str) -> Option<&mut RenderItem<Self::T>>;
     /// Add a render item to the game
     fn add_render_item(&mut self, render_item: RenderItem<Self::T>);
 }
@@ -133,13 +133,8 @@ impl<T: Default> RenderItems for Game<T> {
     }
 
     /// Get a ref to a render item from its name, returning the first found
-    fn get_render_item_by_name(&mut self, name: String) -> Option<&mut RenderItem<T>> {
-        for i in 0..self.render_items.len() {
-            if self.render_items[i].name == name {
-                return Some(&mut self.render_items[i]);
-            }
-        }
-        None
+    fn get_render_item_by_name(&mut self, name: &str) -> Option<&mut RenderItem<T>> {
+        self.render_items.iter_mut().find(|item| item.name == name)
     }
 
     /// Add a render item to the game
