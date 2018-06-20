@@ -80,6 +80,8 @@ pub struct RenderItem<T: Default> {
     pub tag: T,
 }
 
+unsafe impl<T: Default> Send for RenderItem<T> {}
+
 /// Struct for containing material information
 #[derive(Builder, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Material {
@@ -116,6 +118,8 @@ pub struct TextItem {
     #[builder(default = "\"ti\".to_string()")]
     pub name: String,
 }
+
+unsafe impl Send for TextItem {}
 
 /// struct for abstracting the camera state
 #[derive(Builder, Copy, Clone, Serialize, Deserialize, PartialEq)]

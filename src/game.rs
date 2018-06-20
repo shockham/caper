@@ -15,8 +15,11 @@ use nphysics3d::world::World;
 
 use glium::glutin::EventsLoop;
 
-use std::slice::IterMut;
+//use std::slice::IterMut;
 use std::time::Instant;
+
+use rayon::prelude::*;
+use rayon::slice::IterMut;
 
 /// The divisor for the physics space to align with render space
 const PHYSICS_DIVISOR: f32 = 2f32;
@@ -124,7 +127,7 @@ impl<T: Default> RenderItems for Game<T> {
 
     /// Get an IterMut of the RenderItem
     fn render_items_iter_mut(&mut self) -> IterMut<RenderItem<T>> {
-        self.render_items.iter_mut()
+        self.render_items.par_iter_mut()
     }
 
     /// Get a ref to a render item
@@ -324,7 +327,7 @@ impl<T: Default> TextItems for Game<T> {
 
     /// Get an IterMut of the TextItem
     fn text_items_iter_mut(&mut self) -> IterMut<TextItem> {
-        self.text_items.iter_mut()
+        self.text_items.par_iter_mut()
     }
 
     /// Get a ref to a text item
