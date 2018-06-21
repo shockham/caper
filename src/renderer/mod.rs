@@ -512,7 +512,7 @@ impl Draw for Renderer {
         self.render_count = render_count;
 
         // drawing the text items
-        for text_item in text_items.iter().filter(|r| r.active) {
+        text_items.iter().filter(|r| r.active).for_each(|text_item| {
             // create the matrix for the text
             let matrix = [
                 [0.02 * text_item.scale.0, 0.0, 0.0, 0.0],
@@ -541,7 +541,7 @@ impl Draw for Renderer {
                 matrix,
                 text_item.color,
             );
-        }
+        });
 
         // imgui elements
         let ui = self.imgui.frame((width, height), (width, height), 0.1);
