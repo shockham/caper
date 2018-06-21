@@ -1,12 +1,12 @@
 /// Module for utility functions for textures
 #[macro_use]
 pub mod texture;
+/// Module for the lighting system
+pub mod lighting;
 /// Rendering post processing effects
 pub mod posteffect;
 /// Module for dealing with shaders
 pub mod shader;
-/// Module for the lighting system
-pub mod lighting;
 
 use glium::backend::Facade;
 use glium::draw_parameters::{BackfaceCullingMode, DepthClamp};
@@ -31,6 +31,8 @@ use imgui_glium_renderer::Renderer as ImGuiRenderer;
 use gif;
 use gif::SetParameter;
 use image;
+
+use rayon::prelude::*;
 
 use std::fs::File;
 use std::fs::OpenOptions;
@@ -337,78 +339,81 @@ impl Draw for Renderer {
                     target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
                     // drawing the render items (with more than one instance)
-                    for item in render_items
+                    render_items
                         .iter()
                         .filter(|r| r.active && !r.instance_transforms.is_empty())
-                    {
-                        // building the vertex and index buffers
-                        let vertex_buffer =
-                            VertexBuffer::new(&self.display, &item.vertices).unwrap();
+                        .for_each(|item| {
+                            // building the vertex and index buffers
+                            let vertex_buffer =
+                                VertexBuffer::new(&self.display, &item.vertices).unwrap();
 
-                        // add positions for instances
-                        let per_instance = {
-                            let data = item.instance_transforms
-                                .iter()
-                                .filter(|t| {
-                                    (!t.cull
-                                        || frustrum_test(
-                                            &t.pos,
-                                            t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
-                                            &frustum_planes,
-                                        )) && t.active
-                                })
-                                .map(|t| ShaderIn {
-                                    world_position: t.pos,
-                                    world_rotation: t.rot,
-                                    world_scale: t.scale,
-                                })
-                                .collect::<Vec<_>>();
+                            // add positions for instances
+                            let per_instance = {
+                                let data = item
+                                    .instance_transforms
+                                    .par_iter()
+                                    .filter(|t| {
+                                        (!t.cull
+                                            || frustrum_test(
+                                                &t.pos,
+                                                t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
+                                                &frustum_planes,
+                                            )) && t.active
+                                    })
+                                    .map(|t| ShaderIn {
+                                        world_position: t.pos,
+                                        world_rotation: t.rot,
+                                        world_scale: t.scale,
+                                    })
+                                    .collect::<Vec<_>>();
 
-                            // if there are no active transforms skip ri
-                            if data.is_empty() {
-                                continue;
-                            }
+                                // if there are no active transforms skip ri
+                                if data.is_empty() {
+                                    return;
+                                }
 
-                            // add instances to render_count
-                            render_count += data.len();
+                                // add instances to render_count
+                                render_count += data.len();
 
-                            VertexBuffer::dynamic(&self.display, &data).unwrap()
-                        };
+                                VertexBuffer::dynamic(&self.display, &data).unwrap()
+                            };
 
-                        let tex_name = item.material
-                            .texture_name
-                            .clone()
-                            .unwrap_or_else(|| "default".to_string());
-                        let normal_tex_name = item.material
-                            .normal_texture_name
-                            .clone()
-                            .unwrap_or_else(|| "default_normal".to_string());
+                            let tex_name = item
+                                .material
+                                .texture_name
+                                .clone()
+                                .unwrap_or_else(|| "default".to_string());
+                            let normal_tex_name = item
+                                .material
+                                .normal_texture_name
+                                .clone()
+                                .unwrap_or_else(|| "default_normal".to_string());
 
-                        let dir_lights = self.lighting.directional_tex.borrow();
+                            let dir_lights = self.lighting.directional_tex.borrow();
 
-                        let uniforms = uniform! {
-                            projection_matrix: projection_matrix,
-                            modelview_matrix: modelview_matrix,
-                            cam_pos: cam_pos,
-                            viewport: (width as f32, height as f32),
-                            time: time,
-                            tex: &self.shaders.textures[tex_name.as_str()],
-                            normal_tex: &self.shaders.textures[normal_tex_name.as_str()],
-                            dir_lights: &*dir_lights,
-                        };
+                            let uniforms = uniform! {
+                                projection_matrix: projection_matrix,
+                                modelview_matrix: modelview_matrix,
+                                cam_pos: cam_pos,
+                                viewport: (width as f32, height as f32),
+                                time: time,
+                                tex: &self.shaders.textures[tex_name.as_str()],
+                                normal_tex: &self.shaders.textures[normal_tex_name.as_str()],
+                                dir_lights: &*dir_lights,
+                            };
 
-                        target
-                            .draw(
-                                (&vertex_buffer, per_instance.per_instance().unwrap()),
-                                &NoIndices(PrimitiveType::Patches {
-                                    vertices_per_patch: 3,
-                                }),
-                                &self.shaders.shaders[item.material.shader_name.as_str()],
-                                &uniforms,
-                                &params,
-                            )
-                            .unwrap();
-                    }
+                            target
+                                .draw(
+                                    (&vertex_buffer, per_instance.per_instance().unwrap()),
+                                    &NoIndices(PrimitiveType::Patches {
+                                        vertices_per_patch: 3,
+                                    }),
+                                    &self.shaders.shaders[item.material.shader_name.as_str()],
+                                    &uniforms,
+                                    &params,
+                                )
+                                .unwrap();
+                        });
                 });
 
             cols.push(target_color);

@@ -39,6 +39,8 @@ pub struct Transform {
     pub cull: bool,
 }
 
+unsafe impl Send for Transform {}
+
 /// Denotes how the RenderItem acts in the physics engine
 #[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]
 pub enum PhysicsType {

@@ -63,7 +63,8 @@ impl Lighting {
     pub fn regenerate_lighting_tex(&mut self) {
         let mut dir_tex = self.directional_tex.borrow_mut();
 
-        let lights = self.directional_lights
+        let lights = self
+            .directional_lights
             .par_iter()
             .filter(|d| d.active)
             .map(|d| d.dir)

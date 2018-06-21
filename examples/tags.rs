@@ -1,6 +1,6 @@
 extern crate caper;
-extern crate time;
 extern crate rayon;
+extern crate time;
 
 use caper::game::*;
 use caper::imgui::Ui;
