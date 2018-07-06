@@ -310,7 +310,7 @@ impl Draw for Renderer {
         let mut p_mat = None;
         let mut mv_mat = None;
 
-        for cam in cams.iter_mut() {
+        cams.iter_mut().for_each(|cam| {
             // uniforms passed to the shaders
             let projection_matrix =
                 build_persp_proj_mat(60f32, width as f32 / height as f32, 0.01f32, 1000f32);
@@ -415,7 +415,7 @@ impl Draw for Renderer {
 
             cols.push(target_color);
             depths.push(target_depth);
-        }
+        });
 
         //let texs_arr = Texture2dArray::new(&self.post_effect.context, cols).unwrap();
         //let depths_arr = DepthTexture2dArray::new(&self.post_effect.context, depths).unwrap();
