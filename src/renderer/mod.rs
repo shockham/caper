@@ -54,9 +54,9 @@ pub struct Renderer {
     /// The glium display used for rendering
     pub display: Display,
     /// The glium_text system used for rendering TextItem
-    text_system: TextSystem,
+    text_system: Arc<Mutex<TextSystem>>,
     /// Fefault font that the text renderer will use
-    default_font: FontTexture,
+    default_font: Arc<Mutex<FontTexture>>,
     /// Main imgui system
     imgui: ImGui,
     /// The sub renderer for imgui
@@ -160,8 +160,8 @@ impl Renderer {
 
         let renderer = Renderer {
             display,
-            text_system,
-            default_font: font,
+            text_system: Arc::new(Mutex::new(text_system)),
+            default_font: Arc::new(Mutex::new(font)),
             imgui,
             imgui_rend,
             post_effect,
@@ -512,6 +512,7 @@ impl Draw for Renderer {
         self.render_count = render_count;
 
         // drawing the text items
+        let renderer = Arc::new(Mutex::new(self));
         text_items.iter().filter(|r| r.active).for_each(|text_item| {
             // create the matrix for the text
             let matrix = [
@@ -526,10 +527,14 @@ impl Draw for Renderer {
                 [text_item.pos.0, text_item.pos.1, text_item.pos.2, 1.0f32],
             ];
 
+            let renderer = renderer.lock().unwrap();
+            let text_system = renderer.text_system.lock().unwrap();
+            let default_font = renderer.default_font.lock().unwrap();
+
             // create TextDisplay for item, TODO change this to not be done every frame
             let text = TextDisplay::new(
-                &self.text_system,
-                &self.default_font,
+                &*text_system,
+                &*default_font,
                 text_item.text.as_str(),
             );
 
@@ -538,20 +543,26 @@ impl Draw for Renderer {
             // draw the text
             let _ = glium_text::draw(
                 &text,
-                &self.text_system,
+                &*text_system,
                 &mut *target,
                 matrix,
                 text_item.color,
             );
         });
 
+        let lock = match Arc::try_unwrap(renderer) {
+            Ok(l) => l,
+            Err(_) => panic!("Failed to unwrap renderer arc"),
+        };
+        let renderer = lock.into_inner().unwrap();
+
         // imgui elements
-        let ui = self.imgui.frame((width, height), (width, height), 0.1);
+        let ui = renderer.imgui.frame((width, height), (width, height), 0.1);
         f(&ui);
 
         // create the engine editor
-        if self.show_editor {
-            let fps = self.fps;
+        if renderer.show_editor {
+            let fps = renderer.fps;
             // create the editor window
             ui.window(im_str!("caper editor"))
                 .size((300.0, 200.0), ImGuiCond::FirstUseEver)
@@ -694,11 +705,11 @@ impl Draw for Renderer {
 
         // render imgui items
         let mut target = target.lock().unwrap();
-        self.imgui_rend.render(&mut *target, ui).unwrap();
+        renderer.imgui_rend.render(&mut *target, ui).unwrap();
 
         match target.set_finish() {
             Ok(_) => {
-                self.fps = self.fps_counter.tick() as f32;
+                renderer.fps = renderer.fps_counter.tick() as f32;
             }
             Err(e) => println!("{:?}", e),
         };
