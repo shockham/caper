@@ -287,12 +287,6 @@ impl Draw for Renderer {
         text_items: &mut Vec<TextItem>,
         mut f: F,
     ) {
-        // get display dimensions
-        let (width, height) = self.display.get_framebuffer_dimensions();
-
-        // get the context
-        let context = self.display.get_context().clone();
-
         // draw parameters
         let params = DrawParameters {
             depth: Depth {
@@ -307,7 +301,9 @@ impl Draw for Renderer {
         };
 
         // drawing a frame
-        let mut target = self.display.draw();
+        let context = self.display.get_context().clone();
+        let target = Arc::new(Mutex::new(self.display.draw()));
+        let (width, height) = self.display.get_framebuffer_dimensions();
         let mut render_count = 0usize;
         let mut cols = Vec::new();
         let mut depths = Vec::new();
@@ -333,8 +329,9 @@ impl Draw for Renderer {
             let frustum_planes = get_frustum_planes(&combo_matrix);
 
             // render to texture/depth
+            let mut target = target.lock().unwrap();
             let (target_color, target_depth) =
-                render_to_texture(&self.post_effect, &context, &mut target, |target| {
+                render_to_texture(&self.post_effect, &context, &mut *target, |target| {
                     // clear the colour and depth buffers
                     target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
@@ -499,15 +496,18 @@ impl Draw for Renderer {
                 .add("depth_buf_5", &depths[0])
         };
 
-        target
-            .draw(
-                &self.post_effect.vertex_buffer,
-                &self.post_effect.index_buffer,
-                &self.shaders.post_shaders[self.post_effect.current_shader],
-                &uniforms,
-                &Default::default(),
-            )
-            .unwrap();
+        {
+            let mut target = target.lock().unwrap();
+            target
+                .draw(
+                    &self.post_effect.vertex_buffer,
+                    &self.post_effect.index_buffer,
+                    &self.shaders.post_shaders[self.post_effect.current_shader],
+                    &uniforms,
+                    &Default::default(),
+                )
+                .unwrap();
+        }
 
         self.render_count = render_count;
 
@@ -533,11 +533,13 @@ impl Draw for Renderer {
                 text_item.text.as_str(),
             );
 
+            let mut target = target.lock().unwrap();
+
             // draw the text
             let _ = glium_text::draw(
                 &text,
                 &self.text_system,
-                &mut target,
+                &mut *target,
                 matrix,
                 text_item.color,
             );
@@ -691,9 +693,10 @@ impl Draw for Renderer {
         }
 
         // render imgui items
-        self.imgui_rend.render(&mut target, ui).unwrap();
+        let mut target = target.lock().unwrap();
+        self.imgui_rend.render(&mut *target, ui).unwrap();
 
-        match target.finish() {
+        match target.set_finish() {
             Ok(_) => {
                 self.fps = self.fps_counter.tick() as f32;
             }
