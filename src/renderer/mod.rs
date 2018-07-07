@@ -16,8 +16,8 @@ use glium::index::{NoIndices, PrimitiveType};
 use glium::texture::RawImage2d;
 use glium::vertex::VertexBuffer;
 use glium::DepthTest::IfLess;
-use glium::{Blend, Depth, Display, DrawParameters, Surface};
 use glium::Frame;
+use glium::{Blend, Depth, Display, DrawParameters, Surface};
 
 use glium_text;
 use glium_text::{FontTexture, TextDisplay, TextSystem};
@@ -285,11 +285,7 @@ pub trait Draw {
         render_items: &mut Vec<RenderItem<T>>,
     );
     /// Draws the text_items
-    fn draw_text_items(
-        &mut self,
-        target: Arc<Mutex<Frame>>,
-        text_items: &mut Vec<TextItem>,
-    );
+    fn draw_text_items(&mut self, target: Arc<Mutex<Frame>>, text_items: &mut Vec<TextItem>);
     /// Draws the ui
     fn draw_ui<F: FnMut(&Ui), T: Default>(
         &mut self,
@@ -548,51 +544,41 @@ impl Draw for Renderer {
         self.render_count = render_count;
     }
 
-    fn draw_text_items(
-        &mut self,
-        target: Arc<Mutex<Frame>>,
-        text_items: &mut Vec<TextItem>,
-    ) {
+    fn draw_text_items(&mut self, target: Arc<Mutex<Frame>>, text_items: &mut Vec<TextItem>) {
         let (width, height) = self.display.get_framebuffer_dimensions();
         let renderer = Arc::new(Mutex::new(self));
 
         // drawing the text items
-        text_items.iter().filter(|r| r.active).for_each(|text_item| {
-            // create the matrix for the text
-            let matrix = [
-                [0.02 * text_item.scale.0, 0.0, 0.0, 0.0],
-                [
-                    0.0,
-                    0.02 * text_item.scale.1 * (width as f32) / (height as f32),
-                    0.0,
-                    0.0,
-                ],
-                [0.0, 0.0, 0.02 * text_item.scale.2, 0.0],
-                [text_item.pos.0, text_item.pos.1, text_item.pos.2, 1.0f32],
-            ];
+        text_items
+            .iter()
+            .filter(|r| r.active)
+            .for_each(|text_item| {
+                // create the matrix for the text
+                let matrix = [
+                    [0.02 * text_item.scale.0, 0.0, 0.0, 0.0],
+                    [
+                        0.0,
+                        0.02 * text_item.scale.1 * (width as f32) / (height as f32),
+                        0.0,
+                        0.0,
+                    ],
+                    [0.0, 0.0, 0.02 * text_item.scale.2, 0.0],
+                    [text_item.pos.0, text_item.pos.1, text_item.pos.2, 1.0f32],
+                ];
 
-            let renderer = renderer.lock().unwrap();
-            let text_system = renderer.text_system.lock().unwrap();
-            let default_font = renderer.default_font.lock().unwrap();
+                let renderer = renderer.lock().unwrap();
+                let text_system = renderer.text_system.lock().unwrap();
+                let default_font = renderer.default_font.lock().unwrap();
 
-            // create TextDisplay for item, TODO change this to not be done every frame
-            let text = TextDisplay::new(
-                &*text_system,
-                &*default_font,
-                text_item.text.as_str(),
-            );
+                // create TextDisplay for item, TODO change this to not be done every frame
+                let text = TextDisplay::new(&*text_system, &*default_font, text_item.text.as_str());
 
-            let mut target = target.lock().unwrap();
+                let mut target = target.lock().unwrap();
 
-            // draw the text
-            let _ = glium_text::draw(
-                &text,
-                &*text_system,
-                &mut *target,
-                matrix,
-                text_item.color,
-            );
-        });
+                // draw the text
+                let _ =
+                    glium_text::draw(&text, &*text_system, &mut *target, matrix, text_item.color);
+            });
     }
 
     fn draw_ui<F: FnMut(&Ui), T: Default>(
@@ -603,7 +589,6 @@ impl Draw for Renderer {
         text_items: &mut Vec<TextItem>,
         mut f: F,
     ) {
-
         let renderer = self;
         let (width, height) = renderer.display.get_framebuffer_dimensions();
 
