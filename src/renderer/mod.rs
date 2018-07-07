@@ -17,6 +17,7 @@ use glium::texture::RawImage2d;
 use glium::vertex::VertexBuffer;
 use glium::DepthTest::IfLess;
 use glium::{Blend, Depth, Display, DrawParameters, Surface};
+use glium::Frame;
 
 use glium_text;
 use glium_text::{FontTexture, TextDisplay, TextSystem};
@@ -276,6 +277,28 @@ pub trait Draw {
         text_items: &mut Vec<TextItem>,
         f: F,
     );
+    /// Draws render_items
+    fn draw_render_items<T: Default>(
+        &mut self,
+        target: Arc<Mutex<Frame>>,
+        cams: &mut Vec<Camera>,
+        render_items: &mut Vec<RenderItem<T>>,
+    );
+    /// Draws the text_items
+    fn draw_text_items(
+        &mut self,
+        target: Arc<Mutex<Frame>>,
+        text_items: &mut Vec<TextItem>,
+    );
+    /// Draws the ui
+    fn draw_ui<F: FnMut(&Ui), T: Default>(
+        &mut self,
+        target: Arc<Mutex<Frame>>,
+        cams: &mut Vec<Camera>,
+        render_items: &mut Vec<RenderItem<T>>,
+        text_items: &mut Vec<TextItem>,
+        f: F,
+    );
 }
 
 impl Draw for Renderer {
@@ -285,7 +308,21 @@ impl Draw for Renderer {
         cams: &mut Vec<Camera>,
         render_items: &mut Vec<RenderItem<T>>,
         text_items: &mut Vec<TextItem>,
-        mut f: F,
+        f: F,
+    ) {
+        let target = Arc::new(Mutex::new(self.display.draw()));
+
+        self.draw_render_items(Arc::clone(&target), cams, render_items);
+        self.draw_text_items(Arc::clone(&target), text_items);
+        self.draw_ui(Arc::clone(&target), cams, render_items, text_items, f);
+    }
+
+    /// Draw render_items
+    fn draw_render_items<T: Default>(
+        &mut self,
+        target: Arc<Mutex<Frame>>,
+        cams: &mut Vec<Camera>,
+        render_items: &mut Vec<RenderItem<T>>,
     ) {
         // draw parameters
         let params = DrawParameters {
@@ -302,7 +339,6 @@ impl Draw for Renderer {
 
         // drawing a frame
         let context = self.display.get_context().clone();
-        let target = Arc::new(Mutex::new(self.display.draw()));
         let (width, height) = self.display.get_framebuffer_dimensions();
         let mut render_count = 0usize;
         let mut cols = Vec::new();
@@ -510,9 +546,17 @@ impl Draw for Renderer {
         }
 
         self.render_count = render_count;
+    }
+
+    fn draw_text_items(
+        &mut self,
+        target: Arc<Mutex<Frame>>,
+        text_items: &mut Vec<TextItem>,
+    ) {
+        let (width, height) = self.display.get_framebuffer_dimensions();
+        let renderer = Arc::new(Mutex::new(self));
 
         // drawing the text items
-        let renderer = Arc::new(Mutex::new(self));
         text_items.iter().filter(|r| r.active).for_each(|text_item| {
             // create the matrix for the text
             let matrix = [
@@ -549,12 +593,19 @@ impl Draw for Renderer {
                 text_item.color,
             );
         });
+    }
 
-        let lock = match Arc::try_unwrap(renderer) {
-            Ok(l) => l,
-            Err(_) => panic!("Failed to unwrap renderer arc"),
-        };
-        let renderer = lock.into_inner().unwrap();
+    fn draw_ui<F: FnMut(&Ui), T: Default>(
+        &mut self,
+        target: Arc<Mutex<Frame>>,
+        cams: &mut Vec<Camera>,
+        render_items: &mut Vec<RenderItem<T>>,
+        text_items: &mut Vec<TextItem>,
+        mut f: F,
+    ) {
+
+        let renderer = self;
+        let (width, height) = renderer.display.get_framebuffer_dimensions();
 
         // imgui elements
         let ui = renderer.imgui.frame((width, height), (width, height), 0.1);
