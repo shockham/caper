@@ -311,6 +311,14 @@ impl Draw for Renderer {
         self.draw_render_items(Arc::clone(&target), cams, render_items);
         self.draw_text_items(Arc::clone(&target), text_items);
         self.draw_ui(Arc::clone(&target), cams, render_items, text_items, f);
+
+        let mut target = target.lock().unwrap();
+        match target.set_finish() {
+            Ok(_) => {
+                self.fps = self.fps_counter.tick() as f32;
+            }
+            Err(e) => println!("{:?}", e),
+        };
     }
 
     /// Draw render_items
@@ -566,16 +574,16 @@ impl Draw for Renderer {
                     [text_item.pos.0, text_item.pos.1, text_item.pos.2, 1.0f32],
                 ];
 
+                // lock required members
                 let renderer = renderer.lock().unwrap();
                 let text_system = renderer.text_system.lock().unwrap();
                 let default_font = renderer.default_font.lock().unwrap();
 
-                // create TextDisplay for item, TODO change this to not be done every frame
+                // create TextDisplay for item
                 let text = TextDisplay::new(&*text_system, &*default_font, text_item.text.as_str());
 
-                let mut target = target.lock().unwrap();
-
                 // draw the text
+                let mut target = target.lock().unwrap();
                 let _ =
                     glium_text::draw(&text, &*text_system, &mut *target, matrix, text_item.color);
             });
@@ -742,12 +750,5 @@ impl Draw for Renderer {
         // render imgui items
         let mut target = target.lock().unwrap();
         renderer.imgui_rend.render(&mut *target, ui).unwrap();
-
-        match target.set_finish() {
-            Ok(_) => {
-                renderer.fps = renderer.fps_counter.tick() as f32;
-            }
-            Err(e) => println!("{:?}", e),
-        };
     }
 }
