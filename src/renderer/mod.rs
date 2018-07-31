@@ -10,7 +10,6 @@ pub mod shader;
 
 use glium::backend::Facade;
 use glium::draw_parameters::{BackfaceCullingMode, DepthClamp};
-use glium::glutin::CursorState::Hide;
 use glium::glutin::{Api, ContextBuilder, EventsLoop, GlRequest, WindowBuilder};
 use glium::index::{NoIndices, PrimitiveType};
 use glium::texture::RawImage2d;
@@ -178,7 +177,7 @@ impl Renderer {
 
         {
             let window = renderer.display.gl_window();
-            window.set_cursor_state(Hide).ok();
+            window.hide_cursor(true);
         }
 
         renderer

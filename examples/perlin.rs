@@ -85,8 +85,8 @@ fn main() {
             let gl_window = game.renderer.display.gl_window();
             let window = gl_window.window();
 
-            let (width, height) = window.get_inner_size().unwrap();
-            let hidpi = window.hidpi_factor();
+            let (width, height):(u32, u32) = window.get_inner_size().unwrap().into();
+            let hidpi = window.get_hidpi_factor();
 
             (width, height, hidpi)
         };
