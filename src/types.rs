@@ -47,6 +47,8 @@ impl Default for Transform {
     }
 }
 
+unsafe impl Send for Transform {}
+
 /// Denotes how the RenderItem acts in the physics engine
 #[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]
 pub enum PhysicsType {
@@ -96,6 +98,8 @@ impl<T: Default> Default for RenderItem<T> {
         }
     }
 }
+
+unsafe impl<T: Default> Send for RenderItem<T> {}
 
 /// Struct for containing material information
 #[derive(Builder, Clone, Serialize, Deserialize, PartialEq)]
@@ -152,6 +156,8 @@ impl Default for TextItem {
         }
     }
 }
+
+unsafe impl Send for TextItem {}
 
 /// struct for abstracting the camera state
 #[derive(Builder, Copy, Clone, Serialize, Deserialize, PartialEq)]

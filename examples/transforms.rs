@@ -138,7 +138,8 @@ fn main() {
 
     // test getting a direcitonal light by name
     {
-        let _ = game.renderer
+        let _ = game
+            .renderer
             .lighting
             .get_directional_light_by_name("one")
             .unwrap();
@@ -154,22 +155,26 @@ fn main() {
 
                 // temporary fix after removal of update_fn
                 sin_y(
-                    &mut g.get_render_item_by_name("sphere".to_string())
+                    &mut g
+                        .get_render_item_by_name("sphere")
                         .unwrap()
                         .instance_transforms[0],
                 );
                 circle(
-                    &mut g.get_render_item_by_name("sphere".to_string())
+                    &mut g
+                        .get_render_item_by_name("sphere")
                         .unwrap()
                         .instance_transforms[0],
                 );
                 circle(
-                    &mut g.get_render_item_by_name("sphere".to_string())
+                    &mut g
+                        .get_render_item_by_name("sphere")
                         .unwrap()
                         .instance_transforms[1],
                 );
                 spin(
-                    &mut g.get_render_item_by_name("floor".to_string())
+                    &mut g
+                        .get_render_item_by_name("floor")
                         .unwrap()
                         .instance_transforms[1],
                 );

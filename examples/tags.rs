@@ -1,4 +1,5 @@
 extern crate caper;
+extern crate rayon;
 extern crate time;
 
 use caper::game::*;
@@ -7,6 +8,8 @@ use caper::input::Key;
 use caper::mesh::gen_cube;
 use caper::types::{RenderItemBuilder, TransformBuilder};
 use caper::utils::handle_fp_inputs;
+
+use rayon::prelude::*;
 
 #[derive(Clone)]
 enum Tags {
@@ -63,7 +66,7 @@ fn main() {
                 let frame_time = time::precise_time_s() - g.renderer.start_time;
 
                 // update items by tag
-                for item in g.render_items_iter_mut() {
+                g.render_items_iter_mut().for_each(|item| {
                     match item.tag {
                         Tags::One => {
                             item.instance_transforms[0].pos.1 = frame_time.sin() as f32;
@@ -72,7 +75,7 @@ fn main() {
                             item.instance_transforms[0].pos.1 = frame_time.cos() as f32;
                         }
                     };
-                }
+                });
 
                 // quit
                 if g.input.keys_down.contains(&Key::Escape) {

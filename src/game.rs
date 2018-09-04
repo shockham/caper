@@ -15,8 +15,11 @@ use nphysics3d::world::World;
 
 use glium::glutin::EventsLoop;
 
-use std::slice::IterMut;
+//use std::slice::IterMut;
 use std::time::Instant;
+
+use rayon::prelude::*;
+use rayon::slice::IterMut;
 
 /// The divisor for the physics space to align with render space
 const PHYSICS_DIVISOR: f32 = 2f32;
@@ -109,7 +112,7 @@ pub trait RenderItems {
     /// Get a ref to a render item
     fn get_render_item(&mut self, index: usize) -> &mut RenderItem<Self::T>;
     /// Get a ref to a render item from its name, returning the first found
-    fn get_render_item_by_name(&mut self, name: String) -> Option<&mut RenderItem<Self::T>>;
+    fn get_render_item_by_name(&mut self, name: &str) -> Option<&mut RenderItem<Self::T>>;
     /// Add a render item to the game
     fn add_render_item(&mut self, render_item: RenderItem<Self::T>);
 }
@@ -124,7 +127,7 @@ impl<T: Default> RenderItems for Game<T> {
 
     /// Get an IterMut of the RenderItem
     fn render_items_iter_mut(&mut self) -> IterMut<RenderItem<T>> {
-        self.render_items.iter_mut()
+        self.render_items.par_iter_mut()
     }
 
     /// Get a ref to a render item
@@ -133,13 +136,8 @@ impl<T: Default> RenderItems for Game<T> {
     }
 
     /// Get a ref to a render item from its name, returning the first found
-    fn get_render_item_by_name(&mut self, name: String) -> Option<&mut RenderItem<T>> {
-        for i in 0..self.render_items.len() {
-            if self.render_items[i].name == name {
-                return Some(&mut self.render_items[i]);
-            }
-        }
-        None
+    fn get_render_item_by_name(&mut self, name: &str) -> Option<&mut RenderItem<T>> {
+        self.render_items.iter_mut().find(|item| item.name == name)
     }
 
     /// Add a render item to the game
@@ -329,7 +327,7 @@ impl<T: Default> TextItems for Game<T> {
 
     /// Get an IterMut of the TextItem
     fn text_items_iter_mut(&mut self) -> IterMut<TextItem> {
-        self.text_items.iter_mut()
+        self.text_items.par_iter_mut()
     }
 
     /// Get a ref to a text item

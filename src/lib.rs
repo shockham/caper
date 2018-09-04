@@ -116,5 +116,5 @@ pub mod utils;
 
 pub use renderer::lighting;
 pub use renderer::posteffect;
-pub use renderer::texture;
 pub use renderer::shader;
+pub use renderer::texture;

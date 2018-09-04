@@ -1,21 +1,21 @@
 /// Module for utility functions for textures
 #[macro_use]
 pub mod texture;
+/// Module for the lighting system
+pub mod lighting;
 /// Rendering post processing effects
 pub mod posteffect;
 /// Module for dealing with shaders
 pub mod shader;
-/// Module for the lighting system
-pub mod lighting;
 
 use glium::backend::Facade;
 use glium::draw_parameters::{BackfaceCullingMode, DepthClamp};
-use glium::glutin::CursorState::Hide;
 use glium::glutin::{Api, ContextBuilder, EventsLoop, GlRequest, WindowBuilder};
 use glium::index::{NoIndices, PrimitiveType};
 use glium::texture::RawImage2d;
 use glium::vertex::VertexBuffer;
 use glium::DepthTest::IfLess;
+use glium::Frame;
 use glium::{Blend, Depth, Display, DrawParameters, Surface};
 
 use glium_text;
@@ -31,6 +31,8 @@ use imgui_glium_renderer::Renderer as ImGuiRenderer;
 use gif;
 use gif::SetParameter;
 use image;
+
+use rayon::prelude::*;
 
 use std::fs::File;
 use std::fs::OpenOptions;
@@ -52,9 +54,9 @@ pub struct Renderer {
     /// The glium display used for rendering
     pub display: Display,
     /// The glium_text system used for rendering TextItem
-    text_system: TextSystem,
+    text_system: Arc<Mutex<TextSystem>>,
     /// Fefault font that the text renderer will use
-    default_font: FontTexture,
+    default_font: Arc<Mutex<FontTexture>>,
     /// Main imgui system
     imgui: ImGui,
     /// The sub renderer for imgui
@@ -158,8 +160,8 @@ impl Renderer {
 
         let renderer = Renderer {
             display,
-            text_system,
-            default_font: font,
+            text_system: Arc::new(Mutex::new(text_system)),
+            default_font: Arc::new(Mutex::new(font)),
             imgui,
             imgui_rend,
             post_effect,
@@ -175,7 +177,7 @@ impl Renderer {
 
         {
             let window = renderer.display.gl_window();
-            window.set_cursor_state(Hide).ok();
+            window.hide_cursor(true);
         }
 
         renderer
@@ -274,6 +276,24 @@ pub trait Draw {
         text_items: &mut Vec<TextItem>,
         f: F,
     );
+    /// Draws render_items
+    fn draw_render_items<T: Default>(
+        &mut self,
+        target: Arc<Mutex<Frame>>,
+        cams: &mut Vec<Camera>,
+        render_items: &mut Vec<RenderItem<T>>,
+    );
+    /// Draws the text_items
+    fn draw_text_items(&mut self, target: Arc<Mutex<Frame>>, text_items: &mut Vec<TextItem>);
+    /// Draws the ui
+    fn draw_ui<F: FnMut(&Ui), T: Default>(
+        &mut self,
+        target: Arc<Mutex<Frame>>,
+        cams: &mut Vec<Camera>,
+        render_items: &mut Vec<RenderItem<T>>,
+        text_items: &mut Vec<TextItem>,
+        f: F,
+    );
 }
 
 impl Draw for Renderer {
@@ -283,14 +303,30 @@ impl Draw for Renderer {
         cams: &mut Vec<Camera>,
         render_items: &mut Vec<RenderItem<T>>,
         text_items: &mut Vec<TextItem>,
-        mut f: F,
+        f: F,
     ) {
-        // get display dimensions
-        let (width, height) = self.display.get_framebuffer_dimensions();
+        let target = Arc::new(Mutex::new(self.display.draw()));
 
-        // get the context
-        let context = self.display.get_context().clone();
+        self.draw_render_items(Arc::clone(&target), cams, render_items);
+        self.draw_text_items(Arc::clone(&target), text_items);
+        self.draw_ui(Arc::clone(&target), cams, render_items, text_items, f);
 
+        let mut target = target.lock().unwrap();
+        match target.set_finish() {
+            Ok(_) => {
+                self.fps = self.fps_counter.tick() as f32;
+            }
+            Err(e) => println!("{:?}", e),
+        };
+    }
+
+    /// Draw render_items
+    fn draw_render_items<T: Default>(
+        &mut self,
+        target: Arc<Mutex<Frame>>,
+        cams: &mut Vec<Camera>,
+        render_items: &mut Vec<RenderItem<T>>,
+    ) {
         // draw parameters
         let params = DrawParameters {
             depth: Depth {
@@ -305,14 +341,15 @@ impl Draw for Renderer {
         };
 
         // drawing a frame
-        let mut target = self.display.draw();
+        let context = self.display.get_context().clone();
+        let (width, height) = self.display.get_framebuffer_dimensions();
         let mut render_count = 0usize;
         let mut cols = Vec::new();
         let mut depths = Vec::new();
         let mut p_mat = None;
         let mut mv_mat = None;
 
-        for cam in cams.iter_mut() {
+        cams.iter_mut().for_each(|cam| {
             // uniforms passed to the shaders
             let projection_matrix =
                 build_persp_proj_mat(60f32, width as f32 / height as f32, 0.01f32, 1000f32);
@@ -331,89 +368,93 @@ impl Draw for Renderer {
             let frustum_planes = get_frustum_planes(&combo_matrix);
 
             // render to texture/depth
+            let mut target = target.lock().unwrap();
             let (target_color, target_depth) =
-                render_to_texture(&self.post_effect, &context, &mut target, |target| {
+                render_to_texture(&self.post_effect, &context, &mut *target, |target| {
                     // clear the colour and depth buffers
                     target.clear_color_and_depth((1.0, 1.0, 1.0, 1.0), 1.0);
 
                     // drawing the render items (with more than one instance)
-                    for item in render_items
+                    render_items
                         .iter()
                         .filter(|r| r.active && !r.instance_transforms.is_empty())
-                    {
-                        // building the vertex and index buffers
-                        let vertex_buffer =
-                            VertexBuffer::new(&self.display, &item.vertices).unwrap();
+                        .for_each(|item| {
+                            // building the vertex and index buffers
+                            let vertex_buffer =
+                                VertexBuffer::new(&self.display, &item.vertices).unwrap();
 
-                        // add positions for instances
-                        let per_instance = {
-                            let data = item.instance_transforms
-                                .iter()
-                                .filter(|t| {
-                                    (!t.cull
-                                        || frustrum_test(
-                                            &t.pos,
-                                            t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
-                                            &frustum_planes,
-                                        )) && t.active
-                                })
-                                .map(|t| ShaderIn {
-                                    world_position: t.pos,
-                                    world_rotation: t.rot,
-                                    world_scale: t.scale,
-                                })
-                                .collect::<Vec<_>>();
+                            // add positions for instances
+                            let per_instance = {
+                                let data = item
+                                    .instance_transforms
+                                    .par_iter()
+                                    .filter(|t| {
+                                        (!t.cull
+                                            || frustrum_test(
+                                                &t.pos,
+                                                t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
+                                                &frustum_planes,
+                                            )) && t.active
+                                    })
+                                    .map(|t| ShaderIn {
+                                        world_position: t.pos,
+                                        world_rotation: t.rot,
+                                        world_scale: t.scale,
+                                    })
+                                    .collect::<Vec<_>>();
 
-                            // if there are no active transforms skip ri
-                            if data.is_empty() {
-                                continue;
-                            }
+                                // if there are no active transforms skip ri
+                                if data.is_empty() {
+                                    return;
+                                }
 
-                            // add instances to render_count
-                            render_count += data.len();
+                                // add instances to render_count
+                                render_count += data.len();
 
-                            VertexBuffer::dynamic(&self.display, &data).unwrap()
-                        };
+                                VertexBuffer::dynamic(&self.display, &data).unwrap()
+                            };
 
-                        let tex_name = item.material
-                            .texture_name
-                            .clone()
-                            .unwrap_or_else(|| "default".to_string());
-                        let normal_tex_name = item.material
-                            .normal_texture_name
-                            .clone()
-                            .unwrap_or_else(|| "default_normal".to_string());
+                            let tex_name = item
+                                .material
+                                .texture_name
+                                .clone()
+                                .unwrap_or_else(|| "default".to_string());
+                            let normal_tex_name = item
+                                .material
+                                .normal_texture_name
+                                .clone()
+                                .unwrap_or_else(|| "default_normal".to_string());
 
-                        let dir_lights = self.lighting.directional_tex.borrow();
+                            let dir_lights = self.lighting.directional_tex.borrow();
 
-                        let uniforms = uniform! {
-                            projection_matrix: projection_matrix,
-                            modelview_matrix: modelview_matrix,
-                            cam_pos: cam_pos,
-                            viewport: (width as f32, height as f32),
-                            time: time,
-                            tex: &self.shaders.textures[tex_name.as_str()],
-                            normal_tex: &self.shaders.textures[normal_tex_name.as_str()],
-                            dir_lights: &*dir_lights,
-                        };
+                            let uniforms = uniform! {
+                                projection_matrix: projection_matrix,
+                                modelview_matrix: modelview_matrix,
+                                cam_pos: cam_pos,
+                                viewport: (width as f32, height as f32),
+                                time: time,
+                                tex: &self.shaders.textures[tex_name.as_str()],
+                                normal_tex: &self.shaders.textures[normal_tex_name.as_str()],
+                                dir_lights: &*dir_lights,
+                            };
 
-                        target
-                            .draw(
-                                (&vertex_buffer, per_instance.per_instance().unwrap()),
-                                &NoIndices(PrimitiveType::Patches {
-                                    vertices_per_patch: 3,
-                                }),
-                                &self.shaders.shaders[item.material.shader_name.as_str()],
-                                &uniforms,
-                                &params,
-                            )
-                            .unwrap();
-                    }
+                            target
+                                .draw(
+                                    (&vertex_buffer, per_instance.per_instance().unwrap()),
+                                    &NoIndices(PrimitiveType::Patches {
+                                        vertices_per_patch: 3,
+                                    }),
+                                    &self.shaders.shaders[item.material.shader_name.as_str()],
+                                    &uniforms,
+                                    &params,
+                                )
+                                .unwrap();
+                        });
                 });
 
             cols.push(target_color);
             depths.push(target_depth);
-        }
+        });
 
         //let texs_arr = Texture2dArray::new(&self.post_effect.context, cols).unwrap();
         //let depths_arr = DepthTexture2dArray::new(&self.post_effect.context, depths).unwrap();
@@ -494,57 +535,77 @@ impl Draw for Renderer {
                 .add("depth_buf_5", &depths[0])
         };
 
-        target
-            .draw(
-                &self.post_effect.vertex_buffer,
-                &self.post_effect.index_buffer,
-                &self.shaders.post_shaders[self.post_effect.current_shader],
-                &uniforms,
-                &Default::default(),
-            )
-            .unwrap();
-
-        self.render_count = render_count;
-
-        // drawing the text items
-        for text_item in text_items.iter().filter(|r| r.active) {
-            // create the matrix for the text
-            let matrix = [
-                [0.02 * text_item.scale.0, 0.0, 0.0, 0.0],
-                [
-                    0.0,
-                    0.02 * text_item.scale.1 * (width as f32) / (height as f32),
-                    0.0,
-                    0.0,
-                ],
-                [0.0, 0.0, 0.02 * text_item.scale.2, 0.0],
-                [text_item.pos.0, text_item.pos.1, text_item.pos.2, 1.0f32],
-            ];
-
-            // create TextDisplay for item, TODO change this to not be done every frame
-            let text = TextDisplay::new(
-                &self.text_system,
-                &self.default_font,
-                text_item.text.as_str(),
-            );
-
-            // draw the text
-            let _ = glium_text::draw(
-                &text,
-                &self.text_system,
-                &mut target,
-                matrix,
-                text_item.color,
-            );
+        {
+            let mut target = target.lock().unwrap();
+            target
+                .draw(
+                    &self.post_effect.vertex_buffer,
+                    &self.post_effect.index_buffer,
+                    &self.shaders.post_shaders[self.post_effect.current_shader],
+                    &uniforms,
+                    &Default::default(),
+                )
+                .unwrap();
         }
 
+        self.render_count = render_count;
+    }
+
+    fn draw_text_items(&mut self, target: Arc<Mutex<Frame>>, text_items: &mut Vec<TextItem>) {
+        let (width, height) = self.display.get_framebuffer_dimensions();
+        let renderer = Arc::new(Mutex::new(self));
+
+        // drawing the text items
+        text_items
+            .iter()
+            .filter(|r| r.active)
+            .for_each(|text_item| {
+                // create the matrix for the text
+                let matrix = [
+                    [0.02 * text_item.scale.0, 0.0, 0.0, 0.0],
+                    [
+                        0.0,
+                        0.02 * text_item.scale.1 * (width as f32) / (height as f32),
+                        0.0,
+                        0.0,
+                    ],
+                    [0.0, 0.0, 0.02 * text_item.scale.2, 0.0],
+                    [text_item.pos.0, text_item.pos.1, text_item.pos.2, 1.0f32],
+                ];
+
+                // lock required members
+                let renderer = renderer.lock().unwrap();
+                let text_system = renderer.text_system.lock().unwrap();
+                let default_font = renderer.default_font.lock().unwrap();
+
+                // create TextDisplay for item
+                let text = TextDisplay::new(&*text_system, &*default_font, text_item.text.as_str());
+
+                // draw the text
+                let mut target = target.lock().unwrap();
+                let _ =
+                    glium_text::draw(&text, &*text_system, &mut *target, matrix, text_item.color);
+            });
+    }
+
+    fn draw_ui<F: FnMut(&Ui), T: Default>(
+        &mut self,
+        target: Arc<Mutex<Frame>>,
+        cams: &mut Vec<Camera>,
+        render_items: &mut Vec<RenderItem<T>>,
+        text_items: &mut Vec<TextItem>,
+        mut f: F,
+    ) {
+        let renderer = self;
+        let (width, height) = renderer.display.get_framebuffer_dimensions();
+
         // imgui elements
-        let ui = self.imgui.frame((width, height), (width, height), 0.1);
+        let ui = renderer.imgui.frame((width, height), (width, height), 0.1);
         f(&ui);
 
         // create the engine editor
-        if self.show_editor {
-            let fps = self.fps;
+        if renderer.show_editor {
+            let fps = renderer.fps;
             // create the editor window
             ui.window(im_str!("caper editor"))
                 .size((300.0, 200.0), ImGuiCond::FirstUseEver)
@@ -686,13 +747,7 @@ impl Draw for Renderer {
         }
 
         // render imgui items
-        self.imgui_rend.render(&mut target, ui).unwrap();
-
-        match target.finish() {
-            Ok(_) => {
-                self.fps = self.fps_counter.tick() as f32;
-            }
-            Err(e) => println!("{:?}", e),
-        };
+        let mut target = target.lock().unwrap();
+        renderer.imgui_rend.render(&mut *target, ui).unwrap();
     }
 }
