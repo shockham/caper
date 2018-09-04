@@ -18,16 +18,25 @@ pub struct Lighting {
 
 /// Struct for defining a directional light
 #[derive(Builder, Clone, Serialize, Deserialize, PartialEq)]
+#[builder(default)]
 pub struct DirectionalLight {
     /// The name of the directional light
-    #[builder(default = "\"light\".to_string()")]
+    #[builder(setter(into))]
     pub name: String,
     /// The direction the light is facing
-    #[builder(default = "(1f32, 1f32, 1f32)")]
     pub dir: Vector3,
     /// Whether the light is active
-    #[builder(default = "true")]
     pub active: bool,
+}
+
+impl Default for DirectionalLight {
+    fn default() -> Self {
+        DirectionalLight {
+            name: "light".into(),
+            dir: (1f32, 1f32, 1f32),
+            active: true,
+        }
+    }
 }
 
 impl Lighting {

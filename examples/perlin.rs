@@ -32,7 +32,7 @@ fn main() {
             .vertices(gen_perlin_mesh(pseu_cam_pos, map_size))
             .material(
                 MaterialBuilder::default()
-                    .shader_name("height".to_string())
+                    .shader_name("height")
                     .build()
                     .unwrap(),
             )
@@ -49,11 +49,11 @@ fn main() {
     game.add_render_item(create_skydome("height"));
     game.add_render_item(
         RenderItemBuilder::default()
-            .name("sphere".to_string())
+            .name("sphere")
             .vertices(gen_sphere())
             .material(
                 MaterialBuilder::default()
-                    .shader_name("line".to_string())
+                    .shader_name("line")
                     .build()
                     .unwrap(),
             )
@@ -69,7 +69,7 @@ fn main() {
 
     game.add_text_item(
         TextItemBuilder::default()
-            .text("test text".to_string())
+            .text("test text")
             .pos((-1.0f32, 0.5f32, 0f32))
             .build()
             .unwrap(),

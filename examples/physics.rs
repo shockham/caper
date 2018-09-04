@@ -32,7 +32,7 @@ fn main() {
             .vertices(gen_cube())
             .material(
                 MaterialBuilder::default()
-                    .shader_name("height".to_string())
+                    .shader_name("height")
                     .build()
                     .unwrap(),
             )
