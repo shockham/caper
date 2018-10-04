@@ -187,7 +187,7 @@ impl Renderer {
     pub fn update_imgui_input(&mut self, input: &Input) {
         self.imgui
             .set_mouse_pos(input.mouse_pos.0, input.mouse_pos.1);
-        self.imgui.set_mouse_down(&[
+        self.imgui.set_mouse_down([
             input.mouse_btns_down.contains(&MouseButton::Left),
             input.mouse_btns_down.contains(&MouseButton::Right),
             input.mouse_btns_down.contains(&MouseButton::Middle),
@@ -599,8 +599,10 @@ impl Draw for Renderer {
         let renderer = self;
         let (width, height) = renderer.display.get_framebuffer_dimensions();
 
+        let frame_size = FrameSize::new(width as f64, height as f64, 1f64);
+
         // imgui elements
-        let ui = renderer.imgui.frame((width, height), (width, height), 0.1);
+        let ui = renderer.imgui.frame(frame_size, 0.1);
         f(&ui);
 
         // create the engine editor

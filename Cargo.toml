@@ -11,13 +11,13 @@ description = "Minimalist game framework"
 
 [dependencies]
 glium = "0.22"
-glium_text_rusttype = { git = "https://github.com/shockham/glium_text", branch = "rusttype" }#"0.3.1"
+glium_text_rusttype = "0.3.2"
 time = "0.1"
 genmesh = "0.6"
 obj = { version = "0.9", features = ["genmesh"] }
 noise = "0.5"
-imgui = { git = "https://github.com/shockham/imgui-rs" }#"0.0.18"
-imgui-glium-renderer = { git = "https://github.com/shockham/imgui-rs" }#"0.0.18"
+imgui = "0.0.20"
+imgui-glium-renderer = "0.0.20"
 fps_counter = "1.0.0"
 bincode = "1.0"
 serde = "1.0"
