@@ -37,6 +37,8 @@ fn main() {
         .color_offset((1f32, 0.8f32, 1f32, 1f32))
         .greyscale(true)
         .noise(0.5f32)
+        .scanline(0.1f32)
+        .scanline_count(100)
         .build()
         .unwrap();
 

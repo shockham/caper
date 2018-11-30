@@ -96,6 +96,10 @@ pub struct PostShaderOptions {
     pub greyscale: bool,
     /// Noise
     pub noise: f32,
+    /// Scanline
+    pub scanline: f32,
+    /// Scanline count
+    pub scanline_count: i32,
 }
 
 impl Default for PostShaderOptions {
@@ -113,6 +117,8 @@ impl Default for PostShaderOptions {
             color_offset: (1f32, 1f32, 1f32, 1f32),
             greyscale: false,
             noise: 0f32,
+            scanline: 0f32,
+            scanline_count: 0i32,
         }
     }
 }

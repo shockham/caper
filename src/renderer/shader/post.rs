@@ -49,6 +49,10 @@ pub mod gl330 {
         // noise
         uniform float noise;
 
+        // scanline
+        uniform float scanline;
+        uniform int scanline_count;
+
         in vec2 v_tex_coords;
 
         out vec4 frag_output;
@@ -73,6 +77,21 @@ pub mod gl330 {
         void main() {
             vec4 color = texture(tex, v_tex_coords);
             float depth = texture(depth_buf, v_tex_coords).r;
+
+            // scanline
+            if (scanline > 0.0) {
+                color = texture(tex,
+                    vec2(
+                        v_tex_coords.x
+                            + rand(
+                                vec2(ceil(v_tex_coords.y * scanline_count) / scanline_count, 0.5)
+                            )
+                            * scanline
+                            * sin(tan(time)),
+                        v_tex_coords.y
+                    )
+                );
+            }
 
             // pseudo chromatic aberration
             if (chrom_amt > 0.0) {

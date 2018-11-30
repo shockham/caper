@@ -483,6 +483,8 @@ impl Draw for Renderer {
             color_offset: self.post_effect.post_shader_options.color_offset,
             greyscale: self.post_effect.post_shader_options.greyscale,
             noise: self.post_effect.post_shader_options.noise,
+            scanline: self.post_effect.post_shader_options.scanline,
+            scanline_count: self.post_effect.post_shader_options.scanline_count,
         };
 
         let uniforms = if cols.len() > 1 {
