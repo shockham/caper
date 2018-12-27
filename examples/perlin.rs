@@ -170,6 +170,11 @@ fn main() {
                     g.renderer.save_add_to_gif("test.gif");
                 }
 
+                // screenshot
+                if g.input.keys_pressed.contains(&Key::P) {
+                    g.renderer.save_screenshot();
+                }
+
                 if g.input.keys_down.contains(&Key::LShift) {
                     if g.input.keys_down.contains(&Key::L) {
                         debug_mode = true;
