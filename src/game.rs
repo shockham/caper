@@ -4,13 +4,10 @@ use input::Input;
 use renderer::{Draw, Renderer};
 use types::{Camera, PhysicsType, RenderItem, TextItem};
 
-use nalgebra::zero;
-use nalgebra::Isometry3;
 use nalgebra::Translation3;
 use nalgebra::Vector3 as nVector3;
 use ncollide::shape::{Cuboid, ShapeHandle};
-use nphysics3d::object::{BodyHandle, BodyStatus, Material};
-use nphysics3d::volumetric::Volumetric;
+use nphysics3d::object::{BodyHandle, BodyStatus, RigidBodyDesc, ColliderDesc};
 use nphysics3d::world::World;
 
 use glium::glutin::EventsLoop;
@@ -23,8 +20,6 @@ use rayon::slice::IterMut;
 
 /// The divisor for the physics space to align with render space
 const PHYSICS_DIVISOR: f32 = 2f32;
-/// collider margin
-const COLLIDER_MARGIN: f32 = 0f32;
 
 /// Enum for update to return status
 pub enum UpdateStatus {
@@ -164,8 +159,6 @@ pub trait Physics {
 impl<T: Default> Physics for Game<T> {
     /// Initalise physics depending on PhysicsType
     fn add_physics(&mut self, i: usize) {
-        // default physics mat
-        let material = Material::default();
         // add the rigid body if needed
         match self.render_items[i].physics_type {
             PhysicsType::Static => {
@@ -177,36 +170,28 @@ impl<T: Default> Physics for Game<T> {
                         ri_trans.scale.1,
                         ri_trans.scale.2,
                     )));
-                    let inertia = geom.inertia(1.0);
-                    let center_of_mass = geom.center_of_mass();
-                    let pos = Isometry3::new(
-                        nVector3::new(
-                            ri_trans.pos.0 * PHYSICS_DIVISOR,
-                            ri_trans.pos.1 * PHYSICS_DIVISOR,
-                            ri_trans.pos.2 * PHYSICS_DIVISOR,
-                        ),
-                        zero(),
+                    let mut collider_desc = ColliderDesc::new(geom)
+                        .density(1.0);
+
+                    let mut rb_desc = RigidBodyDesc::new()
+                        .collider(&collider_desc);
+
+                    let pos = nVector3::new(
+                        ri_trans.pos.0 * PHYSICS_DIVISOR,
+                        ri_trans.pos.1 * PHYSICS_DIVISOR,
+                        ri_trans.pos.2 * PHYSICS_DIVISOR,
                     );
 
-                    let handle = self.physics.add_rigid_body(pos, inertia, center_of_mass);
+                    let rb = rb_desc
+                        .set_translation(pos)
+                        .set_status(BodyStatus::Static)
+                        .build(&mut self.physics);
+
                     let physics_handle = PhysicsHandle {
                         render_item: (i, j),
-                        body_handle: handle,
+                        body_handle: rb.handle(),
                     };
                     self.physics_items.push(physics_handle);
-
-                    {
-                        let mut rb = self.physics.rigid_body_mut(handle).unwrap();
-                        rb.set_status(BodyStatus::Static);
-                    }
-
-                    self.physics.add_collider(
-                        COLLIDER_MARGIN,
-                        geom.clone(),
-                        handle,
-                        Isometry3::identity(),
-                        material.clone(),
-                    );
                 }
             }
             PhysicsType::Dynamic => {
@@ -218,33 +203,27 @@ impl<T: Default> Physics for Game<T> {
                         ri_trans.scale.1,
                         ri_trans.scale.2,
                     )));
-                    let inertia = geom.inertia(1.0);
-                    let center_of_mass = geom.center_of_mass();
-                    let pos = Isometry3::new(
-                        nVector3::new(
-                            ri_trans.pos.0 * PHYSICS_DIVISOR,
-                            ri_trans.pos.1 * PHYSICS_DIVISOR,
-                            ri_trans.pos.2 * PHYSICS_DIVISOR,
-                        ),
-                        zero(),
+                    let mut collider_desc = ColliderDesc::new(geom)
+                        .density(1.0);
+
+                    let mut rb_desc = RigidBodyDesc::new()
+                        .collider(&collider_desc);
+
+                    let pos = nVector3::new(
+                        ri_trans.pos.0 * PHYSICS_DIVISOR,
+                        ri_trans.pos.1 * PHYSICS_DIVISOR,
+                        ri_trans.pos.2 * PHYSICS_DIVISOR,
                     );
 
-                    let handle = self.physics.add_rigid_body(pos, inertia, center_of_mass);
+                    let rb = rb_desc
+                        .set_translation(pos)
+                        .build(&mut self.physics);
+
                     let physics_handle = PhysicsHandle {
                         render_item: (i, j),
-                        body_handle: handle,
+                        body_handle: rb.handle(),
                     };
                     self.physics_items.push(physics_handle);
-
-                    let _ = self.physics.rigid_body_mut(handle).unwrap();
-
-                    self.physics.add_collider(
-                        COLLIDER_MARGIN,
-                        geom.clone(),
-                        handle,
-                        Isometry3::identity(),
-                        material.clone(),
-                    );
                 }
             }
             PhysicsType::None => {}
@@ -265,11 +244,14 @@ impl<T: Default> Physics for Game<T> {
                     // update the rb transform pos
                     let mut rb = self.physics.rigid_body_mut(ph.body_handle).unwrap();
                     let ri_pos = self.render_items[ri_i].instance_transforms[ri_it_i].pos;
-                    rb.position().translation = Translation3::new(
+
+                    let mut rb_pos = rb.position().clone();
+                    rb_pos.translation = Translation3::new(
                         ri_pos.0 * PHYSICS_DIVISOR,
                         ri_pos.1 * PHYSICS_DIVISOR,
                         ri_pos.2 * PHYSICS_DIVISOR,
                     );
+                    rb.set_position(rb_pos);
                 }
             }
         }
