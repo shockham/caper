@@ -170,7 +170,7 @@ impl<T: Default> Physics for Game<T> {
                         ri_trans.scale.1,
                         ri_trans.scale.2,
                     )));
-                    let mut collider_desc = ColliderDesc::new(geom)
+                    let collider_desc = ColliderDesc::new(geom)
                         .density(1.0);
 
                     let mut rb_desc = RigidBodyDesc::new()
@@ -203,7 +203,7 @@ impl<T: Default> Physics for Game<T> {
                         ri_trans.scale.1,
                         ri_trans.scale.2,
                     )));
-                    let mut collider_desc = ColliderDesc::new(geom)
+                    let collider_desc = ColliderDesc::new(geom)
                         .density(1.0);
 
                     let mut rb_desc = RigidBodyDesc::new()
@@ -242,7 +242,7 @@ impl<T: Default> Physics for Game<T> {
                     && self.render_items[ri_i].instance_transforms.len() > ri_it_i
                 {
                     // update the rb transform pos
-                    let mut rb = self.physics.rigid_body_mut(ph.body_handle).unwrap();
+                    let rb = self.physics.rigid_body_mut(ph.body_handle).unwrap();
                     let ri_pos = self.render_items[ri_i].instance_transforms[ri_it_i].pos;
 
                     let mut rb_pos = rb.position().clone();

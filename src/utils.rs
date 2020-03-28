@@ -335,10 +335,8 @@ pub fn get_frustum_planes(matrix: &Matrix4) -> Vec<(f32, f32, f32, f32)> {
 pub fn demo(frag_shader: &'static str) {
     use game::*;
     use imgui::Ui;
-    use input::Key;
     use shader;
     use types::DefaultTag;
-    use utils::handle_fp_inputs;
 
     // crate an instance of the game struct
     let mut game = Game::<DefaultTag>::new();
