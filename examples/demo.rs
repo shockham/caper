@@ -6,6 +6,8 @@ fn main() {
     // Shader re-purposed from https://www.shadertoy.com/view/llt3R4
     demo(
         "
+#version 330
+
 const int MAX_MARCHING_STEPS = 255;
 const float MIN_DIST = 0.0;
 const float MAX_DIST = 100.0;
@@ -16,7 +18,7 @@ uniform vec3 cam_pos;
 
 in vec2 v_tex_coords;
 
-varying out vec4 frag_output;
+out vec4 frag_output;
 
 float sphereSDF(vec3 p, float s) {
     return length(p) - s;
@@ -31,7 +33,7 @@ float shortestDistanceToSurface(vec3 eye, vec3 marchingDirection, float start, f
     for (int i = 0; i < MAX_MARCHING_STEPS; i++) {
         float dist = sceneSDF(eye + depth * marchingDirection);
         if (dist < EPSILON) {
-			return depth;
+            return depth;
         }
         depth += dist;
         if (depth >= end) {
@@ -54,7 +56,7 @@ void main() {
     if (dist > MAX_DIST - EPSILON) {
         // Didn't hit anything
         frag_output = vec4(0.0, 0.0, 0.0, 0.0);
-		return;
+        return;
     }
 
     frag_output = vec4(1.0, 0.0, 0.0, 1.0);

@@ -130,7 +130,7 @@ impl Shaders {
                                          }) {
             Ok(s) => s,
             Err(e) => {
-                println!("{}", e.source().unwrap());
+                println!("{}", e.source().unwrap_or(&e));
                 return Err("Could not create shader");
             }
         };
@@ -155,7 +155,7 @@ impl Shaders {
                                               }) {
             Ok(s) => s,
             Err(e) => {
-                println!("{}", e.source().unwrap());
+                println!("{}", e.source().unwrap_or(&e));
                 return Err("Could not create post shader");
             }
         };

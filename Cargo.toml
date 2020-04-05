@@ -16,7 +16,7 @@ glium_text_rusttype = { git = "https://github.com/shockham/glium_text", branch =
 time = "0.1"
 genmesh = "0.6"
 obj = { version = "0.9", features = ["genmesh"] }
-noise = "0.5"
+noise = "0.6"
 imgui = "0.0.22"
 imgui-glium-renderer = "0.0.22"
 fps_counter = "1.0.0"
