@@ -319,7 +319,8 @@ pub fn set_perlin_seed(seed: u32) {
 pub fn get_pos_perlin(p: (f32, f32)) -> f32 {
     PERLIN
         .get([f64::from(p.0) / 15f64, f64::from(p.1) / 15f64])
-        .abs() as f32 * 6f32
+        .abs() as f32
+        * 6f32
 }
 
 /// Generates a perlin mesh from pseu_pos with each side of vert length map_size

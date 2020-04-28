@@ -141,7 +141,8 @@ where
         context,
         (target_dimensions.0 as f32 * system.downscale_factor) as u32,
         (target_dimensions.1 as f32 * system.downscale_factor) as u32,
-    ).unwrap();
+    )
+    .unwrap();
 
     let target_depth = DepthTexture2d::empty_with_format(
         context,
@@ -149,7 +150,8 @@ where
         MipmapsOption::NoMipmap,
         (target_dimensions.0 as f32 * system.downscale_factor) as u32,
         (target_dimensions.1 as f32 * system.downscale_factor) as u32,
-    ).unwrap();
+    )
+    .unwrap();
 
     // first pass draw the scene into a buffer
     draw(&mut SimpleFrameBuffer::with_depth_buffer(context, &target_color, &target_depth).unwrap());

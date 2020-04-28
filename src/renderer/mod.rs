@@ -107,7 +107,8 @@ impl Renderer {
             &include_bytes!("./resources/font.ttf")[..],
             100,
             glium_text::FontTexture::ascii_character_list(),
-        ).unwrap();
+        )
+        .unwrap();
 
         let mut imgui = ImGui::init();
 
@@ -394,7 +395,8 @@ impl Draw for Renderer {
                                                 &t.pos,
                                                 t.scale.0.max(t.scale.1.max(t.scale.2)) * 2.5f32,
                                                 &frustum_planes,
-                                            )) && t.active
+                                            ))
+                                            && t.active
                                     })
                                     .map(|t| ShaderIn {
                                         world_position: t.pos,

@@ -52,7 +52,9 @@ fn main() {
                 for t in g.get_render_item(0).instance_transforms.iter_mut() {
                     t.pos = (
                         t.pos.0,
-                        ((t.pos.0 / 5f32).sin() * (t.pos.2 / 5f32).cos() * update_time.sin() as f32)
+                        ((t.pos.0 / 5f32).sin()
+                            * (t.pos.2 / 5f32).cos()
+                            * update_time.sin() as f32)
                             * 2f32,
                         t.pos.2,
                     );

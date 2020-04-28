@@ -15,14 +15,12 @@ fn main() {
     game.add_render_item(
         RenderItemBuilder::default()
             .vertices(gen_cube())
-            .instance_transforms(vec![
-                TransformBuilder::default()
-                    .pos((0f32, -5.0, -5.0))
-                    .rot((0f32, 0f32, 0f32, 1f32))
-                    .scale((20f32, 1f32, 20f32))
-                    .build()
-                    .unwrap(),
-            ])
+            .instance_transforms(vec![TransformBuilder::default()
+                .pos((0f32, -5.0, -5.0))
+                .rot((0f32, 0f32, 0f32, 1f32))
+                .scale((20f32, 1f32, 20f32))
+                .build()
+                .unwrap()])
             .physics_type(PhysicsType::Static)
             .build()
             .unwrap(),

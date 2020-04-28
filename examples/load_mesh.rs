@@ -17,12 +17,10 @@ fn main() {
     game.add_render_item(
         RenderItemBuilder::default()
             .vertices(load_wavefront(include_bytes!("assets/sphere.obj")))
-            .instance_transforms(vec![
-                TransformBuilder::default()
-                    .pos((-0.5, 0.0, -5.0))
-                    .build()
-                    .unwrap(),
-            ])
+            .instance_transforms(vec![TransformBuilder::default()
+                .pos((-0.5, 0.0, -5.0))
+                .build()
+                .unwrap()])
             .build()
             .unwrap(),
     );

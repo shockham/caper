@@ -43,7 +43,7 @@ impl Default for Transform {
             scale: (1f32, 1f32, 1f32),
             active: true,
             cull: true,
-         }
+        }
     }
 }
 

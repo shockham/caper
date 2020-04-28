@@ -15,36 +15,30 @@ fn main() {
     game.add_render_item(
         RenderItemBuilder::default()
             .vertices(gen_sphere())
-            .instance_transforms(vec![
-                TransformBuilder::default()
-                    .pos((0.0, 0.0, -5.0))
-                    .build()
-                    .unwrap(),
-            ])
+            .instance_transforms(vec![TransformBuilder::default()
+                .pos((0.0, 0.0, -5.0))
+                .build()
+                .unwrap()])
             .build()
             .unwrap(),
     );
     game.add_render_item(
         RenderItemBuilder::default()
             .vertices(gen_sphere_segments(10f32, 5f32))
-            .instance_transforms(vec![
-                TransformBuilder::default()
-                    .pos((-5.0, 0.0, -5.0))
-                    .build()
-                    .unwrap(),
-            ])
+            .instance_transforms(vec![TransformBuilder::default()
+                .pos((-5.0, 0.0, -5.0))
+                .build()
+                .unwrap()])
             .build()
             .unwrap(),
     );
     game.add_render_item(
         RenderItemBuilder::default()
             .vertices(gen_sphere_segments(5f32, 10f32))
-            .instance_transforms(vec![
-                TransformBuilder::default()
-                    .pos((5.0, 0.0, -5.0))
-                    .build()
-                    .unwrap(),
-            ])
+            .instance_transforms(vec![TransformBuilder::default()
+                .pos((5.0, 0.0, -5.0))
+                .build()
+                .unwrap()])
             .build()
             .unwrap(),
     );
