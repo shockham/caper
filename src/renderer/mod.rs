@@ -111,6 +111,12 @@ impl Renderer {
         .unwrap();
 
         let mut imgui = imgui::Context::create();
+        {
+            // set the framebuffer size for imgui
+            let (width, height) = display.get_framebuffer_dimensions();
+            let imgui_io = imgui.io_mut();
+            imgui_io.display_size = [width as f32, height as f32];
+        }
 
         {
             // Set style for caper editor windows
@@ -602,9 +608,6 @@ impl Draw for Renderer {
         mut f: F,
     ) {
         let renderer = self;
-        let (width, height) = renderer.display.get_framebuffer_dimensions();
-
-        //let frame_size = FrameSize::new(width as f64, height as f64, 1f64);
 
         // imgui elements
         let ui = renderer.imgui.frame();
