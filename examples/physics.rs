@@ -87,11 +87,11 @@ fn main() {
         // updating the game & ui rendering
         let status = game.update(
             |ui: &Ui| {
-                ui.window(im_str!("Editor"))
-                    .size((500.0, 200.0), ImGuiCond::FirstUseEver)
-                    .position((0.0, 0.0), ImGuiCond::FirstUseEver)
+                Window::new(im_str!("Editor"))
+                    .size([500f32, 200f32], Condition::FirstUseEver)
+                    .position([0f32, 0f32], Condition::FirstUseEver)
                     .movable(false)
-                    .build(|| {
+                    .build(&ui, || {
                         ui.text(im_str!(
                             "{:?}",
                             debug_render_item.instance_transforms[0].pos

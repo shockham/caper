@@ -81,8 +81,8 @@ fn main() {
             let gl_window = game.renderer.display.gl_window();
             let window = gl_window.window();
 
-            let (width, height): (u32, u32) = window.get_inner_size().unwrap().into();
-            let hidpi = window.get_hidpi_factor();
+            let (width, height): (u32, u32) = window.inner_size().into();
+            let hidpi = window.scale_factor();
 
             (width, height, hidpi)
         };
@@ -92,10 +92,10 @@ fn main() {
         let status = game.update(
             |ui: &Ui| {
                 if debug_debug_mode {
-                    ui.window(im_str!("debug"))
-                        .size((300.0, 200.0), ImGuiCond::FirstUseEver)
-                        .position((0.0, 0.0), ImGuiCond::FirstUseEver)
-                        .build(|| {
+                    Window::new(im_str!("debug"))
+                        .size([300f32, 200f32], Condition::FirstUseEver)
+                        .position([0f32, 0f32], Condition::FirstUseEver)
+                        .build(&ui, || {
                             ui.text(im_str!("map_size: {}", map_size));
                             ui.text(im_str!("fixed_val: {}", fixed_val));
                             ui.separator();

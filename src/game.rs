@@ -10,7 +10,7 @@ use ncollide::shape::{Cuboid, ShapeHandle};
 use nphysics3d::object::{BodyHandle, BodyStatus, ColliderDesc, RigidBodyDesc};
 use nphysics3d::world::World;
 
-use glium::glutin::EventsLoop;
+use glium::glutin::event_loop::EventLoop;
 
 //use std::slice::IterMut;
 use std::time::Instant;
@@ -70,12 +70,14 @@ impl<T: Default> Game<T> {
             euler_rot: (0.0f32, 0.0, 0.0),
         };
 
-        let events_loop = EventsLoop::new();
+        let events_loop = EventLoop::new();
 
         let renderer = Renderer::new("caper window".to_string(), &events_loop);
 
         Game {
-            input: Input::from_existing(events_loop),
+            // TODO: Update to the new winit event polling
+            //input: Input::from_existing(events_loop),
+            input: Input::new(),
             renderer,
             physics,
             audio: Audio::new(),
@@ -376,10 +378,11 @@ impl<T: Default> Update for Game<T> {
     /// Default Game implementation to Update inputs
     fn update_inputs(&mut self) {
         {
+            // TODO: Update to accomodate the new glutin event polling
             // updating and handling the inputs
-            let gl_window = self.renderer.display.gl_window();
-            let window = gl_window.window();
-            self.input.update_inputs(window);
+            //let gl_window = self.renderer.display.gl_window();
+            //let window = gl_window.window();
+            //self.input.update_inputs(window);
         }
         {
             // update the inputs for imgui

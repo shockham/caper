@@ -10,15 +10,16 @@ documentation = "https://docs.rs/caper/*/caper/"
 description = "Minimalist game framework"
 
 [dependencies]
-glium = "0.23"
+glium = "0.26"
 # glium_text_rusttype = "0.3.2"
-glium_text_rusttype = { git = "https://github.com/shockham/glium_text", branch = "rusttype" }
+glium_text_rusttype = { git = "https://github.com/shockham/glium_text", branch = "update/rusttype" }
+imgui = "0.3"
+imgui-glium-renderer = "0.3"
+
 time = "0.2"
 genmesh = "0.6"
 obj = { version = "0.9", features = ["genmesh"] }
 noise = "0.6"
-imgui = "0.0.22"
-imgui-glium-renderer = "0.0.22"
 fps_counter = "1.0.0"
 bincode = "1.0"
 serde = "1.0"
