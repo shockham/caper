@@ -22,12 +22,10 @@ fn main() {
                     .build()
                     .unwrap(),
             )
-            .instance_transforms(vec![
-                TransformBuilder::default()
-                    .pos((-0.5, 0.0, -5.0))
-                    .build()
-                    .unwrap(),
-            ])
+            .instance_transforms(vec![TransformBuilder::default()
+                .pos((-0.5, 0.0, -5.0))
+                .build()
+                .unwrap()])
             .build()
             .unwrap(),
     );

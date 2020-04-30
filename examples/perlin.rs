@@ -36,13 +36,11 @@ fn main() {
                     .build()
                     .unwrap(),
             )
-            .instance_transforms(vec![
-                TransformBuilder::default()
-                    .pos((fixed_val, 0.0, fixed_val))
-                    .cull(false)
-                    .build()
-                    .unwrap(),
-            ])
+            .instance_transforms(vec![TransformBuilder::default()
+                .pos((fixed_val, 0.0, fixed_val))
+                .cull(false)
+                .build()
+                .unwrap()])
             .build()
             .unwrap(),
     );
@@ -57,12 +55,10 @@ fn main() {
                     .build()
                     .unwrap(),
             )
-            .instance_transforms(vec![
-                TransformBuilder::default()
-                    .pos((sphere_pos.0, 3.0, sphere_pos.1))
-                    .build()
-                    .unwrap(),
-            ])
+            .instance_transforms(vec![TransformBuilder::default()
+                .pos((sphere_pos.0, 3.0, sphere_pos.1))
+                .build()
+                .unwrap()])
             .build()
             .unwrap(),
     );
@@ -85,7 +81,7 @@ fn main() {
             let gl_window = game.renderer.display.gl_window();
             let window = gl_window.window();
 
-            let (width, height):(u32, u32) = window.get_inner_size().unwrap().into();
+            let (width, height): (u32, u32) = window.get_inner_size().unwrap().into();
             let hidpi = window.get_hidpi_factor();
 
             (width, height, hidpi)

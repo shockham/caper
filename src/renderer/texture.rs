@@ -8,7 +8,7 @@ macro_rules! load_texture (
         use $crate::image;
 
         let image = image::load(Cursor::new(&include_bytes!($file)[..]),
-                                image::PNG).unwrap().to_rgba();
+                                image::ImageFormat::Png).unwrap().to_rgba();
         let image_dimensions = image.dimensions();
         let image = RawImage2d::from_raw_rgba_reversed(image.into_raw().as_slice(),
                                                        image_dimensions);

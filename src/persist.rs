@@ -25,7 +25,8 @@ pub fn save<T: Serialize>(to_save: &T, key: &'static str) {
         f.write_all(encoded.as_slice()).unwrap();
 
         let _ = f.flush();
-    }).join();
+    })
+    .join();
 }
 
 /// Load a decodable type from persistence using the key

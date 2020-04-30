@@ -16,12 +16,10 @@ fn main() {
     game.add_render_item(
         RenderItemBuilder::default()
             .vertices(gen_cube())
-            .instance_transforms(vec![
-                TransformBuilder::default()
-                    .pos((-0.5, 0.0, -5.0))
-                    .build()
-                    .unwrap(),
-            ])
+            .instance_transforms(vec![TransformBuilder::default()
+                .pos((-0.5, 0.0, -5.0))
+                .build()
+                .unwrap()])
             .build()
             .unwrap(),
     );

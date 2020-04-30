@@ -7,7 +7,7 @@ use types::{Camera, PhysicsType, RenderItem, TextItem};
 use nalgebra::Translation3;
 use nalgebra::Vector3 as nVector3;
 use ncollide::shape::{Cuboid, ShapeHandle};
-use nphysics3d::object::{BodyHandle, BodyStatus, RigidBodyDesc, ColliderDesc};
+use nphysics3d::object::{BodyHandle, BodyStatus, ColliderDesc, RigidBodyDesc};
 use nphysics3d::world::World;
 
 use glium::glutin::EventsLoop;
@@ -170,11 +170,9 @@ impl<T: Default> Physics for Game<T> {
                         ri_trans.scale.1,
                         ri_trans.scale.2,
                     )));
-                    let collider_desc = ColliderDesc::new(geom)
-                        .density(1.0);
+                    let collider_desc = ColliderDesc::new(geom).density(1.0);
 
-                    let mut rb_desc = RigidBodyDesc::new()
-                        .collider(&collider_desc);
+                    let mut rb_desc = RigidBodyDesc::new().collider(&collider_desc);
 
                     let pos = nVector3::new(
                         ri_trans.pos.0 * PHYSICS_DIVISOR,
@@ -203,11 +201,9 @@ impl<T: Default> Physics for Game<T> {
                         ri_trans.scale.1,
                         ri_trans.scale.2,
                     )));
-                    let collider_desc = ColliderDesc::new(geom)
-                        .density(1.0);
+                    let collider_desc = ColliderDesc::new(geom).density(1.0);
 
-                    let mut rb_desc = RigidBodyDesc::new()
-                        .collider(&collider_desc);
+                    let mut rb_desc = RigidBodyDesc::new().collider(&collider_desc);
 
                     let pos = nVector3::new(
                         ri_trans.pos.0 * PHYSICS_DIVISOR,
@@ -215,9 +211,7 @@ impl<T: Default> Physics for Game<T> {
                         ri_trans.pos.2 * PHYSICS_DIVISOR,
                     );
 
-                    let rb = rb_desc
-                        .set_translation(pos)
-                        .build(&mut self.physics);
+                    let rb = rb_desc.set_translation(pos).build(&mut self.physics);
 
                     let physics_handle = PhysicsHandle {
                         render_item: (i, j),

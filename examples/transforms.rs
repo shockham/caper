@@ -86,12 +86,10 @@ fn main() {
                     .build()
                     .unwrap(),
             )
-            .instance_transforms(vec![
-                TransformBuilder::default()
-                    .pos((0.0, 1.0, 0.0))
-                    .build()
-                    .unwrap(),
-            ])
+            .instance_transforms(vec![TransformBuilder::default()
+                .pos((0.0, 1.0, 0.0))
+                .build()
+                .unwrap()])
             .build()
             .unwrap(),
     );
@@ -104,24 +102,20 @@ fn main() {
                     .build()
                     .unwrap(),
             )
-            .instance_transforms(vec![
-                TransformBuilder::default()
-                    .pos((0.0, 3.0, 0.0))
-                    .build()
-                    .unwrap(),
-            ])
+            .instance_transforms(vec![TransformBuilder::default()
+                .pos((0.0, 3.0, 0.0))
+                .build()
+                .unwrap()])
             .build()
             .unwrap(),
     );
     game.add_render_item(
         RenderItemBuilder::default()
             .vertices(gen_cube())
-            .instance_transforms(vec![
-                TransformBuilder::default()
-                    .pos((0.0, 8.0, 0.0))
-                    .build()
-                    .unwrap(),
-            ])
+            .instance_transforms(vec![TransformBuilder::default()
+                .pos((0.0, 8.0, 0.0))
+                .build()
+                .unwrap()])
             .build()
             .unwrap(),
     );

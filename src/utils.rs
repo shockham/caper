@@ -33,20 +33,22 @@ pub fn load_wavefront(data: &[u8]) -> Vec<Vertex> {
                 x: v1,
                 y: v2,
                 z: v3,
-            }) => for v in &[v1, v2, v3] {
-                let position = data.position[v.0];
-                let texture = v.1.map(|index| data.texture[index]);
-                let normal = v.2.map(|index| data.normal[index]);
+            }) => {
+                for v in &[v1, v2, v3] {
+                    let position = data.position[v.0];
+                    let texture = v.1.map(|index| data.texture[index]);
+                    let normal = v.2.map(|index| data.normal[index]);
 
-                let texture = texture.unwrap_or([0.0, 0.0]);
-                let normal = normal.unwrap_or([0.0, 0.0, 0.0]);
+                    let texture = texture.unwrap_or([0.0, 0.0]);
+                    let normal = normal.unwrap_or([0.0, 0.0, 0.0]);
 
-                vertex_data.push(Vertex {
-                    position,
-                    normal,
-                    texture,
-                })
-            },
+                    vertex_data.push(Vertex {
+                        position,
+                        normal,
+                        texture,
+                    })
+                }
+            }
             _ => unimplemented!(),
         }
     }
@@ -67,12 +69,10 @@ pub fn create_skydome<T: Clone + Default>(shader_name: &'static str) -> RenderIt
                 .build()
                 .unwrap(),
         )
-        .instance_transforms(vec![
-            TransformBuilder::default()
-                .scale((300f32, 300f32, 300f32))
-                .build()
-                .unwrap(),
-        ])
+        .instance_transforms(vec![TransformBuilder::default()
+            .scale((300f32, 300f32, 300f32))
+            .build()
+            .unwrap()])
         .build()
         .unwrap()
 }
