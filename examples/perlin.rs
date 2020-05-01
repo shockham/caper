@@ -1,6 +1,5 @@
 extern crate caper;
 
-#[macro_use]
 extern crate imgui;
 
 use caper::game::*;
@@ -13,7 +12,7 @@ use caper::utils::create_skydome;
 use imgui::*;
 
 fn main() {
-    let mut game = Game::<DefaultTag>::new();
+    let (mut game, event_loop) = Game::<DefaultTag>::new();
 
     let map_size = 100f32;
     let fixed_val = -(map_size / 2f32);
@@ -73,7 +72,7 @@ fn main() {
 
     game.cams[0].pos.1 =
         2.5f32 + get_pos_perlin(((pseu_cam_pos.0 - fixed_val), (pseu_cam_pos.1 - fixed_val)));
-    loop {
+    event_loop.run(move |event, _, _control_flow| {
         let fps = game.renderer.fps;
         let mouse_pos = game.input.mouse_pos;
         let mouse_delta = game.input.mouse_delta;
@@ -89,7 +88,7 @@ fn main() {
         let debug_pseu_cam_pos = pseu_cam_pos;
         let debug_debug_mode = debug_mode;
         // run the engine update
-        let status = game.update(
+        game.update(
             |ui: &Ui| {
                 if debug_debug_mode {
                     Window::new(im_str!("debug"))
@@ -189,10 +188,7 @@ fn main() {
 
                 UpdateStatus::Continue
             },
+            event,
         );
-
-        if let UpdateStatus::Finish = status {
-            break;
-        }
-    }
+    });
 }

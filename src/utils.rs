@@ -339,7 +339,7 @@ pub fn demo(frag_shader: &'static str) {
     use types::DefaultTag;
 
     // crate an instance of the game struct
-    let mut game = Game::<DefaultTag>::new();
+    let (mut game, event_loop) = Game::<DefaultTag>::new();
 
     game.renderer
         .shaders
@@ -352,9 +352,9 @@ pub fn demo(frag_shader: &'static str) {
         .unwrap();
     game.renderer.post_effect.current_shader = "demo";
 
-    loop {
-        // run the engine update
-        let status = game.update(
+    // run the engine update
+    event_loop.run(move |event, _, control_flow| {
+        game.update(
             |_: &Ui| {},
             |g: &mut Game<DefaultTag>| -> UpdateStatus {
                 // update the first person inputs
@@ -367,10 +367,7 @@ pub fn demo(frag_shader: &'static str) {
 
                 UpdateStatus::Continue
             },
+            event,
         );
-
-        if let UpdateStatus::Finish = status {
-            break;
-        }
-    }
+    });
 }

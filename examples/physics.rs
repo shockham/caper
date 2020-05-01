@@ -1,5 +1,4 @@
 extern crate caper;
-#[macro_use]
 extern crate imgui;
 
 use caper::game::*;
@@ -10,7 +9,8 @@ use caper::types::{DefaultTag, MaterialBuilder, PhysicsType, RenderItemBuilder, 
 use imgui::*;
 
 fn main() {
-    let mut game = Game::<DefaultTag>::new();
+    let (mut game, event_loop) = Game::<DefaultTag>::new();
+
     // define some items to be rendered
     game.add_render_item(
         RenderItemBuilder::default()
@@ -81,11 +81,11 @@ fn main() {
             .unwrap(),
     );
 
-    loop {
+    event_loop.run(move |event, _, _control_flow| {
         // clone of the RenderItem for access in the ui rendering
         let debug_render_item = game.get_render_item(1).clone();
         // updating the game & ui rendering
-        let status = game.update(
+        game.update(
             |ui: &Ui| {
                 Window::new(im_str!("Editor"))
                     .size([500f32, 200f32], Condition::FirstUseEver)
@@ -137,10 +137,7 @@ fn main() {
 
                 UpdateStatus::Continue
             },
+            event,
         );
-
-        if let UpdateStatus::Finish = status {
-            break;
-        }
-    }
+    });
 }

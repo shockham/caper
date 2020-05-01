@@ -10,7 +10,11 @@ pub mod shader;
 
 use glium::backend::Facade;
 use glium::draw_parameters::{BackfaceCullingMode, DepthClamp};
-use glium::glutin::{Api, ContextBuilder, event_loop::EventLoop, GlRequest, window::{WindowBuilder, Fullscreen}};
+use glium::glutin::{
+    event_loop::EventLoop,
+    window::{Fullscreen, WindowBuilder},
+    Api, ContextBuilder, GlRequest,
+};
 use glium::index::{NoIndices, PrimitiveType};
 use glium::texture::RawImage2d;
 use glium::vertex::VertexBuffer;
@@ -90,15 +94,15 @@ struct GifInfo {
 
 impl Renderer {
     /// Creates new Renderer instance
-    pub fn new(title: String, events_loop: &EventLoop<()>) -> Renderer {
+    pub fn new(title: String, event_loop: &EventLoop<()>) -> Renderer {
         let window_builder = WindowBuilder::new()
             .with_title(title)
-            .with_fullscreen(Some(Fullscreen::Borderless(events_loop.primary_monitor())));
+            .with_fullscreen(Some(Fullscreen::Borderless(event_loop.primary_monitor())));
         let ctx_builder = ContextBuilder::new()
             .with_depth_buffer(24)
             .with_vsync(true)
             .with_gl(GlRequest::Specific(Api::OpenGl, (4, 0)));
-        let display = Display::new(window_builder, ctx_builder, &events_loop).unwrap();
+        let display = Display::new(window_builder, ctx_builder, &event_loop).unwrap();
 
         // create a text system instance and font
         let text_system = TextSystem::new(&display);

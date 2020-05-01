@@ -10,6 +10,7 @@ use ncollide::shape::{Cuboid, ShapeHandle};
 use nphysics3d::object::{BodyHandle, BodyStatus, ColliderDesc, RigidBodyDesc};
 use nphysics3d::world::World;
 
+use glium::glutin::event::Event;
 use glium::glutin::event_loop::EventLoop;
 
 //use std::slice::IterMut;
@@ -59,7 +60,7 @@ pub struct Game<T: Default> {
 
 impl<T: Default> Game<T> {
     /// Creates a new instance of a game
-    pub fn new() -> Game<T> {
+    pub fn new() -> (Game<T>, EventLoop<()>) {
         // init physics
         let mut physics = World::new();
         physics.set_gravity(nVector3::new(0.0, -9.81, 0.0));
@@ -70,23 +71,24 @@ impl<T: Default> Game<T> {
             euler_rot: (0.0f32, 0.0, 0.0),
         };
 
-        let events_loop = EventLoop::new();
+        let event_loop = EventLoop::new();
 
-        let renderer = Renderer::new("caper window".to_string(), &events_loop);
+        let renderer = Renderer::new("caper window".to_string(), &event_loop);
 
-        Game {
-            // TODO: Update to the new winit event polling
-            //input: Input::from_existing(events_loop),
-            input: Input::new(),
-            renderer,
-            physics,
-            audio: Audio::new(),
-            cams: vec![cam],
-            render_items: Vec::new(),
-            text_items: Vec::new(),
-            physics_items: Vec::new(),
-            delta: 0.016_666_667f32,
-        }
+        (
+            Game {
+                input: Input::new(),
+                renderer,
+                physics,
+                audio: Audio::new(),
+                cams: vec![cam],
+                render_items: Vec::new(),
+                text_items: Vec::new(),
+                physics_items: Vec::new(),
+                delta: 0.016_666_667f32,
+            },
+            event_loop,
+        )
     }
 }
 
@@ -94,7 +96,7 @@ impl<T: Default> Game<T> {
 impl<T: Default> Default for Game<T> {
     /// Returns a default instance of Game
     fn default() -> Self {
-        Self::new()
+        Self::new().0
     }
 }
 
@@ -338,9 +340,10 @@ pub trait Update {
         &mut self,
         render_imgui: F,
         update: U,
-    ) -> UpdateStatus;
+        event: Event<()>,
+    );
     /// Update the per frame inputs
-    fn update_inputs(&mut self);
+    fn update_inputs(&mut self, event: Event<()>);
 }
 
 /// Impl for Update on Game
@@ -352,10 +355,12 @@ impl<T: Default> Update for Game<T> {
         &mut self,
         mut render_imgui: F,
         mut update: U,
-    ) -> UpdateStatus {
+        event: Event<()>,
+    ) {
+        //self.event_loop.run(move |event, _, control_flow| {
         let frame_start = Instant::now();
 
-        self.update_inputs();
+        self.update_inputs(event);
         self.update_physics();
 
         let status = update(self);
@@ -371,18 +376,16 @@ impl<T: Default> Update for Game<T> {
         }
 
         self.delta = 0.000_000_001f32 * frame_start.elapsed().subsec_nanos() as f32;
-
-        status
+        //});
     }
 
     /// Default Game implementation to Update inputs
-    fn update_inputs(&mut self) {
+    fn update_inputs(&mut self, event: Event<()>) {
         {
-            // TODO: Update to accomodate the new glutin event polling
             // updating and handling the inputs
-            //let gl_window = self.renderer.display.gl_window();
-            //let window = gl_window.window();
-            //self.input.update_inputs(window);
+            let gl_window = self.renderer.display.gl_window();
+            let window = gl_window.window();
+            self.input.update_inputs(window, event);
         }
         {
             // update the inputs for imgui
