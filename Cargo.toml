@@ -32,5 +32,6 @@ gif = "0.10"
 derive_builder = "0.9"
 lazy_static = "1.0"
 rayon = "1.0"
-volition = "0.1.0"
+# volition = "0.1.0"
+volition = { path = "../volition" }
 impose = "0.3"

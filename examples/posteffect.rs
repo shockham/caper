@@ -40,7 +40,7 @@ fn main() {
         .build()
         .unwrap();
 
-    event_loop.run(move |event, _, _control_flow| {
+    start_loop(event_loop, move |events| {
         // run the engine update
         game.update(
             |_: &Ui| {},
@@ -55,7 +55,7 @@ fn main() {
 
                 UpdateStatus::Continue
             },
-            event,
-        );
+            events,
+        )
     });
 }

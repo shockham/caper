@@ -353,7 +353,7 @@ pub fn demo(frag_shader: &'static str) {
     game.renderer.post_effect.current_shader = "demo";
 
     // run the engine update
-    event_loop.run(move |event, _, control_flow| {
+    start_loop(event_loop, move |events| {
         game.update(
             |_: &Ui| {},
             |g: &mut Game<DefaultTag>| -> UpdateStatus {
@@ -367,7 +367,9 @@ pub fn demo(frag_shader: &'static str) {
 
                 UpdateStatus::Continue
             },
-            event,
+            events,
         );
+
+        UpdateStatus::Continue
     });
 }

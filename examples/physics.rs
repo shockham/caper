@@ -81,7 +81,7 @@ fn main() {
             .unwrap(),
     );
 
-    event_loop.run(move |event, _, _control_flow| {
+    start_loop(event_loop, move |events| {
         // clone of the RenderItem for access in the ui rendering
         let debug_render_item = game.get_render_item(1).clone();
         // updating the game & ui rendering
@@ -137,7 +137,9 @@ fn main() {
 
                 UpdateStatus::Continue
             },
-            event,
+            events,
         );
+
+        UpdateStatus::Continue
     });
 }

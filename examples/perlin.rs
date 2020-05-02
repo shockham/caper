@@ -72,7 +72,7 @@ fn main() {
 
     game.cams[0].pos.1 =
         2.5f32 + get_pos_perlin(((pseu_cam_pos.0 - fixed_val), (pseu_cam_pos.1 - fixed_val)));
-    event_loop.run(move |event, _, _control_flow| {
+    start_loop(event_loop, move |events| {
         let fps = game.renderer.fps;
         let mouse_pos = game.input.mouse_pos;
         let mouse_delta = game.input.mouse_delta;
@@ -139,8 +139,8 @@ fn main() {
                         movement_dirty = true;
                     }
 
-                    g.cams[0].euler_rot.0 += g.input.mouse_axis_motion.1 * mouse_speed;
-                    g.cams[0].euler_rot.1 += g.input.mouse_axis_motion.0 * mouse_speed;
+                    g.cams[0].euler_rot.0 += g.input.mouse_delta.1 * mouse_speed;
+                    g.cams[0].euler_rot.1 += g.input.mouse_delta.0 * mouse_speed;
                 }
 
                 // only regenerate the mesh if movement
@@ -188,7 +188,7 @@ fn main() {
 
                 UpdateStatus::Continue
             },
-            event,
-        );
+            events,
+        )
     });
 }
