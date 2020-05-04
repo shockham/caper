@@ -251,8 +251,8 @@ pub fn handle_fp_inputs(input: &mut Input, cam: &mut Camera) {
         cam.pos.2 -= mv_matrix[2][0] * MOVE_SPEED;
     }
 
-    cam.euler_rot.0 += input.mouse_axis_motion.1 * MOUSE_SPEED;
-    cam.euler_rot.1 += input.mouse_axis_motion.0 * MOUSE_SPEED;
+    cam.euler_rot.0 += input.mouse_delta.1 * MOUSE_SPEED;
+    cam.euler_rot.1 += input.mouse_delta.0 * MOUSE_SPEED;
 
     cam.euler_rot.0 = fix_rot(cam.euler_rot.0);
     cam.euler_rot.1 = fix_rot(cam.euler_rot.1);
