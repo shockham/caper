@@ -11,8 +11,7 @@ description = "Minimalist game framework"
 
 [dependencies]
 glium = "0.26"
-# glium_text_rusttype = "0.3.2"
-glium_text_rusttype = { git = "https://github.com/shockham/glium_text", branch = "rusttype" }
+glium_text_rusttype = "0.3.3"
 imgui = "0.3"
 imgui-glium-renderer = "0.3"
 
