@@ -1,6 +1,5 @@
 extern crate caper;
 
-#[macro_use]
 extern crate imgui;
 
 use caper::game::*;
@@ -13,7 +12,7 @@ use caper::utils::create_skydome;
 use imgui::*;
 
 fn main() {
-    let mut game = Game::<DefaultTag>::new();
+    let (mut game, event_loop) = Game::<DefaultTag>::new();
 
     let map_size = 100f32;
     let fixed_val = -(map_size / 2f32);
@@ -73,7 +72,7 @@ fn main() {
 
     game.cams[0].pos.1 =
         2.5f32 + get_pos_perlin(((pseu_cam_pos.0 - fixed_val), (pseu_cam_pos.1 - fixed_val)));
-    loop {
+    start_loop(event_loop, move |events| {
         let fps = game.renderer.fps;
         let mouse_pos = game.input.mouse_pos;
         let mouse_delta = game.input.mouse_delta;
@@ -81,21 +80,21 @@ fn main() {
             let gl_window = game.renderer.display.gl_window();
             let window = gl_window.window();
 
-            let (width, height): (u32, u32) = window.get_inner_size().unwrap().into();
-            let hidpi = window.get_hidpi_factor();
+            let (width, height): (u32, u32) = window.inner_size().into();
+            let hidpi = window.scale_factor();
 
             (width, height, hidpi)
         };
         let debug_pseu_cam_pos = pseu_cam_pos;
         let debug_debug_mode = debug_mode;
         // run the engine update
-        let status = game.update(
+        game.update(
             |ui: &Ui| {
                 if debug_debug_mode {
-                    ui.window(im_str!("debug"))
-                        .size((300.0, 200.0), ImGuiCond::FirstUseEver)
-                        .position((0.0, 0.0), ImGuiCond::FirstUseEver)
-                        .build(|| {
+                    Window::new(im_str!("debug"))
+                        .size([300f32, 200f32], Condition::FirstUseEver)
+                        .position([0f32, 0f32], Condition::FirstUseEver)
+                        .build(&ui, || {
                             ui.text(im_str!("map_size: {}", map_size));
                             ui.text(im_str!("fixed_val: {}", fixed_val));
                             ui.separator();
@@ -140,8 +139,8 @@ fn main() {
                         movement_dirty = true;
                     }
 
-                    g.cams[0].euler_rot.0 += g.input.mouse_axis_motion.1 * mouse_speed;
-                    g.cams[0].euler_rot.1 += g.input.mouse_axis_motion.0 * mouse_speed;
+                    g.cams[0].euler_rot.0 += g.input.mouse_delta.1 * mouse_speed;
+                    g.cams[0].euler_rot.1 += g.input.mouse_delta.0 * mouse_speed;
                 }
 
                 // only regenerate the mesh if movement
@@ -189,10 +188,7 @@ fn main() {
 
                 UpdateStatus::Continue
             },
-        );
-
-        if let UpdateStatus::Finish = status {
-            break;
-        }
-    }
+            events,
+        )
+    });
 }

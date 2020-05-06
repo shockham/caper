@@ -10,7 +10,7 @@ use caper::utils::load_wavefront;
 
 fn main() {
     // create an instance of Game
-    let mut game = Game::<DefaultTag>::new();
+    let (mut game, event_loop) = Game::<DefaultTag>::new();
 
     // generate the instance positions
     let map_size = 50f32;
@@ -38,9 +38,9 @@ fn main() {
             .unwrap(),
     );
 
-    loop {
+    start_loop(event_loop, move |events| {
         // run the engine update
-        let status = game.update(
+        game.update(
             |_: &Ui| {},
             |g: &mut Game<DefaultTag>| -> UpdateStatus {
                 // update the first person inputs
@@ -53,10 +53,7 @@ fn main() {
 
                 UpdateStatus::Continue
             },
-        );
-
-        if let UpdateStatus::Finish = status {
-            break;
-        }
-    }
+            events,
+        )
+    });
 }

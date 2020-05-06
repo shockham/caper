@@ -251,8 +251,8 @@ pub fn handle_fp_inputs(input: &mut Input, cam: &mut Camera) {
         cam.pos.2 -= mv_matrix[2][0] * MOVE_SPEED;
     }
 
-    cam.euler_rot.0 += input.mouse_axis_motion.1 * MOUSE_SPEED;
-    cam.euler_rot.1 += input.mouse_axis_motion.0 * MOUSE_SPEED;
+    cam.euler_rot.0 += input.mouse_delta.1 * MOUSE_SPEED;
+    cam.euler_rot.1 += input.mouse_delta.0 * MOUSE_SPEED;
 
     cam.euler_rot.0 = fix_rot(cam.euler_rot.0);
     cam.euler_rot.1 = fix_rot(cam.euler_rot.1);
@@ -339,7 +339,7 @@ pub fn demo(frag_shader: &'static str) {
     use types::DefaultTag;
 
     // crate an instance of the game struct
-    let mut game = Game::<DefaultTag>::new();
+    let (mut game, event_loop) = Game::<DefaultTag>::new();
 
     game.renderer
         .shaders
@@ -352,9 +352,9 @@ pub fn demo(frag_shader: &'static str) {
         .unwrap();
     game.renderer.post_effect.current_shader = "demo";
 
-    loop {
-        // run the engine update
-        let status = game.update(
+    // run the engine update
+    start_loop(event_loop, move |events| {
+        game.update(
             |_: &Ui| {},
             |g: &mut Game<DefaultTag>| -> UpdateStatus {
                 // update the first person inputs
@@ -367,10 +367,9 @@ pub fn demo(frag_shader: &'static str) {
 
                 UpdateStatus::Continue
             },
+            events,
         );
 
-        if let UpdateStatus::Finish = status {
-            break;
-        }
-    }
+        UpdateStatus::Continue
+    });
 }

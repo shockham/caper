@@ -9,7 +9,7 @@ use caper::utils::load_wavefront;
 
 fn main() {
     // crate an instance of the game struct
-    let mut game = Game::<DefaultTag>::new();
+    let (mut game, event_loop) = Game::<DefaultTag>::new();
 
     // define some items to be rendered
     // this example shows how to use the utiliy fn load_wavefront
@@ -25,9 +25,9 @@ fn main() {
             .unwrap(),
     );
 
-    loop {
+    start_loop(event_loop, move |events| {
         // run the engine update
-        let status = game.update(
+        game.update(
             |_: &Ui| {},
             |g: &mut Game<DefaultTag>| -> UpdateStatus {
                 // update the first person inputs
@@ -40,10 +40,7 @@ fn main() {
 
                 UpdateStatus::Continue
             },
-        );
-
-        if let UpdateStatus::Finish = status {
-            break;
-        }
-    }
+            events,
+        )
+    });
 }

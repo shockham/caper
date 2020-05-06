@@ -9,7 +9,7 @@ use caper::utils::handle_fp_inputs;
 
 fn main() {
     // crate an instance of the game struct
-    let mut game = Game::<DefaultTag>::new();
+    let (mut game, event_loop) = Game::<DefaultTag>::new();
 
     // define some items to be rendered
     game.add_render_item(
@@ -31,9 +31,9 @@ fn main() {
     // play the audio on start
     //game.audio.play("test");
 
-    loop {
+    start_loop(event_loop, move |events| {
         // run the engine update
-        let status = game.update(
+        game.update(
             |_: &Ui| {},
             |g: &mut Game<DefaultTag>| -> UpdateStatus {
                 // update the first person inputs
@@ -56,10 +56,7 @@ fn main() {
 
                 UpdateStatus::Continue
             },
-        );
-
-        if let UpdateStatus::Finish = status {
-            break;
-        }
-    }
+            events,
+        )
+    });
 }

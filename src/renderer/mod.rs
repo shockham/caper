@@ -10,7 +10,11 @@ pub mod shader;
 
 use glium::backend::Facade;
 use glium::draw_parameters::{BackfaceCullingMode, DepthClamp};
-use glium::glutin::{Api, ContextBuilder, EventsLoop, GlRequest, WindowBuilder};
+use glium::glutin::{
+    event_loop::EventLoop,
+    window::{Fullscreen, WindowBuilder},
+    Api, ContextBuilder, GlRequest,
+};
 use glium::index::{NoIndices, PrimitiveType};
 use glium::texture::RawImage2d;
 use glium::vertex::VertexBuffer;
@@ -58,7 +62,7 @@ pub struct Renderer {
     /// Fefault font that the text renderer will use
     default_font: Arc<Mutex<FontTexture>>,
     /// Main imgui system
-    imgui: ImGui,
+    imgui: imgui::Context,
     /// The sub renderer for imgui
     imgui_rend: ImGuiRenderer,
     /// Instance of PostEffect used for rendering post processing
@@ -90,15 +94,15 @@ struct GifInfo {
 
 impl Renderer {
     /// Creates new Renderer instance
-    pub fn new(title: String, events_loop: &EventsLoop) -> Renderer {
+    pub fn new(title: String, event_loop: &EventLoop<()>) -> Renderer {
         let window_builder = WindowBuilder::new()
             .with_title(title)
-            .with_fullscreen(Some(events_loop.get_primary_monitor()));
+            .with_fullscreen(Some(Fullscreen::Borderless(event_loop.primary_monitor())));
         let ctx_builder = ContextBuilder::new()
             .with_depth_buffer(24)
             .with_vsync(true)
             .with_gl(GlRequest::Specific(Api::OpenGl, (4, 0)));
-        let display = Display::new(window_builder, ctx_builder, &events_loop).unwrap();
+        let display = Display::new(window_builder, ctx_builder, &event_loop).unwrap();
 
         // create a text system instance and font
         let text_system = TextSystem::new(&display);
@@ -110,45 +114,51 @@ impl Renderer {
         )
         .unwrap();
 
-        let mut imgui = ImGui::init();
+        let mut imgui = imgui::Context::create();
+        {
+            // set the framebuffer size for imgui
+            let (width, height) = display.get_framebuffer_dimensions();
+            let imgui_io = imgui.io_mut();
+            imgui_io.display_size = [width as f32, height as f32];
+        }
 
         {
             // Set style for caper editor windows
             let imgui_style = imgui.style_mut();
             // TitleBg
-            imgui_style.colors[10] = ImVec4::new(0.05f32, 0.05f32, 0.05f32, 0.95f32);
+            imgui_style.colors[10] = [0.05f32, 0.05f32, 0.05f32, 0.95f32];
             // TitleBgActive
-            imgui_style.colors[11] = ImVec4::new(0.01f32, 0.01f32, 0.01f32, 0.95f32);
+            imgui_style.colors[11] = [0.01f32, 0.01f32, 0.01f32, 0.95f32];
             // TitleBgCollapsed
-            imgui_style.colors[12] = ImVec4::new(0.1f32, 0.1f32, 0.1f32, 0.95f32);
+            imgui_style.colors[12] = [0.1f32, 0.1f32, 0.1f32, 0.95f32];
             // ScrollbarBg
-            imgui_style.colors[14] = ImVec4::new(0f32, 0f32, 0f32, 0.8f32);
+            imgui_style.colors[14] = [0f32, 0f32, 0f32, 0.8f32];
             // ScrollbarGrab
-            imgui_style.colors[15] = ImVec4::new(0.98f32, 0.98f32, 0.98f32, 0.8f32);
+            imgui_style.colors[15] = [0.98f32, 0.98f32, 0.98f32, 0.8f32];
             // ScrollbarGrabHovered
-            imgui_style.colors[16] = ImVec4::new(0.95f32, 0.95f32, 0.95f32, 0.8f32);
+            imgui_style.colors[16] = [0.95f32, 0.95f32, 0.95f32, 0.8f32];
             // ScrollBarGrabActive
-            imgui_style.colors[17] = ImVec4::new(0.9f32, 0.9f32, 0.9f32, 0.8f32);
+            imgui_style.colors[17] = [0.9f32, 0.9f32, 0.9f32, 0.8f32];
             // Button
-            imgui_style.colors[22] = ImVec4::new(0.05f32, 0.05f32, 0.05f32, 0.8f32);
+            imgui_style.colors[22] = [0.05f32, 0.05f32, 0.05f32, 0.8f32];
             // ButtonHovered
-            imgui_style.colors[23] = ImVec4::new(0.01f32, 0.01f32, 0.01f32, 0.8f32);
+            imgui_style.colors[23] = [0.01f32, 0.01f32, 0.01f32, 0.8f32];
             // ButtonActive
-            imgui_style.colors[24] = ImVec4::new(0.1f32, 0.1f32, 0.1f32, 0.8f32);
+            imgui_style.colors[24] = [0.1f32, 0.1f32, 0.1f32, 0.8f32];
             // Header
-            imgui_style.colors[25] = ImVec4::new(0.05f32, 0.05f32, 0.05f32, 0.7f32);
+            imgui_style.colors[25] = [0.05f32, 0.05f32, 0.05f32, 0.7f32];
             // HeaderHovered
-            imgui_style.colors[26] = ImVec4::new(0.01f32, 0.01f32, 0.01f32, 0.7f32);
+            imgui_style.colors[26] = [0.01f32, 0.01f32, 0.01f32, 0.7f32];
             // HeaderActive
-            imgui_style.colors[27] = ImVec4::new(0.1f32, 0.1f32, 0.1f32, 0.7f32);
+            imgui_style.colors[27] = [0.1f32, 0.1f32, 0.1f32, 0.7f32];
             // CloseButton
-            imgui_style.colors[34] = ImVec4::new(0.05f32, 0.05f32, 0.05f32, 0.6f32);
+            imgui_style.colors[34] = [0.05f32, 0.05f32, 0.05f32, 0.6f32];
             // CloseButtonHovered
-            imgui_style.colors[35] = ImVec4::new(0.01f32, 0.01f32, 0.01f32, 0.6f32);
+            imgui_style.colors[35] = [0.01f32, 0.01f32, 0.01f32, 0.6f32];
             // CloseButtonActive
-            imgui_style.colors[36] = ImVec4::new(0.1f32, 0.1f32, 0.1f32, 0.6f32);
+            imgui_style.colors[36] = [0.1f32, 0.1f32, 0.1f32, 0.6f32];
             //TextSelectedBg
-            imgui_style.colors[41] = ImVec4::new(0f32, 0f32, 0f32, 0.9f32);
+            imgui_style.colors[41] = [0f32, 0f32, 0f32, 0.9f32];
         }
 
         let imgui_rend = ImGuiRenderer::init(&mut imgui, &display).unwrap();
@@ -177,8 +187,9 @@ impl Renderer {
         };
 
         {
-            let window = renderer.display.gl_window();
-            window.hide_cursor(true);
+            let gl_window = renderer.display.gl_window();
+            let window = gl_window.window();
+            window.set_cursor_visible(true);
         }
 
         renderer
@@ -186,24 +197,24 @@ impl Renderer {
 
     /// Update imgui's interal input state
     pub fn update_imgui_input(&mut self, input: &Input) {
-        self.imgui
-            .set_mouse_pos(input.mouse_pos.0, input.mouse_pos.1);
-        self.imgui.set_mouse_down([
+        let mut imgui_io = self.imgui.io_mut();
+        imgui_io.mouse_pos = [input.mouse_pos.0, input.mouse_pos.1];
+        imgui_io.mouse_down = [
             input.mouse_btns_down.contains(&MouseButton::Left),
             input.mouse_btns_down.contains(&MouseButton::Right),
             input.mouse_btns_down.contains(&MouseButton::Middle),
             false,
             false,
-        ]);
+        ];
         for ch in &input.characters_down {
-            self.imgui.add_input_character(*ch);
+            imgui_io.add_input_character(*ch);
         }
     }
 
     /// Saves out a screenshot from in-game
     pub fn save_screenshot(&self) {
         // reading the front buffer into an image
-        let image: RawImage2d<u8> = self.display.read_front_buffer();
+        let image: RawImage2d<u8> = self.display.read_front_buffer().unwrap();
 
         thread::spawn(move || {
             let image =
@@ -219,7 +230,7 @@ impl Renderer {
     /// When called with the same path adds a frame to a gif at the path
     pub fn save_add_to_gif(&mut self, path: &'static str) {
         // reading the front buffer into a gif frame
-        let image: RawImage2d<u8> = self.display.read_front_buffer();
+        let image: RawImage2d<u8> = self.display.read_front_buffer().unwrap();
 
         let (w, h) = (image.width, image.height);
 
@@ -601,23 +612,20 @@ impl Draw for Renderer {
         mut f: F,
     ) {
         let renderer = self;
-        let (width, height) = renderer.display.get_framebuffer_dimensions();
-
-        let frame_size = FrameSize::new(width as f64, height as f64, 1f64);
 
         // imgui elements
-        let ui = renderer.imgui.frame(frame_size, 0.1);
+        let ui = renderer.imgui.frame();
         f(&ui);
 
         // create the engine editor
         if renderer.show_editor {
             let fps = renderer.fps;
             // create the editor window
-            ui.window(im_str!("caper editor"))
-                .size((300.0, 200.0), ImGuiCond::FirstUseEver)
-                .position((0.0, 0.0), ImGuiCond::FirstUseEver)
+            Window::new(im_str!("caper editor"))
+                .size([300f32, 200f32], Condition::FirstUseEver)
+                .position([0f32, 0f32], Condition::FirstUseEver)
                 .collapsible(true)
-                .build(|| {
+                .build(&ui, || {
                     // fps
                     ui.text(im_str!("fps: {:?}", fps));
                     // camera state editor
@@ -661,7 +669,7 @@ impl Draw for Renderer {
                     if ui.collapsing_header(im_str!("Render items")).build() {
                         // create node for each item
                         for render_item in render_items {
-                            ui.tree_node(im_str!("name:{}", render_item.name))
+                            ui.tree_node(&im_str!("name:{}", render_item.name))
                                 .build(|| {
                                     ui.checkbox(im_str!("active"), &mut render_item.active);
                                     // physics type TODO make sure this is propagated
@@ -670,11 +678,10 @@ impl Draw for Renderer {
                                         PhysicsType::Dynamic => 1,
                                         PhysicsType::None => 2,
                                     };
-                                    ui.combo(
-                                        im_str!("physics"),
+                                    ComboBox::new(im_str!("physics")).build_simple_string(
+                                        &ui,
                                         &mut physics_type,
                                         &[im_str!("Static"), im_str!("Dynamic"), im_str!("None")],
-                                        -1,
                                     );
                                     render_item.physics_type = match physics_type {
                                         0 => PhysicsType::Static,
@@ -693,7 +700,7 @@ impl Draw for Renderer {
                     // text items editor
                     if ui.collapsing_header(im_str!("Text items")).build() {
                         for text_item in text_items {
-                            ui.tree_node(im_str!("name:{}", text_item.name)).build(|| {
+                            ui.tree_node(&im_str!("name:{}", text_item.name)).build(|| {
                                 // TODO add mutability
                                 //ui.input_text(im_str!("text"), &mut text_item.text).build();
                                 // text item color
@@ -754,6 +761,7 @@ impl Draw for Renderer {
 
         // render imgui items
         let mut target = target.lock().unwrap();
-        renderer.imgui_rend.render(&mut *target, ui).unwrap();
+        let draw_data = ui.render();
+        renderer.imgui_rend.render(&mut *target, draw_data).unwrap();
     }
 }
