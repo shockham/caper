@@ -9,6 +9,11 @@ homepage = "https://github.com/shockham/caper"
 documentation = "https://docs.rs/caper/*/caper/"
 description = "Minimalist game framework"
 
+[features]
+default = ["impose"]
+3d-audio = ["ambisonic"]
+no-audio = []
+
 [dependencies]
 glium = "0.26"
 glium_text_rusttype = "0.3.3"
@@ -32,4 +37,5 @@ derive_builder = "0.9"
 lazy_static = "1.0"
 rayon = "1.0"
 volition = "0.1.1"
-impose = "0.3"
+impose = { version = "0.3", optional = true }
+ambisonic = { version = "0.3", optional = true }
