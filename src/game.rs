@@ -1,4 +1,8 @@
+#[cfg(feature = "default")]
+#[cfg(not(feature = "3d-audio"))]
 use audio::Audio;
+#[cfg(feature = "3d-audio")]
+use audio::{Ambisonic, AmbisonicBuilder};
 use imgui::Ui;
 use input::Input;
 use renderer::{Draw, Renderer};
@@ -45,7 +49,12 @@ pub struct Game<T: Default> {
     /// The physics system
     pub physics: World<f32>,
     /// The audio system
+    #[cfg(feature = "default")]
+    #[cfg(not(feature = "3d-audio"))]
     pub audio: Audio,
+    /// The 3d audio system
+    #[cfg(feature = "3d-audio")]
+    pub audio: Ambisonic,
     /// Simple struct for camera data
     pub cams: Vec<Camera>,
     /// All of the mesh items to be rendered in the game
@@ -75,12 +84,18 @@ impl<T: Default> Game<T> {
 
         let renderer = Renderer::new("caper window".to_string(), &event_loop);
 
+        #[cfg(feature = "default")]
+        #[cfg(not(feature = "3d-audio"))]
+        let audio = Audio::new();
+        #[cfg(feature = "3d-audio")]
+        let audio = AmbisonicBuilder::default().build();
+
         (
             Game {
                 input: Input::new(),
                 renderer,
                 physics,
-                audio: Audio::new(),
+                audio: audio,
                 cams: vec![cam],
                 render_items: Vec::new(),
                 text_items: Vec::new(),
