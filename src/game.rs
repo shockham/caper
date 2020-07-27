@@ -96,6 +96,7 @@ impl<T: Default> Game<T> {
                 renderer,
                 physics,
                 #[cfg(feature = "default")]
+                #[cfg(not(feature = "3d-audio"))]
                 audio: audio,
                 #[cfg(feature = "3d-audio")]
                 audio: audio,

@@ -39,3 +39,7 @@ rayon = "1.0"
 volition = "0.1.1"
 impose = { version = "0.3", optional = true }
 ambisonic = { version = "0.3", optional = true }
+
+[[example]]
+name = "audio_3d"
+required-features = ["3d-audio"]
