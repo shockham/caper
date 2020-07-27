@@ -95,6 +95,8 @@ impl<T: Default> Game<T> {
                 input: Input::new(),
                 renderer,
                 physics,
+                #[cfg(feature = "default")]
+                #[cfg(feature = "3d-audio")]
                 audio: audio,
                 cams: vec![cam],
                 render_items: Vec::new(),
