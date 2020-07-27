@@ -81,7 +81,11 @@ extern crate serde_derive;
 
 pub extern crate image;
 pub extern crate imgui;
+#[cfg(feature = "default")]
+#[cfg(not(feature = "3d-audio"))]
 pub extern crate impose as audio;
+#[cfg(feature = "3d-audio")]
+pub extern crate ambisonic as audio;
 pub extern crate nalgebra;
 pub extern crate ncollide3d as ncollide;
 pub extern crate nphysics3d;
