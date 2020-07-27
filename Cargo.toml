@@ -41,5 +41,44 @@ impose = { version = "0.3", optional = true }
 ambisonic = { version = "0.3", optional = true }
 
 [[example]]
+name = "audio"
+
+[[example]]
 name = "audio_3d"
 required-features = ["3d-audio"]
+
+[[example]]
+name = "cubes"
+
+[[example]]
+name = "physics"
+
+[[example]]
+name = "posteffect"
+
+[[example]]
+name = "spheres"
+
+[[example]]
+name = "transforms"
+
+[[example]]
+name = "simple"
+
+[[example]]
+name = "tags"
+
+[[example]]
+name = "demo"
+
+[[example]]
+name = "proc"
+
+[[example]]
+name = "texture"
+
+[[example]]
+name = "load_mesh"
+
+[[example]]
+name = "perlin"
