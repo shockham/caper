@@ -116,13 +116,6 @@ impl Renderer {
 
         let mut imgui = imgui::Context::create();
         {
-            // set the framebuffer size for imgui
-            let (width, height) = display.get_framebuffer_dimensions();
-            let imgui_io = imgui.io_mut();
-            imgui_io.display_size = [width as f32, height as f32];
-        }
-
-        {
             // Set style for caper editor windows
             let imgui_style = imgui.style_mut();
             // TitleBg
@@ -198,6 +191,12 @@ impl Renderer {
     /// Update imgui's interal input state
     pub fn update_imgui_input(&mut self, input: &Input) {
         let mut imgui_io = self.imgui.io_mut();
+
+        // set the framebuffer size for imgui
+        // moved to here rather than Renderer::new as it was the wrong size
+        let (width, height) = self.display.get_framebuffer_dimensions();
+        imgui_io.display_size = [width as f32, height as f32];
+
         imgui_io.mouse_pos = [input.mouse_pos.0, input.mouse_pos.1];
         imgui_io.mouse_down = [
             input.mouse_btns_down.contains(&MouseButton::Left),
