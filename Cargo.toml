@@ -36,7 +36,7 @@ gif = "0.10"
 derive_builder = "0.9"
 lazy_static = "1.0"
 rayon = "1.0"
-volition = "0.1.1"
+volition = "0.1.4"
 impose = { version = "0.3", optional = true }
 ambisonic = { version = "0.3", optional = true }
 
