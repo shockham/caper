@@ -8,6 +8,7 @@ use caper::mesh::{gen_cube, gen_quad, gen_sphere};
 use caper::types::{DefaultTag, MaterialBuilder, RenderItemBuilder, Transform, TransformBuilder};
 use caper::utils::handle_fp_inputs;
 use caper::utils::load_wavefront;
+use caper::load_texture_dynamic;
 
 fn main() {
     let (mut game, event_loop) = Game::<DefaultTag>::new();
@@ -83,6 +84,7 @@ fn main() {
             .material(
                 MaterialBuilder::default()
                     .shader_name("texture".to_string())
+                    .texture_name(Some("dynamic".to_string()))
                     .build()
                     .unwrap(),
             )
@@ -118,6 +120,15 @@ fn main() {
                 .unwrap()])
             .build()
             .unwrap(),
+    );
+
+
+    game.renderer.shaders.textures.insert(
+        "dynamic",
+        load_texture_dynamic!(
+            "src/renderer/resources/caper.png",
+            &game.renderer.display
+        )
     );
 
     game.renderer
