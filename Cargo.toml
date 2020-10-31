@@ -82,3 +82,6 @@ name = "load_mesh"
 
 [[example]]
 name = "perlin"
+
+[[example]]
+name = "ui"
