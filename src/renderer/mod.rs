@@ -62,7 +62,7 @@ pub struct Renderer {
     /// Fefault font that the text renderer will use
     default_font: Arc<Mutex<FontTexture>>,
     /// Main imgui system
-    imgui: imgui::Context,
+    pub imgui: imgui::Context,
     /// The sub renderer for imgui
     imgui_rend: ImGuiRenderer,
     /// Instance of PostEffect used for rendering post processing
@@ -106,10 +106,12 @@ impl Renderer {
 
         // create a text system instance and font
         let text_system = TextSystem::new(&display);
+        let scale_factor = display.gl_window().window().scale_factor();
+
         let font = FontTexture::new(
             &display,
             &include_bytes!("./resources/font.ttf")[..],
-            100,
+            (100 as f64 * scale_factor) as u32,
             glium_text::FontTexture::ascii_character_list(),
         )
         .unwrap();
@@ -154,6 +156,14 @@ impl Renderer {
             imgui_style.colors[41] = [0f32, 0f32, 0f32, 0.9f32];
         }
 
+        imgui.fonts().add_font(&[
+            imgui::FontSource::TtfData {
+                size_pixels: 13. * scale_factor as f32,
+                data: include_bytes!("./resources/font.ttf"),
+                config: None,
+            },
+        ]);
+ 
         let imgui_rend = ImGuiRenderer::init(&mut imgui, &display).unwrap();
 
         let shaders = Shaders::new(&display);
