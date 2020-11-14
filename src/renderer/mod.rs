@@ -48,7 +48,9 @@ use input::{Input, MouseButton};
 use lighting::Lighting;
 use posteffect::{render_to_texture, PostEffect};
 use shader::Shaders;
-use types::{Camera, PhysicsType, RenderItem, ShaderIn, TextItem};
+use types::{Camera, RenderItem, ShaderIn, TextItem};
+#[cfg(feature = "nphysics")]
+use types::PhysicsType;
 use utils::{
     build_fp_view_matrix, build_persp_proj_mat, frustrum_test, get_frustum_planes, mul_mat4,
 };
@@ -682,21 +684,24 @@ impl Draw for Renderer {
                                 .build(|| {
                                     ui.checkbox(im_str!("active"), &mut render_item.active);
                                     // physics type TODO make sure this is propagated
-                                    let mut physics_type = match render_item.physics_type {
-                                        PhysicsType::Static => 0,
-                                        PhysicsType::Dynamic => 1,
-                                        PhysicsType::None => 2,
-                                    };
-                                    ComboBox::new(im_str!("physics")).build_simple_string(
-                                        &ui,
-                                        &mut physics_type,
-                                        &[im_str!("Static"), im_str!("Dynamic"), im_str!("None")],
-                                    );
-                                    render_item.physics_type = match physics_type {
-                                        0 => PhysicsType::Static,
-                                        1 => PhysicsType::Dynamic,
-                                        _ => PhysicsType::None,
-                                    };
+                                    #[cfg(feature = "nphysics")]
+                                    {
+                                        let mut physics_type = match render_item.physics_type {
+                                            PhysicsType::Static => 0,
+                                            PhysicsType::Dynamic => 1,
+                                            PhysicsType::None => 2,
+                                        };
+                                        ComboBox::new(im_str!("physics")).build_simple_string(
+                                            &ui,
+                                            &mut physics_type,
+                                            &[im_str!("Static"), im_str!("Dynamic"), im_str!("None")],
+                                        );
+                                        render_item.physics_type = match physics_type {
+                                            0 => PhysicsType::Static,
+                                            1 => PhysicsType::Dynamic,
+                                            _ => PhysicsType::None,
+                                        };
+                                    }
                                     // TODO add mutability for these items
                                     ui.text(im_str!(
                                         "instance_count:{}",

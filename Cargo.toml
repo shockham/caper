@@ -13,6 +13,7 @@ description = "Minimalist game framework"
 default = ["impose"]
 3d-audio = ["ambisonic"]
 no-audio = []
+nphysics = ["nphysics3d", "nalgebra", "ncollide3d"]
 
 [dependencies]
 glium = "0.26"
@@ -28,9 +29,9 @@ fps_counter = "1.0.0"
 bincode = "1.0"
 serde = "1.0"
 serde_derive = "1.0"
-nphysics3d = "0.11"
-nalgebra = "0.18"
-ncollide3d = "0.19"
+nphysics3d = { version = "0.11", optional = true }
+nalgebra = { version = "0.18", optional = true }
+ncollide3d = { version = "0.19", optional = true }
 image = "0.23"
 gif = "0.10"
 derive_builder = "0.9"
@@ -52,6 +53,7 @@ name = "cubes"
 
 [[example]]
 name = "physics"
+required-features = ["nphysics"]
 
 [[example]]
 name = "posteffect"
