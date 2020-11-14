@@ -86,8 +86,11 @@ pub extern crate imgui;
 pub extern crate impose as audio;
 #[cfg(feature = "3d-audio")]
 pub extern crate ambisonic as audio;
+#[cfg(feature = "nphysics")]
 pub extern crate nalgebra;
+#[cfg(feature = "nphysics")]
 pub extern crate ncollide3d as ncollide;
+#[cfg(feature = "nphysics")]
 pub extern crate nphysics3d;
 pub extern crate volition as input;
 

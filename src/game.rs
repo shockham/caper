@@ -6,12 +6,19 @@ use audio::{Ambisonic, AmbisonicBuilder};
 use imgui::Ui;
 use input::Input;
 use renderer::{Draw, Renderer};
-use types::{Camera, PhysicsType, RenderItem, TextItem};
+#[cfg(feature = "nphysics")]
+use types::PhysicsType;
+use types::{Camera, RenderItem, TextItem};
 
+#[cfg(feature = "nphysics")]
 use nalgebra::Translation3;
+#[cfg(feature = "nphysics")]
 use nalgebra::Vector3 as nVector3;
+#[cfg(feature = "nphysics")]
 use ncollide::shape::{Cuboid, ShapeHandle};
+#[cfg(feature = "nphysics")]
 use nphysics3d::object::{BodyHandle, BodyStatus, ColliderDesc, RigidBodyDesc};
+#[cfg(feature = "nphysics")]
 use nphysics3d::world::World;
 
 use glium::glutin::event::{Event, StartCause};
@@ -24,6 +31,7 @@ use rayon::prelude::*;
 use rayon::slice::IterMut;
 
 /// The divisor for the physics space to align with render space
+#[cfg(feature = "nphysics")]
 const PHYSICS_DIVISOR: f32 = 2f32;
 
 /// Enum for update to return status
@@ -35,6 +43,7 @@ pub enum UpdateStatus {
 }
 
 /// Struct for storing physics handles and associated RenderItem
+#[cfg(feature = "nphysics")]
 struct PhysicsHandle {
     render_item: (usize, usize),
     body_handle: BodyHandle,
@@ -47,6 +56,7 @@ pub struct Game<T: Default> {
     /// The render system for the game
     pub renderer: Renderer,
     /// The physics system
+    #[cfg(feature = "nphysics")]
     pub physics: World<f32>,
     /// The audio system
     #[cfg(feature = "default")]
@@ -62,6 +72,7 @@ pub struct Game<T: Default> {
     /// All the text items to be rendered in the game
     text_items: Vec<TextItem>,
     /// All the body handles for physics items
+    #[cfg(feature = "nphysics")]
     physics_items: Vec<PhysicsHandle>,
     /// The delta time for each frame
     pub delta: f32,
@@ -71,7 +82,9 @@ impl<T: Default> Game<T> {
     /// Creates a new instance of a game
     pub fn new() -> (Game<T>, EventLoop<()>) {
         // init physics
+        #[cfg(feature = "nphysics")]
         let mut physics = World::new();
+        #[cfg(feature = "nphysics")]
         physics.set_gravity(nVector3::new(0.0, -9.81, 0.0));
 
         //cam state
@@ -94,6 +107,7 @@ impl<T: Default> Game<T> {
             Game {
                 input: Input::new(),
                 renderer,
+                #[cfg(feature = "nphysics")]
                 physics,
                 #[cfg(feature = "default")]
                 #[cfg(not(feature = "3d-audio"))]
@@ -103,6 +117,7 @@ impl<T: Default> Game<T> {
                 cams: vec![cam],
                 render_items: Vec::new(),
                 text_items: Vec::new(),
+                #[cfg(feature = "nphysics")]
                 physics_items: Vec::new(),
                 delta: 0.016_666_667f32,
             },
@@ -167,11 +182,13 @@ impl<T: Default> RenderItems for Game<T> {
         let i = self.render_items.len() - 1;
 
         // setup the physics for the item
+        #[cfg(feature = "nphysics")]
         self.add_physics(i);
     }
 }
 
 /// Trait for physics operations
+#[cfg(feature = "nphysics")]
 pub trait Physics {
     /// Initalise physics depending on PhysicsType
     fn add_physics(&mut self, i: usize);
@@ -179,6 +196,7 @@ pub trait Physics {
     fn update_physics(&mut self);
 }
 
+#[cfg(feature = "nphysics")]
 impl<T: Default> Physics for Game<T> {
     /// Initalise physics depending on PhysicsType
     fn add_physics(&mut self, i: usize) {
@@ -379,6 +397,7 @@ impl<T: Default> Update for Game<T> {
         let frame_start = Instant::now();
 
         self.update_inputs(events);
+        #[cfg(feature = "nphysics")]
         self.update_physics();
 
         let status = update(self);
