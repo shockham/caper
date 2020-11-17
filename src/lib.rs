@@ -79,13 +79,13 @@ extern crate lazy_static;
 #[macro_use]
 extern crate serde_derive;
 
+#[cfg(feature = "3d-audio")]
+pub extern crate ambisonic as audio;
 pub extern crate image;
 pub extern crate imgui;
 #[cfg(feature = "default")]
 #[cfg(not(feature = "3d-audio"))]
 pub extern crate impose as audio;
-#[cfg(feature = "3d-audio")]
-pub extern crate ambisonic as audio;
 #[cfg(feature = "nphysics")]
 pub extern crate nalgebra;
 #[cfg(feature = "nphysics")]

@@ -48,9 +48,9 @@ use input::{Input, MouseButton};
 use lighting::Lighting;
 use posteffect::{render_to_texture, PostEffect};
 use shader::Shaders;
-use types::{Camera, RenderItem, ShaderIn, TextItem};
 #[cfg(feature = "nphysics")]
 use types::PhysicsType;
+use types::{Camera, RenderItem, ShaderIn, TextItem};
 use utils::{
     build_fp_view_matrix, build_persp_proj_mat, frustrum_test, get_frustum_planes, mul_mat4,
 };
@@ -158,14 +158,12 @@ impl Renderer {
             imgui_style.colors[41] = [0f32, 0f32, 0f32, 0.9f32];
         }
 
-        imgui.fonts().add_font(&[
-            imgui::FontSource::TtfData {
-                size_pixels: 13. * scale_factor as f32,
-                data: include_bytes!("./resources/font.ttf"),
-                config: None,
-            },
-        ]);
- 
+        imgui.fonts().add_font(&[imgui::FontSource::TtfData {
+            size_pixels: 13. * scale_factor as f32,
+            data: include_bytes!("./resources/font.ttf"),
+            config: None,
+        }]);
+
         let imgui_rend = ImGuiRenderer::init(&mut imgui, &display).unwrap();
 
         let shaders = Shaders::new(&display);
@@ -694,7 +692,11 @@ impl Draw for Renderer {
                                         ComboBox::new(im_str!("physics")).build_simple_string(
                                             &ui,
                                             &mut physics_type,
-                                            &[im_str!("Static"), im_str!("Dynamic"), im_str!("None")],
+                                            &[
+                                                im_str!("Static"),
+                                                im_str!("Dynamic"),
+                                                im_str!("None"),
+                                            ],
                                         );
                                         render_item.physics_type = match physics_type {
                                             0 => PhysicsType::Static,

@@ -4,11 +4,11 @@ extern crate time;
 use caper::game::*;
 use caper::imgui::Ui;
 use caper::input::Key;
+use caper::load_texture_dynamic;
 use caper::mesh::{gen_cube, gen_quad, gen_sphere};
 use caper::types::{DefaultTag, MaterialBuilder, RenderItemBuilder, Transform, TransformBuilder};
 use caper::utils::handle_fp_inputs;
 use caper::utils::load_wavefront;
-use caper::load_texture_dynamic;
 
 fn main() {
     let (mut game, event_loop) = Game::<DefaultTag>::new();
@@ -122,13 +122,9 @@ fn main() {
             .unwrap(),
     );
 
-
     game.renderer.shaders.textures.insert(
         "dynamic",
-        load_texture_dynamic!(
-            "src/renderer/resources/caper.png",
-            &game.renderer.display
-        )
+        load_texture_dynamic!("src/renderer/resources/caper.png", &game.renderer.display),
     );
 
     game.renderer

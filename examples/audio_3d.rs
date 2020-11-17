@@ -3,13 +3,13 @@ extern crate caper;
 use std::thread::sleep;
 use std::time::Duration;
 
+use caper::audio::rodio;
 use caper::game::*;
 use caper::imgui::Ui;
 use caper::input::Key;
 use caper::mesh::gen_cube;
 use caper::types::{DefaultTag, RenderItemBuilder, TransformBuilder};
 use caper::utils::handle_fp_inputs;
-use caper::audio::rodio;
 
 fn main() {
     // crate an instance of the game struct
