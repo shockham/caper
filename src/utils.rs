@@ -368,8 +368,6 @@ pub fn demo(frag_shader: &'static str) {
                 UpdateStatus::Continue
             },
             events,
-        );
-
-        UpdateStatus::Continue
+        )
     });
 }
